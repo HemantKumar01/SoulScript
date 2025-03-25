@@ -1,26 +1,19 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import Link from "next/link";
+import TherapyInsights from "./graphs";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
-// Define TypeScript interfaces for better type safety
 interface DataItem {
   label: string;
   value: string;
 }
 
 interface ChartDataItem {
-  name: string;
-  score?: number;
-  effectiveness?: number;
+  label: string;
+  score?: string;
+  effectiveness?: string;
 }
 
 interface DataStructure {
@@ -28,136 +21,148 @@ interface DataStructure {
   familyEmployment: DataItem[];
   therapyReasons: DataItem[];
   mentalHealthHistory: DataItem[];
+  traumaAndAdverseExperiences: DataItem[];
+  substanceUse: DataItem[];
+  healthAndLifestyle: DataItem[];
+  relationshipsAndSocialSupport: DataItem[];
   selfPerceptionData: ChartDataItem[];
   copingStrategies: ChartDataItem[];
-  therapyRecommendations: { label: string; description: string }[];
+  medicalAndMedicationHistory: DataItem[];
+  behavioralPatterns: DataItem[];
+  riskAssessment: DataItem[];
+  psychologicalFormulation: DataItem[];
+  strengthsAndResources: DataItem[];
+  therapyRecommendations: DataItem[];
 }
 
 const KnowAboutMe: React.FC = () => {
+  const router = useRouter();
   const [data, setData] = useState<DataStructure | null>(null);
+  const [graphData, setGraphData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetch("/data.json") // Fetching JSON from the `public` folder
-      .then((res) => res.json())
-      .then((jsonData) => {
-        // Transform the data to match our component structure
-        const transformedData: DataStructure = {
-          demographics: Object.entries(jsonData["EXTRACTED INFORMATION"].Demographics).map(([label, value]) => ({ 
-            label, 
-            value: value as string 
-          })),
-          familyEmployment: Object.entries(jsonData["EXTRACTED INFORMATION"]["Family & Employment"]).map(([label, value]) => ({ 
-            label, 
-            value: value as string 
-          })),
-          therapyReasons: Object.entries(jsonData["EXTRACTED INFORMATION"]["Reasons for Seeking Therapy"]).map(([label, value]) => ({ 
-            label, 
-            value: value as string 
-          })),
-          mentalHealthHistory: Object.entries(jsonData["EXTRACTED INFORMATION"]["Mental Health History"]).map(([label, value]) => ({ 
-            label, 
-            value: value as string 
-          })),
-          selfPerceptionData: [
-            { name: "Self-Esteem", score: parseInt(jsonData["EXTRACTED INFORMATION"]["Self-Perception"]["Self-Esteem"].split('/')[0]) },
-            { name: "Family Closeness", score: parseInt(jsonData["EXTRACTED INFORMATION"]["Relationships and Social Support"]["Family Closeness"].split('/')[0]) },
-            { name: "Friend Closeness", score: parseInt(jsonData["EXTRACTED INFORMATION"]["Relationships and Social Support"]["Friend Closeness"].split('/')[0]) },
-            { name: "Personal Support", score: parseInt(jsonData["EXTRACTED INFORMATION"]["Relationships and Social Support"]["Personal Life Support"].split('/')[0]) },
-            { name: "Work Support", score: parseInt(jsonData["EXTRACTED INFORMATION"]["Relationships and Social Support"]["Professional Life Support"].split('/')[0]) }
-          ],
-          copingStrategies: [], // Not used in current UI
-          // Transform recommendations to the expected format
-          therapyRecommendations: Object.entries(jsonData["RECOMMENDATIONS"])
-            .filter(([key]) => key !== "Counseling") // Excluding the "Counseling" entry as it has a different structure
-            .map(([label, details]) => ({
-              label,
-              description: (details as any).Rationale
-            }))
-        };
+    setLoading(true);
+    
+    // Function to read file content
+    const fetchFileContent = async (filePath) => {
+      try {
+        const response = await fetch(filePath);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch ${filePath}`);
+        }
+        return await response.text();
+      } catch (error) {
+        console.error(`Error fetching ${filePath}:`, error);
+        throw error;
+      }
+    };
+    
+    // Main async function to handle API request
+    const fetchData = async () => {
+      try {
+        // Get file contents first
+        const infoContent = await fetchFileContent("info.txt");
+        const journalContent = await fetchFileContent("journal.txt");
         
-        // Add Counseling if it exists
-        if (jsonData["RECOMMENDATIONS"]["Counseling"]) {
-          transformedData.therapyRecommendations.push({
-            label: jsonData["RECOMMENDATIONS"]["Counseling"].Type || "Counseling",
-            description: jsonData["RECOMMENDATIONS"]["Counseling"].Rationale
-          });
+        // Now make the API request with the file contents
+        const response = await fetch("http://127.0.0.1:8000/getReport", {
+          method: 'POST', // Changed to POST since we're sending data
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            "in-0": infoContent,
+            "in-1": journalContent,
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error(`API responded with status ${response.status}`);
         }
         
-        setData(transformedData);
+        const responseData = await response.json();
+        console.log("API Response:", responseData);
+        
+        // Update state with the response data
+        setData(responseData.info);
+        setGraphData(responseData.graph);
         setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
+      } catch (error) {
+        console.error("Error in data fetching process:", error);
+        setError(true);
         setLoading(false);
-      });
+      }
+    };
+    
+    // Execute the data fetching
+    fetchData();
   }, []);
 
-  if (loading) return <p className="text-center text-gray-800">Loading...</p>;
-  if (!data) return <p className="text-center text-red-600">Failed to load data.</p>;
+  // This is the colorful background style that should be applied to both loading and content views
+  const backgroundStyle = "bg-[linear-gradient(60deg,_rgb(247,_149,_51),_rgb(243,_112,_85),_rgb(239,_78,_123),_rgb(161,_102,_171),_rgb(80,_115,_184),_rgb(16,_152,_173),_rgb(7,_179,_155),_rgb(111,_186,_130))] min-h-screen py-12 text-black";
+
+  if (loading) {
+    return (
+      <div className={backgroundStyle}>
+        <div className="flex flex-col items-center justify-center h-screen">
+          <div className="bg-white shadow-lg rounded-xl p-8 text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Generating Report</h2>
+            <div className="flex justify-center">
+              {/* Loading spinner */}
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+            <p className="mt-4 text-gray-600">This may take a moment as we analyze your information...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className={backgroundStyle}>
+        <div className="flex flex-col items-center justify-center h-screen">
+          <div className="bg-white shadow-lg rounded-xl p-8 text-center">
+            <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Data</h2>
+            <p className="text-gray-700">We couldn't generate your report. Please try again later.</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-primary/80 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className=" bg-[linear-gradient(60deg,_rgb(247,_149,_51),_rgb(243,_112,_85),_rgb(239,_78,_123),_rgb(161,_102,_171),_rgb(80,_115,_184),_rgb(16,_152,_173),_rgb(7,_179,_155),_rgb(111,_186,_130))]   text-black min-h-screen py-12">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white shadow-lg rounded-xl mb-8 p-6">
-          <div className="flex justify-between items-center">
-            <h1 className="text-4xl font-extrabold text-gray-800">
-              Know Yourself Better
-            </h1>
-            <Link href="/">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
-                Dashboard
-              </button>
-            </Link>
-          </div>
+    <div className={backgroundStyle}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center bg-white shadow-lg rounded-xl mb-8 p-6">
+          <h1 className="text-4xl font-extrabold text-gray-800">Know About Me</h1>
+          <Button 
+            onClick={() => router.push("/")} 
+            className="bg-[#6ac5fe] hover:bg-primary/90 text-white px-6 py-2 rounded-full shadow-md transition-all duration-300 flex items-center gap-2"
+          >
+            <span>Chat</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </Button>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-6">
-            <Section title="Personal Overview" data={data.demographics} />
-            <Section title="Family & Employment" data={data.familyEmployment} />
-          </div>
-          <div className="space-y-6">
-            <Section title="Reasons for Seeking Therapy" data={data.therapyReasons} />
-            <Section title="Mental Health History" data={data.mentalHealthHistory} />
-          </div>
+          {Object.entries(data).map(([sectionTitle, sectionData]) =>
+            Array.isArray(sectionData) ? (
+              <Section key={sectionTitle} title={formatTitle(sectionTitle)} data={sectionData} />
+            ) : null
+          )}
         </div>
-
-        <div className="mt-8">
-          <ChartCard title="Self-Perception & Support">
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={data.selfPerceptionData}>
-                <XAxis dataKey="name" className="text-sm" />
-                <YAxis domain={[0, 10]} className="text-sm" />
-                <Tooltip />
-                <Bar dataKey="score" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartCard>
-
-          {/* <ChartCard title="Effectiveness of Coping Strategies">
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={data.copingStrategies}>
-                <XAxis dataKey="name" className="text-sm" />
-                <YAxis domain={[0, 10]} className="text-sm" />
-                <Tooltip />
-                <Bar dataKey="effectiveness" fill="#f59e0b" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartCard> */}
-        </div>
-
-        <div className="mt-8 bg-white  shadow-lg rounded-xl p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Recommended Therapy Plan</h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            {data.therapyRecommendations.map((item, index) => (
-              <div key={index} className="bg-blue-50 p-4 rounded-lg">
-                <h3 className="font-semibold text-blue-800 mb-2">{item.label}</h3>
-                <p>{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        {graphData && <TherapyInsights gdata={graphData} />}
       </div>
     </div>
   );
@@ -174,12 +179,11 @@ const Section: React.FC<{ title: string; data: DataItem[] }> = ({ title, data })
   </div>
 );
 
-const ChartCard: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-  <div className="bg-white shadow-md rounded-xl p-6">
-    <h2 className="text-xl font-bold text-gray-800 mb-4">{title}</h2>
-    {children}
-  </div>
-);
+const formatTitle = (key: string) => {
+  return key
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (str) => str.toUpperCase())
+    .trim();
+};
 
 export default KnowAboutMe;
-  

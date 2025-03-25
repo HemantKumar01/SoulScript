@@ -1,7 +1,13 @@
-from google import genai
-import json
 import os
-client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+from dotenv import load_dotenv
+import google.generativeai as genai
+import json
+
+# Load environment variables
+load_dotenv()
+
+# Initialize Gemini client with API key from environment
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 response = client.models.generate_content(
     model="gemini-2.0-flash",

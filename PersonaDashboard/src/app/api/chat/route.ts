@@ -23,10 +23,10 @@ export const maxDuration = 300
 
 async function query(data: Record<string, any>) {
   const response = await fetch(
-    "https://api.stack-ai.com/inference/v0/run/60b84564-8082-4671-ab71-bdc625da5145/67e2334ea00467fb5c701b80",
+    process.env.STACK_AI_ENDPOINT || "https://api.stack-ai.com/inference/v0/run/60b84564-8082-4671-ab71-bdc625da5145/67e2334ea00467fb5c701b80",
     {
       headers: {
-        'Authorization': 'Bearer 703f7232-1883-45c6-85ce-b696faf18849',
+        'Authorization': `Bearer ${process.env.STACK_AI_API_KEY}`,
         'Content-Type': 'application/json'
       },
       method: "POST",

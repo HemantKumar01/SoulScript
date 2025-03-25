@@ -26,13 +26,22 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 import os
 from dotenv import load_dotenv
+import google.generativeai as genai
+from groq import Groq
 
+# Load environment variables
 load_dotenv()
 
+# Get API keys from environment
+groq_api_key = os.getenv("GROQ_API_KEY")
+gemini_api_key = os.getenv("GEMINI_API_KEY")
+
+# Initialize clients
+groq_client = Groq(api_key=groq_api_key)
+genai_client = genai.Client(api_key=gemini_api_key)
 
 # Configuration ------------------------------------------------------------------
 mongo_uri = os.environ.get("MONGO_URI")
-groq_api_key = os.environ.get("GROQ_API_KEY")
 
 # Constants
 EMOTIONS = ["Joy", "Sadness", "Anger", "Fear", "Surprise", "Disgust", "Neutral"]
@@ -78,19 +87,12 @@ def get_journal_entries(days_back):
 #     print(response_data)
 #     return response_data['choices'][0]['message']['content']
 
-import google.generativeai as genai
-
 
 def analyze_with_llm(
     prompt, system_prompt="You are an expert psychologist analyzing journal entries."
 ):
-    # Configure the Gemini client
-    genai.configure(
-        api_key=os.environ.get("GEMINI_API_KEY")
-    )  # Replace with your actual API key
-
     # Create the model instance
-    model = genai.GenerativeModel("gemini-2.0-flash")
+    model = genai_client.generative_model("gemini-2.0-flash")
 
     # Combine system prompt and user prompt
     full_prompt = f"{system_prompt}\n\n{prompt}"
