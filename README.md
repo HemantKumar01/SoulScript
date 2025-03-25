@@ -87,6 +87,7 @@ cp .env.example .env
 # Edit .env with your configuration
 npm run dev
 ```
+now head to http://localhost:3002 or https://v0-mongo-db-journal-app.vercel.app/
 
 ### Persona Dashboard
 ```bash
@@ -96,6 +97,7 @@ cp .env.example .env
 # Edit .env with your configuration
 npm run dev
 ```
+now head to http://localhost:3001 for know yourself better chat and http://localhost:3001/dashboard to see user persona dashboard 
 
 ### Interactive Chatbot
 ```bash
@@ -105,16 +107,16 @@ cp .env.example .env
 # Edit .env with your configuration
 python backend/main.py
 ```
+now head to http://localhost:3000/chat
 
 
 ## Environment Variables
 
 Each component requires its own environment variables. See the respective component's `.env.example` file for details:
 
-- [Journal App Environment Variables](journal-app/.env.example)
 - [Persona Dashboard Environment Variables](PersonaDashboard/.env.example)
 - [Interactive Chatbot Environment Variables](InteractiveChatbot/.env.example)
-- [NVIDIA Guardrail Environment Variables](NVIDIA_guardrail/.env.example)
+
 
 ## Project Structure
 
