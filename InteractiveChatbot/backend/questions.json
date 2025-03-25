@@ -1,0 +1,144 @@
+{
+  "Background Information": [
+    {
+      "question": "What is your name, age, gender and contact information?",
+      "expected_answer": "Name: [User's Name]\nAge: [User's Age]\nGender: [User's Gender]\nContact Information: [User's Contact Info]"
+    },
+    {
+      "question": "What is your employment status?",
+      "expected_answer": "Employment Status: [User's Employment Status]"
+    },
+    {
+      "question": "Do you have any family members or significant others?",
+      "expected_answer": "Relevant Family Members/Significant Others: [Mentioned or Not Mentioned]"
+    }
+  ],
+  "Reasons for Seeking Therapy": [
+    {
+      "question": "Why did you decide to seek therapy at this time?",
+      "expected_answer": "Reason for Seeking Therapy: [User's Stated Reasons]"
+    },
+    {
+      "question": "What do you hope to get out of this i.e what are the changes you are hoping to see?",
+      "expected_answer": "Hoped-for Changes: [User's Desired Outcomes]"
+    }
+  ],
+  "Mental Health History": [
+    {
+      "question": "Have you ever been diagnosed with a mental health disorder? If so, what was the diagnosis?",
+      "expected_answer": "Diagnosed Mental Health Disorder: [Yes/No/Unclear]\nIf Yes: [Specific Diagnosis]"
+    },
+    {
+      "question": "Have you received any previous mental health treatments? If so, what were they?",
+      "expected_answer": "Previous Mental Health Treatment: [Yes/No/Unclear]\nIf Yes: [Therapy, Medication, Hospitalization, etc.]"
+    },
+    {
+      "question": "Do you have a family history of mental health issues?",
+      "expected_answer": "Family History of Mental Health Issues: [Yes/No/Unclear]\nIf Yes: [Specific Conditions & Family Members]"
+    }
+  ],
+  "Trauma and Adverse Experiences": [
+    {
+      "question": "Have you experienced any traumatic events or adverse experiences in your life (like abuse, accidents, loss of loved ones etc)?",
+      "expected_answer": "Experienced Trauma: [Yes/No/Unclear]\nIf Yes: [Type, Timeframe, Severity]"
+    },
+    {
+      "question": "How have these experiences impacted you emotionally?",
+      "expected_answer": "Emotional Impact: [Specific Emotions, Duration/Frequency, Triggers, Functional Impact]"
+    }
+  ],
+  "Substance Use and Addiction": [
+    {
+      "question": "Do you use any substances such as alcohol, drugs etc? If so then how frequently and in what amount?",
+      "expected_answer": "Substance Use: [Yes/No/Unclear]\nIf Yes: [Specific Substance, Frequency, Triggers, Functional Impact, Current Status]"
+    },
+    {
+      "question": "Do you struggle with addiction or compulsive behaviors (like gambling, porn etc)?",
+      "expected_answer": "Struggle with Addiction/Compulsive Behaviors: [Yes/No/Unclear]\nIf Yes: [Specific Addiction, Frequency, Triggers, Functional Impact, Current Status]"
+    }
+  ],
+  "Health and Lifestyle": [
+    {
+      "question": "How do you take care of your physical and emotional health?",
+      "expected_answer": "Physical & Emotional Health Care: [User's Specific Practices]"
+    },
+    {
+      "question": "How would you describe your sleep patterns and food habits?",
+      "expected_answer": "Sleep Patterns & Food Habits:\nFrequency of Meals: [User's Description]\nQuality of Meals: [Healthy/Unhealthy]\nFrequency of Eating Out: [User's Description]\nSleep Duration: [User's Average Sleep Hours]\nSleep Pattern: [Regular/Irregular]\nTime of Sleep: [User's Sleep Schedule]"
+    },
+    {
+      "question": "What activities do you enjoy that help you relax or feel fulfilled?",
+      "expected_answer": "Relaxation & Fulfillment Activities: [Specific Activities, Frequency, Alone/Involving Others]"
+    }
+  ],
+  "Coping Mechanisms": [
+    {
+      "question": "What coping strategies do you currently use to manage stress or difficult emotions?",
+      "expected_answer": "Coping Strategies: [Yes/No/Unclear]\nIf Yes: [Specific Strategies, When Used, Frequency]"
+    }
+  ],
+  "Relationships and Social Support": [
+    {
+      "question": "How would you describe your relationships with family and friends?",
+      "expected_answer": "Relationship with Family & Friends:\nCloseness with Family: [1-10]\nCloseness with Friends: [1-10]"
+    },
+    {
+      "question": "Do you feel supported in your personal and professional life?",
+      "expected_answer": "Feeling Supported in Personal & Professional Life:\nPersonal Life Support: [1-10]\nProfessional Life Support: [1-10]"
+    },
+    {
+      "question": "Who do you turn to for comfort and support?",
+      "expected_answer": "Emotional Support System: [Identified People/Systems, Likelihood of Seeking Support]"
+    }
+  ],
+  "Self-Perception": [
+    {
+      "question": "How do you feel about yourself overall? Do you struggle with self esteem issues? Is there any aspect of yourself that you find really difficult to accept?",
+      "expected_answer": "Self-Esteem: [1-10]\nSpecific Insecurities: [User's Response]"
+    }
+  ],
+  "Medical and Medication History": [
+    {
+      "question": "Do you have any significant medical conditions?",
+      "expected_answer": "Significant Medical Conditions: [Yes/No/Unclear]\nIf Yes: [Condition, Timeline, Daily Impact]"
+    },
+    {
+      "question": "Are you currently taking any medications? If so, what are they?",
+      "expected_answer": "Current Medications: [Yes/No/Unclear]\nIf Yes: [Medication Names, Dosage, Frequency, Effectiveness]"
+    }
+  ],
+  "Personal Values and Meaning": [
+    {
+      "question": "Do you feel like your life has meaning and purpose? If not, what is missing?",
+      "expected_answer": "Sense of Meaning & Purpose: [Yes/No]\nIf No: [What is Missing]"
+    }
+  ],
+  "Risk to Self / others": [
+    {
+      "question": "Have you had any prior attempts of suicide or ideas? If in the past, then how do you feel about it in the present?",
+      "expected_answer": "History of Suicide Attempts/Thoughts: [Yes/No/Unclear]\nIf Yes: [Past & Present Feelings]"
+    },
+    {
+      "question": "Have you had any prior aggression or destruction or any sort of harmful experiences towards others?",
+      "expected_answer": "History of Aggression or Harm to Others: [Yes/No/Unclear]"
+    }
+  ],
+  "Mental Status Examination": [
+    {
+      "question": "How has your mood been recently?",
+      "expected_answer": "Recent Mood: [User's Description]"
+    },
+    {
+      "question": "Do you feel difficulty in focusing and completing tasks / daily activities?",
+      "expected_answer": "Difficulty Focusing/Completing Tasks: [Yes/No]"
+    },
+    {
+      "question": "Have you had hallucinations recently / before?",
+      "expected_answer": "Hallucinations: [Yes/No/Unclear]"
+    },
+    {
+      "question": "What activities do you find yourself doing without realising? (Compulsive habits such as plucking of hairs, scarping off skin, biting nails).",
+      "expected_answer": "Compulsive Habits: [Yes/No]\nIf Yes: [Specific Habit & Frequency]"
+    }
+  ]
+}
