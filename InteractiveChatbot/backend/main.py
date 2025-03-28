@@ -10,16 +10,8 @@ app = Flask(__name__)
 CORS(app)
 load_dotenv()
 
-<<<<<<< HEAD
-client = Groq(
-    api_key=os.environ.get(
-        "GROQ_API_KEY", "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"
-    )
-)
-=======
 # Initialize Groq client with API key from environment
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
->>>>>>> 1be0c8a60714ccef228d5d3d4bfe049f9d20a419
 model_name = "llama3-70b-8192"
 
 
