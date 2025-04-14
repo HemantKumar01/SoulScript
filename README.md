@@ -53,13 +53,12 @@ Safety and monitoring components for AI interactions.
 - TypeScript
 - Tailwind CSS
 - Radix UI Components
-- Various modern React libraries
 
 ### Backend
 - Python 3.x
 - MongoDB
 - AI Integration (Gemini, Stack AI)
-- AWS Services (optional)
+- Google Cloud Platform
 
 ## Prerequisites
 
