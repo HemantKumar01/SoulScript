@@ -1,50 +1,16 @@
-# PersonaBot_Pegasus
+# SoulScript
 
 A sophisticated AI-powered platform that combines journaling capabilities with persona management, built with Next.js, Python, and modern web technologies.
 
 ## Project Overview
-
+![cassidy interactive chatbot](image.png)
 PersonaBot_Pegasus is a multi-component application that provides:
+- Real-time chat interactions with AI personas, with translation in 57 languages.
 - AI-powered journaling and personal reflection
 - Interactive persona management and visualization
-- Real-time chat interactions with AI personas
 - Safety monitoring and content filtering
-- Secure API key management and authentication
 
-## Components
-
-### 1. Journal App
-A modern journaling application with rich text editing and personal reflection features.
-- Rich text editing
-- Personal reflection tools
-- Modern UI with dark/light mode
-- Responsive design
-- MongoDB integration
-
-### 2. Persona Dashboard
-An AI-powered dashboard for managing and interacting with different personas.
-- AI-powered persona management
-- Interactive visualizations
-- Real-time updates
-- Markdown support
-- Stack AI integration
-
-### 3. Interactive Chatbot
-A conversational interface for persona interactions.
-- Natural language processing
-- Context-aware responses
-- Multi-persona support
-- Gemini AI integration
-- Real-time chat capabilities
-
-### 4. NVIDIA Guardrail
-Safety and monitoring components for AI interactions.
-- AI safety monitoring
-- Content filtering
-- Usage analytics
-- Email notifications
-- Rate limiting
-
+![system architecture](image-1.png)
 ## Tech Stack
 
 ### Frontend
@@ -57,16 +23,16 @@ Safety and monitoring components for AI interactions.
 ### Backend
 - Python 3.x
 - MongoDB
-- AI Integration (Gemini, Stack AI)
+- GenAI Integration (Gemini, Stack AI)
 - Google Cloud Platform
 
 ## Prerequisites
 
-- Node.js (Latest LTS version recommended)
+- Git
 - Python 3.x
 - MongoDB
+- Node.js (Latest LTS version recommended)
 - npm or yarn
-- Git
 
 ## Getting Started
 
