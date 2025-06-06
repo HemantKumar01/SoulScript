@@ -1,0 +1,4 @@
+beautifulsoup4==4.13.4
+lxml==5.3.0
+python-dotenv==1.1.0
+Requests==2.32.3
