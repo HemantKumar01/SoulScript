@@ -505,7 +505,7 @@ export default function TherapistsNearYouPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-900 ">
+      <div className="min-h-screen bg-gray-900 pt-4">
         <div className="w-full p-4 max-w-none ">
           <div className="mb-4 lg:mb-6">
             <h1 className="text-2xl lg:text-3xl font-bold text-white mb-2">Find Therapists Near You</h1>
@@ -559,7 +559,7 @@ export default function TherapistsNearYouPage() {
                           className="w-10 h-10 lg:w-12 lg:h-12 rounded-full object-cover flex-shrink-0"
                         />
                         <div className="min-w-0 flex-1">
-                          <CardTitle className="text-base lg:text-lg text-white truncate">{therapist.name}</CardTitle>
+                          <CardTitle className="text-base lg:text-lg text-white md:text-clip ...">{therapist.name}</CardTitle>
                           <div className="flex items-center space-x-2 mt-1">
                             <div className="flex items-center">
                               <Star className="w-3 h-3 lg:w-4 lg:h-4 fill-yellow-400 text-yellow-400" />
