@@ -14,7 +14,8 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  User as UserIcon
+  User as UserIcon,
+  MapIcon
 } from 'lucide-react';
 
 // Create context for sidebar state
@@ -50,8 +51,9 @@ const navItems: NavItem[] = [
   { label: 'Home', href: '/', icon: <Home size={20} /> },
   { label: 'Mind Log', href: '/mindlog', icon: <Brain size={20} /> },
   { label: 'Calmify', href: '/calmify', icon: <Waves size={20} /> },
-  { label: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard size={20} /> },
-  { label: 'Community', href: '/community', icon: <Users size={20} /> },
+  { label: 'Dashboard', href: '/persona-dashboard', icon: <LayoutDashboard size={20} /> },
+  { label: 'Community', href: '/blogs', icon: <Users size={20} /> },
+  { label: 'Therapist', href: '/therapists-near-you', icon: <MapIcon size={20} /> },
 ];
 
 const SidePanel: React.FC = () => {

@@ -44,7 +44,7 @@ export default function BlogsPage() {
   }
   return (
     <div className="min-h-screen bg-black text-white">
-      <div className="pt-4 pb-16">
+      <div className="pt-8 pb-16">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row gap-6">
             {/* Sidebar */}

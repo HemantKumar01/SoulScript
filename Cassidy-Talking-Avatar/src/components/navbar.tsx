@@ -164,7 +164,7 @@ export default function Navbar() {
               Blogs
             </Link>
 
-            <div className="pt-4 border-t border-gray-800 flex flex-col space-y-3">
+            <div className="pt-8 border-t border-gray-800 flex flex-col space-y-3">
               {isLoggedIn ? (
                 <>
                   <div className="flex justify-center py-2">
