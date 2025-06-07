@@ -1,0 +1,16 @@
+# Environment and configuration
+python-dotenv
+
+# Google AI and Cloud services
+google-generativeai
+google-cloud-firestore
+firebase-admin
+
+# Data processing
+pandas
+fastapi[standard]
+google-ai-generativelanguage
+google-genai
+
+# JSON handling (built-in, but listing for completeness)
+# Standard library modules used: json, re, os
