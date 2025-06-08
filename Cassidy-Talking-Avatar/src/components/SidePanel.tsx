@@ -17,6 +17,7 @@ import {
   User as UserIcon,
   MapIcon
 } from 'lucide-react';
+import { ChatBubbleIcon } from '@radix-ui/react-icons';
 
 // Create context for sidebar state
 const SidebarContext = createContext<{
@@ -54,6 +55,7 @@ const navItems: NavItem[] = [
   { label: 'Dashboard', href: '/dashboard/persona-dashboard', icon: <LayoutDashboard size={20} /> },
   { label: 'Community', href: '/dashboard/blogs', icon: <Users size={20} /> },
   { label: 'Therapist', href: '/dashboard/therapists-near-you', icon: <MapIcon size={20} /> },
+  { label: 'Reflection', href: '/dashboard/reflection', icon: <ChatBubbleIcon/> },
 ];
 
 const SidePanel: React.FC = () => {
