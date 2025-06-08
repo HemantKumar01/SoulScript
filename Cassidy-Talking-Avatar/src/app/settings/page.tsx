@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
+import '../globals.css' // Ensure global styles are imported
 
 export default function SettingsPage() {
   const { user, loading } = useCurrentUser()
@@ -97,134 +98,172 @@ export default function SettingsPage() {
 
   return (
     <AuthRequired>
-      <div className="container mx-auto py-20 px-4">
-        <div className="mt-16 max-w-3xl mx-auto space-y-6">
-          <h1 className="text-3xl font-bold mb-8">Account Settings</h1>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Profile Information</CardTitle>
-              <CardDescription>Update your account details</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleUpdateProfile} className="space-y-4">
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email" 
-                    value={user?.email || ""} 
-                    disabled 
-                    className="bg-gray-100"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="displayName">Display Name</Label>
-                  <Input
-                    id="displayName"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    placeholder={user?.displayName || "Enter display name"}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="photoURL">Photo URL</Label>
-                  <Input
-                    id="photoURL"
-                    value={photoURL}
-                    onChange={(e) => setPhotoURL(e.target.value)}
-                    placeholder={user?.photoURL || "Enter photo URL"}
-                  />
-                </div>
-                <Button type="submit" disabled={isUpdating}>
-                  {isUpdating ? "Updating..." : "Update Profile"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Change Password</CardTitle>
-              <CardDescription>Update your account password</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleUpdatePassword} className="space-y-4">
-                <div>
-                  <Label htmlFor="newPassword">New Password</Label>
-                  <Input
-                    id="newPassword"
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter new password"
-                  />
-                </div>
-                <Button type="submit" disabled={isUpdating || !newPassword}>
-                  {isUpdating ? "Updating..." : "Update Password"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Account Information</CardTitle>
-              <CardDescription>Your account details</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <strong>Email:</strong> {user?.email}
-              </div>
-              <div>
-                <strong>Display Name:</strong> {user?.displayName || "Not set"}
-              </div>
-              <div>
-                <strong>Email Verified:</strong> {user?.emailVerified ? "Yes" : "No"}
-              </div>
-              <div>
-                <strong>Account ID:</strong> {user?.id}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Account Actions</CardTitle>
-              <CardDescription>Manage your account</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Button onClick={handleSignOut} variant="outline">
-                Sign Out
-              </Button>
-              
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="destructive">
-                    Delete Account
+      <div className="min-h-screen bg-black text-white">
+        <div className="container mx-auto py-20 px-4">
+          <div className="mt-16 max-w-4xl mx-auto space-y-8">
+            <div className="text-center mb-12">
+              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                Account Settings
+              </h1>
+              <p className="text-gray-400 text-lg">Manage your profile and account preferences</p>
+            </div>
+            
+            <Card className="bg-gray-900/50 border-gray-800 backdrop-blur-sm">
+              <CardHeader className="border-b border-gray-800">
+                <CardTitle className="text-white text-xl">Profile Information</CardTitle>
+                <CardDescription className="text-gray-400">Update your account details</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <form onSubmit={handleUpdateProfile} className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-gray-300 font-medium">Email</Label>
+                    <Input 
+                      id="email" 
+                      value={user?.email || ""} 
+                      disabled 
+                      className="bg-gray-800/50 border-gray-700 text-gray-300 h-12 focus:border-purple-500 focus:ring-purple-500/20"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="displayName" className="text-gray-300 font-medium">Display Name</Label>
+                    <Input
+                      id="displayName"
+                      value={displayName}
+                      onChange={(e) => setDisplayName(e.target.value)}
+                      placeholder={user?.displayName || "Enter display name"}
+                      className="bg-gray-800/50 border-gray-700 text-white h-12 focus:border-purple-500 focus:ring-purple-500/20 placeholder:text-gray-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="photoURL" className="text-gray-300 font-medium">Photo URL</Label>
+                    <Input
+                      id="photoURL"
+                      value={photoURL}
+                      onChange={(e) => setPhotoURL(e.target.value)}
+                      placeholder={user?.photoURL || "Enter photo URL"}
+                      className="bg-gray-800/50 border-gray-700 text-white h-12 focus:border-purple-500 focus:ring-purple-500/20 placeholder:text-gray-500"
+                    />
+                  </div>
+                  <Button 
+                    type="submit" 
+                    disabled={isUpdating}
+                    className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white h-12 font-medium transition-all duration-200 shadow-lg hover:shadow-purple-500/25"
+                  >
+                    {isUpdating ? "Updating..." : "Update Profile"}
                   </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete your account
-                      and remove all your data from our servers.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction 
-                      onClick={handleDeleteAccount}
-                      disabled={isDeleting}
-                      className="bg-red-600 hover:bg-red-700"
-                    >
-                      {isDeleting ? "Deleting..." : "Delete Account"}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </CardContent>
-          </Card>
+                </form>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-900/50 border-gray-800 backdrop-blur-sm">
+              <CardHeader className="border-b border-gray-800">
+                <CardTitle className="text-white text-xl">Change Password</CardTitle>
+                <CardDescription className="text-gray-400">Update your account password</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <form onSubmit={handleUpdatePassword} className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="newPassword" className="text-gray-300 font-medium">New Password</Label>
+                    <Input
+                      id="newPassword"
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Enter new password"
+                      className="bg-gray-800/50 border-gray-700 text-white h-12 focus:border-purple-500 focus:ring-purple-500/20 placeholder:text-gray-500"
+                    />
+                  </div>
+                  <Button 
+                    type="submit" 
+                    disabled={isUpdating || !newPassword}
+                    className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white h-12 font-medium transition-all duration-200 shadow-lg hover:shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isUpdating ? "Updating..." : "Update Password"}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-900/50 border-gray-800 backdrop-blur-sm">
+              <CardHeader className="border-b border-gray-800">
+                <CardTitle className="text-white text-xl">Account Information</CardTitle>
+                <CardDescription className="text-gray-400">Your account details</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-1">
+                    <p className="text-gray-400 text-sm font-medium">Email</p>
+                    <p className="text-white font-medium">{user?.email}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-gray-400 text-sm font-medium">Display Name</p>
+                    <p className="text-white font-medium">{user?.displayName || "Not set"}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-gray-400 text-sm font-medium">Email Verified</p>
+                    <div className="flex items-center space-x-2">
+                      <div className={`w-2 h-2 rounded-full ${user?.emailVerified ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                      <p className="text-white font-medium">{user?.emailVerified ? "Yes" : "No"}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-gray-400 text-sm font-medium">Account ID</p>
+                    <p className="text-white font-medium font-mono text-sm break-all">{user?.id}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-900/50 border-gray-800 backdrop-blur-sm">
+              <CardHeader className="border-b border-gray-800">
+                <CardTitle className="text-white text-xl">Account Actions</CardTitle>
+                <CardDescription className="text-gray-400">Manage your account</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button 
+                    onClick={handleSignOut} 
+                    variant="outline"
+                    className="flex-1 bg-transparent border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white h-12 font-medium transition-all duration-200"
+                  >
+                    Sign Out
+                  </Button>
+                  
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        variant="destructive"
+                        className="flex-1 bg-red-600 hover:bg-red-700 text-white h-12 font-medium transition-all duration-200 shadow-lg hover:shadow-red-500/25"
+                      >
+                        Delete Account
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="bg-gray-900 border-gray-800">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="text-white">Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription className="text-gray-400">
+                          This action cannot be undone. This will permanently delete your account
+                          and remove all your data from our servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600 hover:text-white">
+                          Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction 
+                          onClick={handleDeleteAccount}
+                          disabled={isDeleting}
+                          className="bg-red-600 hover:bg-red-700 text-white"
+                        >
+                          {isDeleting ? "Deleting..." : "Delete Account"}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </AuthRequired>
