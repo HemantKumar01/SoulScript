@@ -1,5 +1,6 @@
 "use client"
 
+import '../../globals.css'
 import React, { useState, useEffect, useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
