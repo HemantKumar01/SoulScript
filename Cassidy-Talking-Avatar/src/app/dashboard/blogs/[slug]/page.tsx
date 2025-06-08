@@ -33,7 +33,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     <div className="min-h-screen bg-black text-white">
       <div className="pt-8 pb-16">
         <div className="container mx-auto px-4 max-w-4xl">
-          <Link href="/blogs" className="inline-flex items-center text-gray-400 hover:text-purple-400 mb-6">
+          <Link href="/dashboard/blogs" className="inline-flex items-center text-gray-400 hover:text-purple-400 mb-6">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to blogs
           </Link>
