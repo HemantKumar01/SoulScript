@@ -22,10 +22,6 @@ import Cassidy from "@/components/avatar/cassidy/cassidy";
 import AIChatInterface from "@/components/chat/interface";
 import { Switch } from "@/components/ui/switch";
 import { requireAuth } from "@/lib/firebase";
-import "../App.scss";
-
-import "../globals.css";
-import { sign } from "crypto";
 import { useEffect, useState } from "react";
 
 const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY as string;

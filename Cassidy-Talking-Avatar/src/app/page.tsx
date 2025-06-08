@@ -5,6 +5,7 @@ import FeatureCard from "@/components/landing-page/feature-card"
 import HeroImage from "@/components/landing-page/hero-image"
 import Navbar from "@/components/navbar"
 import ScrollReveal from "@/components/landing-page/scroll-reveal"
+import './globals.css' // Ensure global styles are imported
 
 export default function Home() {
   return (
