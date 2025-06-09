@@ -15,7 +15,8 @@ import {
   ChevronLeft,
   ChevronRight,
   User as UserIcon,
-  MapIcon
+  MapIcon,
+  ChartColumn
 } from 'lucide-react';
 import { ChatBubbleIcon } from '@radix-ui/react-icons';
 
@@ -55,6 +56,7 @@ const navItems: NavItem[] = [
   { label: 'Dashboard', href: '/dashboard/persona-dashboard', icon: <LayoutDashboard size={20} /> },
   { label: 'Community', href: '/dashboard/blogs', icon: <Users size={20} /> },
   { label: 'Therapist', href: '/dashboard/therapists-near-you', icon: <MapIcon size={20} /> },
+  { label: 'Reports', href: '/dashboard/reports', icon: <ChartColumn/> },
   { label: 'Reflection', href: '/dashboard/reflection', icon: <ChatBubbleIcon/> },
 ];
 

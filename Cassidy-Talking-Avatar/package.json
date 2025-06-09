@@ -65,6 +65,7 @@
     "react-dom": "^19",
     "react-firebase-hooks": "^5.1.1",
     "react-hook-form": "^7.57.0",
+    "react-markdown": "^10.1.0",
     "react-resizable-panels": "^3.0.2",
     "react-simple-typewriter": "^5.0.1",
     "react-spinners": "^0.17.0",
