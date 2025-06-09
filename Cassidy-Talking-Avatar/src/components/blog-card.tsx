@@ -10,7 +10,7 @@ interface BlogCardProps {
 export default function BlogCard({ post }: BlogCardProps) {
   return (
     <div className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-purple-500/30 transition-all group">
-      <Link href={`/blogs/${post.slug}`}>
+      <Link href={`/dashboard/blogs/${post.slug}`}>
         <div className="relative aspect-video overflow-hidden">
           <img
             src={post.coverImage || "/placeholder.svg"}
@@ -39,7 +39,7 @@ export default function BlogCard({ post }: BlogCardProps) {
           <span className="text-gray-500 text-xs ml-auto">{formatDate(post.date)}</span>
         </div>
 
-        <Link href={`/blogs/${post.slug}`}>
+        <Link href={`/dashboard/blogs/${post.slug}`}>
           <h3 className="text-lg font-bold mb-2 line-clamp-2 group-hover:text-purple-400 transition-colors">
             {post.title}
           </h3>
