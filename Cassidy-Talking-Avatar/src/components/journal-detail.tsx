@@ -38,7 +38,7 @@ export function JournalDetail({ entry }: JournalDetailProps) {
       const result = await deleteJournalEntry(user?.uid , entry.id as string)
       console.log(result) ;
       if (result.success) {
-        router.push("/mindlog/calendar")
+        router.push("/dashboard/mindlog/calendar")
       }
     } catch (error) {
       console.error("Error deleting entry:", error)
