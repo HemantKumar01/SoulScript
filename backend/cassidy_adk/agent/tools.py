@@ -152,8 +152,8 @@ class FirebaseQuestionManager:
 
 
 question_manager = FirebaseQuestionManager(
-    credentials_path="./credentials.json",
-    questions_json_path="./questions.json",
+    credentials_path="credentials.json",
+    questions_json_path="questions.json",
 )
 
 

@@ -4,19 +4,20 @@ import "./App.scss";
 import "./globals.css";
 import "tailwindcss/index.css";
 import SidePanel from "@/components/SidePanel";
-import { SidebarProvider } from "@/components/SidePanel"; 
-import MainContent from "@/components/MainContent"; 
+import { SidebarProvider } from "@/components/SidePanel";
+import MainContent from "@/components/MainContent";
 
 // NOTE : resolve sidepanel and cassidy rebuttal
-// this shud work well - but smhow bg is lost in cassidy 
+// this shud work well - but smhow bg is lost in cassidy
 // to hemant: check this out duriing final ui maxxing
- {/* <SidebarProvider>
+{
+  /* <SidebarProvider>
           <SidePanel />
           <MainContent>
             {children}
           </MainContent>
-        </SidebarProvider> */}
-
+        </SidebarProvider> */
+}
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,24 +44,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-      
-      
         <SidebarProvider>
           <SidePanel />
-          <MainContent>
-            {children}
-          </MainContent>
+          <MainContent>{children}</MainContent>
         </SidebarProvider>
-        
-        
       </body>
     </html>
   );
 }
-
-
-
-
-
-
-  
