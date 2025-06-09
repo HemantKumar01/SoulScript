@@ -1,5 +1,7 @@
 "use client"
 
+import "../../App.scss";
+import '../../globals.css'
 import AuthRequired from "@/components/auth-required"
 import React, { useEffect, useState } from "react";
 import TherapyInsights from "./graphs";
