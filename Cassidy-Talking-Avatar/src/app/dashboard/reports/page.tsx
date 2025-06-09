@@ -1,5 +1,7 @@
 "use client"
 
+import "../../App.scss";
+import '../../globals.css'
 import type React from "react"
 import { useState } from "react"
 import MindLogReportViewer from "./mindlog"

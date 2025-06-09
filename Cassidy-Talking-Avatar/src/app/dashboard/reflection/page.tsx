@@ -1,5 +1,7 @@
 "use client"
 
+import "../../App.scss";
+import '../../globals.css'
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

@@ -23,6 +23,8 @@ import AIChatInterface from "@/components/chat/interface";
 import { Switch } from "@/components/ui/switch";
 import { requireAuth } from "@/lib/firebase";
 import { useEffect, useState } from "react";
+import "../App.scss";
+import "../globals.css";
 
 const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY as string;
 if (typeof API_KEY !== "string") {
