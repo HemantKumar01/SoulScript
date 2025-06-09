@@ -1,11 +1,14 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ArrowLeft, Heart, MessageSquare, Bookmark, Share2 } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { getBlogPostBySlug } from "@/lib/firebase-blog"
 import type { BlogPost } from "@/types/blog"
+import CommentSection from "@/components/blog/CommentSection"
+import BlogPostActions from "@/components/blog/BlogPostActions"
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = await getBlogPostBySlug(params.slug)
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = await getBlogPostBySlug(slug)
 
   if (!post) {
     return {
@@ -20,8 +23,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = await getBlogPostBySlug(params.slug)
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = await getBlogPostBySlug(slug)
 
   if (!post) {
     notFound()
@@ -81,29 +85,17 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               </div>
             </div>
 
-            <div className="border-t border-gray-800 pt-6 mt-10">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-6">
-                  <button className="flex items-center space-x-2 text-gray-400 hover:text-purple-400 transition-colors">
-                    <Heart className="h-5 w-5" />
-                    <span>{typedPost.likes}</span>
-                  </button>
-                  <button className="flex items-center space-x-2 text-gray-400 hover:text-purple-400 transition-colors">
-                    <MessageSquare className="h-5 w-5" />
-                    <span>{typedPost.comments}</span>
-                  </button>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <button className="text-gray-400 hover:text-purple-400 transition-colors">
-                    <Bookmark className="h-5 w-5" />
-                  </button>
-                  <button className="text-gray-400 hover:text-purple-400 transition-colors">
-                    <Share2 className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            </div>
+            <BlogPostActions 
+              postId={typedPost.id}
+              initialLikes={typedPost.likes}
+              initialComments={typedPost.comments}
+              initialBookmarks={typedPost.bookmarks}
+            />
           </article>
+
+          <div id="comments-section">
+            <CommentSection postId={typedPost.id} />
+          </div>
         </div>
       </div>
     </div>

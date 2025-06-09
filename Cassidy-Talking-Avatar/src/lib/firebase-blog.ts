@@ -10,13 +10,20 @@ import {
   updateDoc,
   increment,
   Timestamp,
-  DocumentData
+  DocumentData,
+  onSnapshot,
+  serverTimestamp,
+  deleteDoc
 } from 'firebase/firestore'
 import { db } from './firebase'
-import type { BlogPost } from '@/types/blog'
+import type { BlogPost, Comment } from '@/types/blog'
 
-// Collection name
+// Collection names
 const BLOGS_COLLECTION = 'blogs'
+const COMMENTS_SUBCOLLECTION = 'comments'
+const LIKES_SUBCOLLECTION = 'likes'
+const BOOKMARKS_SUBCOLLECTION = 'bookmarks'
+const COMMENT_LIKES_SUBCOLLECTION = 'likes'
 
 // Convert Firestore document to BlogPost
 function convertFirestoreToBlogPost(docData: DocumentData, id: string): BlogPost {
@@ -131,17 +138,118 @@ export async function getBlogPostsByAuthor(authorId: string): Promise<BlogPost[]
   }
 }
 
-// Update blog post likes
-export async function updateBlogPostLikes(postId: string, increment_value: number = 1): Promise<void> {
+// Update blog post likes with user tracking
+export async function updateBlogPostLikes(postId: string, userId: string, isLiking: boolean): Promise<void> {
   try {
     const postRef = doc(db, BLOGS_COLLECTION, postId)
-    await updateDoc(postRef, {
-      likes: increment(increment_value),
-      updatedAt: Timestamp.now()
-    })
+    const userLikeRef = doc(postRef, LIKES_SUBCOLLECTION, userId)
+    
+    if (isLiking) {
+      // Add like
+      await addDoc(collection(postRef, LIKES_SUBCOLLECTION), {
+        userId,
+        createdAt: serverTimestamp()
+      })
+      
+      // Update post likes count
+      await updateDoc(postRef, {
+        likes: increment(1),
+        updatedAt: serverTimestamp()
+      })
+    } else {
+      // Remove like
+      const likesQuery = query(
+        collection(postRef, LIKES_SUBCOLLECTION),
+        where('userId', '==', userId)
+      )
+      const likesSnapshot = await getDocs(likesQuery)
+      
+      if (!likesSnapshot.empty) {
+        await deleteDoc(likesSnapshot.docs[0].ref)
+        
+        // Update post likes count
+        await updateDoc(postRef, {
+          likes: increment(-1),
+          updatedAt: serverTimestamp()
+        })
+      }
+    }
   } catch (error) {
     console.error('Error updating blog post likes:', error)
     throw error
+  }
+}
+
+// Check if user has liked a post
+export async function hasUserLikedPost(postId: string, userId: string): Promise<boolean> {
+  try {
+    const postRef = doc(db, BLOGS_COLLECTION, postId)
+    const likesQuery = query(
+      collection(postRef, LIKES_SUBCOLLECTION),
+      where('userId', '==', userId)
+    )
+    const likesSnapshot = await getDocs(likesQuery)
+    return !likesSnapshot.empty
+  } catch (error) {
+    console.error('Error checking if user liked post:', error)
+    return false
+  }
+}
+
+// Update blog post bookmarks with user tracking
+export async function updateBlogPostBookmarks(postId: string, userId: string, isBookmarking: boolean): Promise<void> {
+  try {
+    const postRef = doc(db, BLOGS_COLLECTION, postId)
+    
+    if (isBookmarking) {
+      // Add bookmark
+      await addDoc(collection(postRef, BOOKMARKS_SUBCOLLECTION), {
+        userId,
+        createdAt: serverTimestamp()
+      })
+      
+      // Update post bookmarks count
+      await updateDoc(postRef, {
+        bookmarks: increment(1),
+        updatedAt: serverTimestamp()
+      })
+    } else {
+      // Remove bookmark
+      const bookmarksQuery = query(
+        collection(postRef, BOOKMARKS_SUBCOLLECTION),
+        where('userId', '==', userId)
+      )
+      const bookmarksSnapshot = await getDocs(bookmarksQuery)
+      
+      if (!bookmarksSnapshot.empty) {
+        await deleteDoc(bookmarksSnapshot.docs[0].ref)
+        
+        // Update post bookmarks count
+        await updateDoc(postRef, {
+          bookmarks: increment(-1),
+          updatedAt: serverTimestamp()
+        })
+      }
+    }
+  } catch (error) {
+    console.error('Error updating blog post bookmarks:', error)
+    throw error
+  }
+}
+
+// Check if user has bookmarked a post
+export async function hasUserBookmarkedPost(postId: string, userId: string): Promise<boolean> {
+  try {
+    const postRef = doc(db, BLOGS_COLLECTION, postId)
+    const bookmarksQuery = query(
+      collection(postRef, BOOKMARKS_SUBCOLLECTION),
+      where('userId', '==', userId)
+    )
+    const bookmarksSnapshot = await getDocs(bookmarksQuery)
+    return !bookmarksSnapshot.empty
+  } catch (error) {
+    console.error('Error checking if user bookmarked post:', error)
+    return false
   }
 }
 
@@ -151,24 +259,10 @@ export async function updateBlogPostComments(postId: string, increment_value: nu
     const postRef = doc(db, BLOGS_COLLECTION, postId)
     await updateDoc(postRef, {
       comments: increment(increment_value),
-      updatedAt: Timestamp.now()
+      updatedAt: serverTimestamp()
     })
   } catch (error) {
     console.error('Error updating blog post comments:', error)
-    throw error
-  }
-}
-
-// Update blog post bookmarks
-export async function updateBlogPostBookmarks(postId: string, increment_value: number = 1): Promise<void> {
-  try {
-    const postRef = doc(db, BLOGS_COLLECTION, postId)
-    await updateDoc(postRef, {
-      bookmarks: increment(increment_value),
-      updatedAt: Timestamp.now()
-    })
-  } catch (error) {
-    console.error('Error updating blog post bookmarks:', error)
     throw error
   }
 }
@@ -188,6 +282,153 @@ export async function searchBlogPosts(searchTerm: string): Promise<BlogPost[]> {
     )
   } catch (error) {
     console.error('Error searching blog posts:', error)
+    throw error
+  }
+}
+
+// Add a comment to a blog post (using subcollection)
+export async function addComment(postId: string, comment: Omit<Comment, 'id' | 'createdAt' | 'updatedAt' | 'postId'>) {
+  try {
+    const postRef = doc(db, BLOGS_COLLECTION, postId)
+    const commentsRef = collection(postRef, COMMENTS_SUBCOLLECTION)
+    
+    const commentData = {
+      ...comment,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      likes: 0
+    }
+    
+    // Add comment to subcollection
+    const commentRef = await addDoc(commentsRef, commentData)
+    
+    // Update the comment count on the blog post
+    await updateDoc(postRef, {
+      comments: increment(1),
+      updatedAt: serverTimestamp()
+    })
+    
+    return commentRef.id
+  } catch (error) {
+    console.error('Error adding comment:', error)
+    throw error
+  }
+}
+
+// Get comments for a blog post (from subcollection)
+export async function getComments(postId: string): Promise<Comment[]> {
+  try {
+    const postRef = doc(db, BLOGS_COLLECTION, postId)
+    const commentsRef = collection(postRef, COMMENTS_SUBCOLLECTION)
+    const commentsQuery = query(commentsRef, orderBy('createdAt', 'desc'))
+    
+    const snapshot = await getDocs(commentsQuery)
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      postId, // Add postId for compatibility
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate() || new Date(),
+      updatedAt: doc.data().updatedAt?.toDate() || new Date()
+    })) as Comment[]
+  } catch (error) {
+    console.error('Error getting comments:', error)
+    throw error
+  }
+}
+
+// Subscribe to comments in real-time (using subcollection)
+export function subscribeToComments(postId: string, callback: (comments: Comment[]) => void) {
+  const postRef = doc(db, BLOGS_COLLECTION, postId)
+  const commentsRef = collection(postRef, COMMENTS_SUBCOLLECTION)
+  const commentsQuery = query(commentsRef, orderBy('createdAt', 'desc'))
+  
+  return onSnapshot(commentsQuery, (snapshot) => {
+    const comments = snapshot.docs.map(doc => ({
+      id: doc.id,
+      postId,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate() || new Date(),
+      updatedAt: doc.data().updatedAt?.toDate() || new Date()
+    })) as Comment[]
+    callback(comments)
+  })
+}
+
+// Like a comment (using subcollection with user tracking)
+export async function likeComment(postId: string, commentId: string, userId: string, isLiking: boolean) {
+  try {
+    const postRef = doc(db, BLOGS_COLLECTION, postId)
+    const commentRef = doc(postRef, COMMENTS_SUBCOLLECTION, commentId)
+    
+    if (isLiking) {
+      // Add like
+      await addDoc(collection(commentRef, COMMENT_LIKES_SUBCOLLECTION), {
+        userId,
+        createdAt: serverTimestamp()
+      })
+      
+      // Update comment likes count
+      await updateDoc(commentRef, {
+        likes: increment(1),
+        updatedAt: serverTimestamp()
+      })
+    } else {
+      // Remove like
+      const likesQuery = query(
+        collection(commentRef, COMMENT_LIKES_SUBCOLLECTION),
+        where('userId', '==', userId)
+      )
+      const likesSnapshot = await getDocs(likesQuery)
+      
+      if (!likesSnapshot.empty) {
+        await deleteDoc(likesSnapshot.docs[0].ref)
+        
+        // Update comment likes count
+        await updateDoc(commentRef, {
+          likes: increment(-1),
+          updatedAt: serverTimestamp()
+        })
+      }
+    }
+  } catch (error) {
+    console.error('Error liking comment:', error)
+    throw error
+  }
+}
+
+// Check if user has liked a comment
+export async function hasUserLikedComment(postId: string, commentId: string, userId: string): Promise<boolean> {
+  try {
+    const postRef = doc(db, BLOGS_COLLECTION, postId)
+    const commentRef = doc(postRef, COMMENTS_SUBCOLLECTION, commentId)
+    const likesQuery = query(
+      collection(commentRef, COMMENT_LIKES_SUBCOLLECTION),
+      where('userId', '==', userId)
+    )
+    const likesSnapshot = await getDocs(likesQuery)
+    return !likesSnapshot.empty
+  } catch (error) {
+    console.error('Error checking if user liked comment:', error)
+    return false
+  }
+}
+
+// Delete a comment (using subcollection)
+export async function deleteComment(postId: string, commentId: string) {
+  try {
+    const postRef = doc(db, BLOGS_COLLECTION, postId)
+    const commentRef = doc(postRef, COMMENTS_SUBCOLLECTION, commentId)
+    
+    // Delete the comment document
+    await deleteDoc(commentRef)
+    
+    // Update the comment count on the blog post
+    await updateDoc(postRef, {
+      comments: increment(-1),
+      updatedAt: serverTimestamp()
+    })
+  } catch (error) {
+    console.error('Error deleting comment:', error)
     throw error
   }
 }
