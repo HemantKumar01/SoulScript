@@ -198,8 +198,8 @@ export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
       let inputTranscription = serverContent.inputTranscription
 
       if (inputTranscription && inputTranscription.text){
-        console.log("Input Transcript:", inputTranscription.text)
-        inputTranscription.text = inputTranscription.text.replace("<noise>", "");
+        // console.log("Input Transcript:", inputTranscription.text)
+        inputTranscription.text = inputTranscription.text.replaceAll("<noise>", "");
         if(this.messageTranscription && this.messageTranscription.role == 'user'){
           this.messageTranscription.message += inputTranscription.text;
         }else{
@@ -214,8 +214,8 @@ export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
       }
       let outputTranscription = serverContent.outputTranscription
       if (outputTranscription && outputTranscription.text){
-        console.log("Output Transcript:", outputTranscription.text)
-        outputTranscription.text = outputTranscription.text.replace("<noise>", "");
+        // console.log("Output Transcript:", outputTranscription.text)
+        outputTranscription.text = outputTranscription.text.replaceAll("<noise>", "");
         if(this.messageTranscription && this.messageTranscription.role == 'assistant'){
           this.messageTranscription.message += outputTranscription.text;
         }else{

@@ -51,6 +51,7 @@
     "embla-carousel-react": "8.6.0",
     "eventemitter3": "^5.0.1",
     "firebase": "^11.8.1",
+    "framer-motion": "^12.16.0",
     "gcp-metadata": "latest",
     "input-otp": "1.4.2",
     "kerberos": "latest",

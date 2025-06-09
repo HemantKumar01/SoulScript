@@ -59,7 +59,7 @@ function Home() {
           ) : (
             <AIChatInterface></AIChatInterface>
           )}
-          <div className="absolute top-0 right-5 lg:right-[160px]  z-50 flex items-center gap-2 justify-center p-5 rounded-lg">
+          <div className="absolute top-0 right-5  z-50 flex items-center gap-2 justify-center p-5 rounded-lg">
             <div className="text-zinc-700">Chat</div>
             <Switch
               checked={InteractiveMode}

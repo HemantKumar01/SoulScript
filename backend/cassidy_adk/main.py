@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from agent.agent import analyze_user_response
 
 load_dotenv()  # Load environment variables from .env file
-
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -26,8 +26,8 @@ def initialize_question_manager():
     global question_manager
 
     try:
-        credentials_path = "credentials.json"
-        questions_json_path = "questions.json"
+        credentials_path = os.path.join(BASE_DIR, "credentials.json")
+        questions_json_path = os.path.join(BASE_DIR, "questions.json")
 
         question_manager = FirebaseQuestionManager(
             credentials_path=credentials_path, questions_json_path=questions_json_path

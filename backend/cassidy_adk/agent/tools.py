@@ -2,6 +2,9 @@ import json
 import firebase_admin
 from firebase_admin import credentials, firestore
 from typing import Dict, Optional, Any
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class FirebaseQuestionManager:
@@ -107,7 +110,7 @@ class FirebaseQuestionManager:
             print(
                 f"Updated user {userId} to question {next_index} in theme '{current_theme}'"
             )
-            return next_question
+            return next_question["questionText"]
 
         except Exception as e:
             print(f"Error getting next question for user {userId}: {e}")
@@ -151,9 +154,11 @@ class FirebaseQuestionManager:
             return None
 
 
+credentials_path = os.path.join(BASE_DIR, "credentials.json")
+questions_json_path = os.path.join(BASE_DIR, "questions.json")
 question_manager = FirebaseQuestionManager(
-    credentials_path="credentials.json",
-    questions_json_path="questions.json",
+    credentials_path=credentials_path,
+    questions_json_path=questions_json_path,
 )
 
 
