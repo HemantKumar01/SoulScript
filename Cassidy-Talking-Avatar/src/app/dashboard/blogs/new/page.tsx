@@ -66,7 +66,7 @@ export default function NewPostPage() {
     
     if (!user) {
       alert("You must be signed in to create a post.")
-      router.push("/sign-in?redirect_url=/blogs/new")
+      router.push("/sign-in?redirect_url=/dashboard/blogs/new")
       return
     }
     
@@ -113,7 +113,7 @@ export default function NewPostPage() {
       // Use Firebase to create the blog post
       const postId = await createBlogPost(newPost);
       console.log("Post created with ID:", postId);
-      router.push("/blogs"); // Navigate immediately after successful post
+      router.push("/dashboard/blogs"); // Navigate immediately after successful post
     } catch (err) {
       console.error("Error creating post:", err);
       alert(`Error creating post: ${err instanceof Error ? err.message : 'Unknown error'}`);

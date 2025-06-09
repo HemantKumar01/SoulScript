@@ -17,6 +17,7 @@ import {
   User as UserIcon,
   MapIcon
 } from 'lucide-react';
+import { ChatBubbleIcon } from '@radix-ui/react-icons';
 
 // Create context for sidebar state
 const SidebarContext = createContext<{
@@ -48,12 +49,13 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: 'Home', href: '/', icon: <Home size={20} /> },
-  { label: 'Mind Log', href: '/mindlog', icon: <Brain size={20} /> },
-  { label: 'Calmify', href: '/calmify', icon: <Waves size={20} /> },
-  { label: 'Dashboard', href: '/persona-dashboard', icon: <LayoutDashboard size={20} /> },
-  { label: 'Community', href: '/blogs', icon: <Users size={20} /> },
-  { label: 'Therapist', href: '/therapists-near-you', icon: <MapIcon size={20} /> },
+  { label: 'Home', href: '/dashboard', icon: <Home size={20} /> },
+  { label: 'Mind Log', href: '/dashboard/mindlog', icon: <Brain size={20} /> },
+  { label: 'Calmify', href: '/dashboard/calmify', icon: <Waves size={20} /> },
+  { label: 'Dashboard', href: '/dashboard/persona-dashboard', icon: <LayoutDashboard size={20} /> },
+  { label: 'Community', href: '/dashboard/blogs', icon: <Users size={20} /> },
+  { label: 'Therapist', href: '/dashboard/therapists-near-you', icon: <MapIcon size={20} /> },
+  { label: 'Reflection', href: '/dashboard/reflection', icon: <ChatBubbleIcon/> },
 ];
 
 const SidePanel: React.FC = () => {

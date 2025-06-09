@@ -22,7 +22,7 @@ export default function BlogSidebar() {
     <div className="bg-gray-900 rounded-lg p-4">
       <div className="mb-6">
         <Link
-          href="/blogs/new"
+          href="/dashboard/blogs/new"
           className="w-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-2 px-4 rounded-md transition-colors"
         >
           <span className="mr-2">+</span> New post
@@ -40,19 +40,19 @@ export default function BlogSidebar() {
         </button>
         {openSections.feeds && (
           <div className="space-y-2 pl-2">
-            <Link href="/blogs" className="flex items-center text-sm text-purple-400 hover:text-purple-300">
+            <Link href="/dashboard/blogs" className="flex items-center text-sm text-purple-400 hover:text-purple-300">
               <MessageSquare className="h-4 w-4 mr-2" />
               My feed
             </Link>
-            <Link href="/blogs/following" className="flex items-center text-sm text-gray-400 hover:text-white">
+            <Link href="/dashboard/blogs/following" className="flex items-center text-sm text-gray-400 hover:text-white">
               <Users className="h-4 w-4 mr-2" />
               Following
             </Link>
-            <Link href="/blogs/explore" className="flex items-center text-sm text-gray-400 hover:text-white">
+            <Link href="/dashboard/blogs/explore" className="flex items-center text-sm text-gray-400 hover:text-white">
               <Tag className="h-4 w-4 mr-2" />
               Explore
             </Link>
-            <Link href="/blogs/history" className="flex items-center text-sm text-gray-400 hover:text-white">
+            <Link href="/dashboard/blogs/history" className="flex items-center text-sm text-gray-400 hover:text-white">
               <History className="h-4 w-4 mr-2" />
               History
             </Link>
@@ -73,11 +73,11 @@ export default function BlogSidebar() {
         </button>
         {openSections.bookmarks && (
           <div className="space-y-2 pl-2">
-            <Link href="/blogs/saved" className="flex items-center text-sm text-gray-400 hover:text-white">
+            <Link href="/dashboard/blogs/saved" className="flex items-center text-sm text-gray-400 hover:text-white">
               <Bookmark className="h-4 w-4 mr-2" />
               Saved articles
             </Link>
-            <Link href="/blogs/reading-list" className="flex items-center text-sm text-gray-400 hover:text-white">
+            <Link href="/dashboard/blogs/reading-list" className="flex items-center text-sm text-gray-400 hover:text-white">
               <Clock className="h-4 w-4 mr-2" />
               Reading list
             </Link>
@@ -98,11 +98,11 @@ export default function BlogSidebar() {
         </button>
         {openSections.discover && (
           <div className="space-y-2 pl-2">
-            <Link href="/blogs/tags" className="flex items-center text-sm text-gray-400 hover:text-white">
+            <Link href="/dashboard/blogs/tags" className="flex items-center text-sm text-gray-400 hover:text-white">
               <Tag className="h-4 w-4 mr-2" />
               Tags
             </Link>
-            <Link href="/blogs/top-authors" className="flex items-center text-sm text-gray-400 hover:text-white">
+            <Link href="/dashboard/blogs/top-authors" className="flex items-center text-sm text-gray-400 hover:text-white">
               <Award className="h-4 w-4 mr-2" />
               Top authors
             </Link>

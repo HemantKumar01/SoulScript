@@ -6,6 +6,7 @@ import BlogSidebar from "@/components/blog-sidebar"
 import { getAllBlogPosts } from "@/lib/firebase-blog"
 import { useEffect, useState } from "react"
 import type { BlogPost } from "@/types/blog"
+import '../../globals.css' // Ensure global styles are imported
 
 export default function BlogsPage() {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
