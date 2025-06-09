@@ -159,7 +159,7 @@ export default function CalmifyPage() {
         clearTimeout(sessionUpdateTimeoutRef.current);
       }
       if (audioContextRef.current) {
-        audioContextRef.current.close();
+        audioContextRef.current.suspend();
       }
     };
   }, []);
