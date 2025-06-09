@@ -1,5 +1,5 @@
 "use client"
-
+import "../../App.scss";
 import '../../globals.css'
 import React, { useState, useEffect, useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'

@@ -10,34 +10,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Brain, Download, AlertCircle, CheckCircle, Loader2, Zap } from "lucide-react"
+import { useAuthId } from "@/hooks/use-auth-id"
 
 const MindLogReportViewer: React.FC = () => {
   const { user, loading: userLoading } = useCurrentUser()
-  const [authId, setAuthId] = useState<string | null>(null)
+  const authId = useAuthId()
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [progress, setProgress] = useState(0)
   const [numDays, setNumDays] = useState(7)
-
-  useEffect(() => {
-    const getAuthId = async () => {
-      if (!user || userLoading) return
-      try {
-        const q = query(collection(db, "users"), where("email", "==", "ytbhemant@gmail.com"))
-        const snapshot = await getDocs(q)
-        if (!snapshot.empty) {
-          setAuthId(snapshot.docs[0].id)
-        } else {
-          setError("User not found in Firestore.")
-        }
-      } catch (err: any) {
-        setError(err.message || "Failed to get user authId")
-      }
-    }
-
-    getAuthId()
-  }, [user, userLoading])
 
   const handleGenerateReport = async () => {
     if (!authId) return
@@ -58,7 +40,7 @@ const MindLogReportViewer: React.FC = () => {
     }, 200)
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/getMindLogReport", {
+      const res = await fetch("api/getMindLogReport", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

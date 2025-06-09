@@ -23,6 +23,8 @@ import AIChatInterface from "@/components/chat/interface";
 import { Switch } from "@/components/ui/switch";
 import { requireAuth } from "@/lib/firebase";
 import { useEffect, useState } from "react";
+import "../App.scss";
+import "../globals.css";
 
 const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY as string;
 if (typeof API_KEY !== "string") {
@@ -47,11 +49,11 @@ function Home() {
             background: "linear-gradient(135deg, #00ce8d 0%, #00a1e4 100%)",
           }}
         >
-          <div className="banner-text fixed z-[0] w-[100vh] h-auto top-1/2 transform -translate-y-1/2 right-0 text-[150px] font-[900] text-[#ffffff] text-center opacity-15 origin-center -rotate-90 translate-x-[calc(50%-0.5em)] select-none">
+          <div className="banner-text fixed z-[1] w-[100vh] h-auto top-1/2 transform -translate-y-1/2 right-0 text-[150px] font-[900] text-[#ffffff] text-center opacity-15 origin-center -rotate-90 translate-x-[calc(50%-0.5em)] select-none">
             CASSIDY
           </div>
           {InteractiveMode ? (
-            <main>
+            <main className="h-[100vh]">
               <Cassidy></Cassidy>
               <GeminiLive></GeminiLive>
               <ControlTray></ControlTray>

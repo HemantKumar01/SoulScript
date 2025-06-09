@@ -61,7 +61,7 @@ export default function Home() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-purple-500/50 text-white hover:bg-purple-900/20 backdrop-blur-sm hover:border-purple-400/70 transition-all duration-300"
+                    className="bg-transparent border-purple-500/50 text-white hover:bg-purple-900/20 backdrop-blur-sm hover:border-purple-400/70 transition-all duration-300"
                   >
                     Watch Demo
                   </Button>
@@ -527,7 +527,7 @@ export default function Home() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-purple-500/50 text-white hover:bg-purple-900/20 backdrop-blur-sm hover:border-purple-400/70 transition-all duration-300 px-8 py-4 text-lg"
+                  className="bg-transparent border-purple-500/50 text-white hover:bg-purple-900/20 backdrop-blur-sm hover:border-purple-400/70 transition-all duration-300 px-8 py-4 text-lg"
                 >
                   Book a Demo
                 </Button>
