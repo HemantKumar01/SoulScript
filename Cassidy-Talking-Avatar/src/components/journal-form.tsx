@@ -11,8 +11,8 @@ import { Label } from "@/components/ui/label"
 import { createJournalEntry, updateJournalEntry } from "@/lib/actions"
 import type { JournalEntry } from "@/lib/types"
 import { format } from "date-fns"
+import { useAuth } from "@/hooks/useAuth"
 
-import { getCurrentUser } from "@/lib/firebase"
 interface JournalFormProps {
   entry?: JournalEntry
   isEditing?: boolean
@@ -23,25 +23,31 @@ export function JournalForm({ entry, isEditing = false }: JournalFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
+  const { user } = useAuth()
 
   const today = format(new Date(), "yyyy-MM-dd")
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    
+    if (!user?.uid) {
+      setError("User not authenticated")
+      return
+    }
+
     setIsSubmitting(true)
     setError("")
     setSuccess("")
 
     const formData = new FormData(e.currentTarget)
-    const user = getCurrentUser();
 
     try {
       let result
 
-      if (isEditing && entry?._id) {
-        result = await updateJournalEntry(user?.uid, entry._id, formData)
+      if (isEditing && entry?.id) {
+        result = await updateJournalEntry(user.uid, entry.id, formData)
       } else {
-        result = await createJournalEntry(user?.uid , formData)
+        result = await createJournalEntry(user.uid, formData)
       }
       console.log("yaha1");
       if (result.success) {
@@ -97,7 +103,7 @@ export function JournalForm({ entry, isEditing = false }: JournalFormProps) {
                 name="date"
                 type="date"
                 required
-                defaultValue={entry?.date ? format(new Date(entry.date), "yyyy-MM-dd") : today}
+                defaultValue={entry?.date ? format(entry.date instanceof Date ? entry.date : new Date(entry.date.seconds * 1000), "yyyy-MM-dd") : today}
                 className="bg-[#23272F] border border-[#10B981]/30 text-white placeholder-gray-400 focus:border-[#10B981] focus:ring-2 focus:ring-[#10B981]/40 transition"
               />
             </div>

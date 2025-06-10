@@ -276,15 +276,22 @@ export default function CalmifyPage() {
               console.log('Session setup complete');
               setConnectionError(false);
             }
-            if (e.filteredPrompt) {
-              setFilteredPrompts(prev => new Set([...prev, e.filteredPrompt.text]));
+            if (e.filteredPrompt && e.filteredPrompt.text) {
+              const filteredText = e.filteredPrompt.text;
+              setFilteredPrompts(prev => new Set([...prev, filteredText]));
               toastRef.current?.show(e.filteredPrompt.filteredReason);
             }
             if (e.serverContent?.audioChunks !== undefined) {
               if (playbackStateRef.current === 'paused' || playbackStateRef.current === 'stopped') return;
               
+              const audioData = e.serverContent?.audioChunks[0].data;
+              if (!audioData) {
+                console.warn('No audio data received');
+                return;
+              }
+              
               const audioBuffer = await decodeAudioData(
-                decode(e.serverContent?.audioChunks[0].data),
+                decode(audioData),
                 audioContextRef.current!,
                 48000,
                 2,
