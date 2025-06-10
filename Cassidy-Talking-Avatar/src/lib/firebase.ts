@@ -142,7 +142,7 @@ export const addMessageToHistory = async (
     console.log('Message added to history successfully');
     
     //track progress
-    fetch( "http://cassidy-questions-api.onrender.com/track_progress/", {
+    fetch( "https://cassidyadk-d5afltb5ba-em.a.run.app/track_progress/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
