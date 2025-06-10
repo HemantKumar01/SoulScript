@@ -48,9 +48,29 @@ interface DataStructure {
 const KnowAboutMe: React.FC = () => {
   const router = useRouter();
   const [data, setData] = useState<DataStructure | null>(null);
+  const [originalData, setOriginalData] = useState<DataStructure | null>(null); // Store original data
+  const [translatedData, setTranslatedData] = useState<DataStructure | null>(null); // Store translated data
+  const [translationCache, setTranslationCache] = useState<{ [key: string]: DataStructure }>(() => {
+    // Load cache from localStorage on initialization
+    if (typeof window !== 'undefined') {
+      const savedCache = localStorage.getItem('translationCache');
+      return savedCache ? JSON.parse(savedCache) : {};
+    }
+    return {};
+  }); // Cache translations
+  const [titleCache, setTitleCache] = useState<{ [key: string]: string }>(() => {
+    // Load title cache from localStorage on initialization
+    if (typeof window !== 'undefined') {
+      const savedTitleCache = localStorage.getItem('titleCache');
+      return savedTitleCache ? JSON.parse(savedTitleCache) : { 'en': 'Know About Me' };
+    }
+    return { 'en': 'Know About Me' };
+  }); // Cache titles
   const [graphData, setGraphData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [translating, setTranslating] = useState(false); // Translation loading state
+  const [pageTitle, setPageTitle] = useState("Know About Me"); // Title translation state
   const [selectedLanguage, setSelectedLanguage] = useState(
     languageOptions.find(lang => lang.language === "English") || languageOptions[0]
   ); // Default to English or first language
@@ -73,13 +93,221 @@ const KnowAboutMe: React.FC = () => {
     !popularLanguages.includes(lang.language)
   );
 
+  // Clear translation cache
+  const clearTranslationCache = () => {
+    setTranslationCache({});
+    setTitleCache({ 'en': 'Know About Me' });
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('translationCache');
+      localStorage.removeItem('titleCache');
+    }
+    console.log('Translation cache cleared');
+  };
+
+  // Add cache statistics for debugging
+  const getCacheStats = () => {
+    const cacheSize = Object.keys(translationCache).length;
+    const titleCacheSize = Object.keys(titleCache).length;
+    const cachedLanguages = Object.keys(translationCache);
+    return { cacheSize, titleCacheSize, cachedLanguages };
+  };
+
   // Handle language selection
-  const handleLanguageSelect = (option: typeof languageOptions[0]) => {
+  const handleLanguageSelect = async (option: typeof languageOptions[0]) => {
     setSelectedLanguage(option);
     setSearchTerm("");
     console.log(`Selected language: ${option.language} (${option.code})`);
-    // TODO: Implement actual translation functionality here
-    // This could trigger a translation of the report content
+    
+    // If English is selected, show original data
+    if (option.language === "English") {
+      setData(originalData);
+      setPageTitle("Know About Me");
+      return;
+    }
+    
+    // Check if we have cached translations for this language
+    if (translationCache[option.code] && titleCache[option.code]) {
+      console.log(`Using cached translation for ${option.language}`);
+      setData(translationCache[option.code]);
+      setPageTitle(titleCache[option.code]);
+      return;
+    }
+    
+    // Translate the page title and data if not cached
+    console.log(`Translating to ${option.language} for the first time`);
+    
+    // Translate the page title
+    await translatePageTitle(option.code);
+    
+    // Translate data
+    await translateData(option.code);
+  };
+
+  // Translate page title
+  const translatePageTitle = async (targetLanguage: string) => {
+    try {
+      const response = await fetch('/dashboard/api/translation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: "Know About Me",
+          targetLanguage: targetLanguage,
+          sourceLanguage: 'en'
+        })
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        const translatedTitle = result.translatedText;
+        setPageTitle(translatedTitle);
+        setTitleCache(prev => {
+          const newCache = { ...prev, [targetLanguage]: translatedTitle };
+          // Save to localStorage
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('titleCache', JSON.stringify(newCache));
+          }
+          return newCache;
+        });
+      }
+    } catch (error) {
+      console.error('Title translation error:', error);
+    }
+  };
+
+  // Translation function with batching for better performance
+  const translateData = async (targetLanguage: string) => {
+    if (!originalData) return;
+    
+    setTranslating(true);
+    try {
+      const translatedStructure: DataStructure = { ...originalData };
+      
+      // Collect all text that needs translation
+      const textsToTranslate: string[] = [];
+      const textMapping: { [key: string]: { sectionKey: string; itemIndex: number; field: string } } = {};
+      
+      // Collect all texts for translation
+      for (const [sectionKey, sectionData] of Object.entries(originalData)) {
+        if (Array.isArray(sectionData)) {
+          sectionData.forEach((item: DataItem | ChartDataItem, itemIndex: number) => {
+            if (item.label) {
+              const key = `${sectionKey}_${itemIndex}_label`;
+              textsToTranslate.push(item.label);
+              textMapping[item.label] = { sectionKey, itemIndex, field: 'label' };
+            }
+            
+            if ('value' in item && item.value) {
+              const key = `${sectionKey}_${itemIndex}_value`;
+              textsToTranslate.push(item.value);
+              textMapping[item.value] = { sectionKey, itemIndex, field: 'value' };
+            }
+            
+            if ('score' in item && item.score) {
+              const key = `${sectionKey}_${itemIndex}_score`;
+              textsToTranslate.push(item.score);
+              textMapping[item.score] = { sectionKey, itemIndex, field: 'score' };
+            }
+            
+            if ('effectiveness' in item && item.effectiveness) {
+              const key = `${sectionKey}_${itemIndex}_effectiveness`;
+              textsToTranslate.push(item.effectiveness);
+              textMapping[item.effectiveness] = { sectionKey, itemIndex, field: 'effectiveness' };
+            }
+          });
+        }
+      }
+      
+      // Translate in smaller batches to avoid overwhelming the API
+      const batchSize = 10;
+      const translations: { [key: string]: string } = {};
+      
+      for (let i = 0; i < textsToTranslate.length; i += batchSize) {
+        const batch = textsToTranslate.slice(i, i + batchSize);
+        
+        // Translate each item in the batch
+        const batchPromises = batch.map(async (text) => {
+          try {
+            const response = await fetch('/dashboard/api/translation', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                text: text,
+                targetLanguage: targetLanguage,
+                sourceLanguage: 'en'
+              })
+            });
+            
+            if (response.ok) {
+              const result = await response.json();
+              return { original: text, translated: result.translatedText };
+            }
+            return { original: text, translated: text }; // Fallback to original
+          } catch (error) {
+            console.error('Translation error for text:', text, error);
+            return { original: text, translated: text }; // Fallback to original
+          }
+        });
+        
+        const batchResults = await Promise.all(batchPromises);
+        batchResults.forEach(({ original, translated }) => {
+          translations[original] = translated;
+        });
+        
+        // Small delay between batches to be respectful to the API
+        if (i + batchSize < textsToTranslate.length) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+      
+      // Apply translations to the data structure
+      for (const [sectionKey, sectionData] of Object.entries(originalData)) {
+        if (Array.isArray(sectionData)) {
+          const translatedSection = sectionData.map((item: DataItem | ChartDataItem) => {
+            const translatedItem = { ...item };
+            
+            if (item.label && translations[item.label]) {
+              translatedItem.label = translations[item.label];
+            }
+            
+            if ('value' in item && item.value && translations[item.value]) {
+              (translatedItem as DataItem).value = translations[item.value];
+            }
+            
+            if ('score' in item && item.score && translations[item.score]) {
+              (translatedItem as ChartDataItem).score = translations[item.score];
+            }
+            
+            if ('effectiveness' in item && item.effectiveness && translations[item.effectiveness]) {
+              (translatedItem as ChartDataItem).effectiveness = translations[item.effectiveness];
+            }
+            
+            return translatedItem;
+          });
+          
+          translatedStructure[sectionKey as keyof DataStructure] = translatedSection as any;
+        }
+      }
+      
+      setTranslatedData(translatedStructure);
+      setData(translatedStructure);
+      
+      // Cache the translated data for future use
+      setTranslationCache(prev => {
+        const newCache = { ...prev, [targetLanguage]: translatedStructure };
+        // Save to localStorage
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('translationCache', JSON.stringify(newCache));
+        }
+        return newCache;
+      });
+      console.log(`Cached translation for language: ${targetLanguage}`);
+    } catch (error) {
+      console.error('Translation error:', error);
+      // Show error message to user
+      alert('Translation failed. Please try again.');
+    } finally {
+      setTranslating(false);
+    }
   };
   
   // Move useCurrentUser hook to the top level
@@ -127,6 +355,7 @@ const KnowAboutMe: React.FC = () => {
         console.log("API Response:", responseData);
         
         // Update state with the response data
+        setOriginalData(responseData.info); // Store original data
         setData(responseData.info);
         setGraphData(responseData.graph);
         setLoading(false);
@@ -188,8 +417,20 @@ const KnowAboutMe: React.FC = () => {
     <AuthRequired>
       <div className={backgroundStyle}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Translation loading overlay */}
+          {translating && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+              <div className="bg-white rounded-xl p-8 text-center shadow-2xl">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">Translating Content</h3>
+                <p className="text-gray-600">Translating to {selectedLanguage.language}...</p>
+                <p className="text-sm text-gray-500 mt-2">This may take a moment</p>
+              </div>
+            </div>
+          )}
+          
           <div className="flex justify-between items-center bg-white shadow-lg rounded-xl mb-8 p-6">
-            <h1 className="text-4xl font-extrabold text-gray-800">Know About Me</h1>
+            <h1 className="text-4xl font-extrabold text-gray-800">{pageTitle}</h1>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button 
@@ -206,7 +447,8 @@ const KnowAboutMe: React.FC = () => {
                         <span className="text-xs text-gray-500 leading-tight">{selectedLanguage.code.toUpperCase()}</span>
                         {selectedLanguage.language !== "English" && (
                           <span className="text-xs bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-2 py-0.5 rounded-full font-medium">
-                            Translate
+                            {translating ? "Translating..." : 
+                             (translationCache[selectedLanguage.code] ? "Cached" : "Translate")}
                           </span>
                         )}
                       </div>
@@ -275,7 +517,14 @@ const KnowAboutMe: React.FC = () => {
                                 </div>
                                 <div className="flex flex-col">
                                   <span className="font-semibold text-gray-800 group-hover:text-blue-700 transition-colors duration-200">{option.language}</span>
-                                  <span className="text-xs text-gray-500 group-hover:text-blue-500 transition-colors duration-200">Code: {option.code}</span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs text-gray-500 group-hover:text-blue-500 transition-colors duration-200">Code: {option.code}</span>
+                                    {translationCache[option.code] && (
+                                      <span className="text-xs bg-green-100 text-green-700 px-1 py-0.5 rounded-full font-medium">
+                                        Cached
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                               {selectedLanguage.code === option.code && (
@@ -310,7 +559,14 @@ const KnowAboutMe: React.FC = () => {
                             </div>
                             <div className="flex flex-col">
                               <span className="font-medium text-gray-800 group-hover:text-blue-700 transition-colors duration-200">{option.language}</span>
-                              <span className="text-xs text-gray-500 group-hover:text-blue-500 transition-colors duration-200">Code: {option.code}</span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-gray-500 group-hover:text-blue-500 transition-colors duration-200">Code: {option.code}</span>
+                                {translationCache[option.code] && (
+                                  <span className="text-xs bg-green-100 text-green-700 px-1 py-0.5 rounded-full font-medium">
+                                    Cached
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
                           {selectedLanguage.code === option.code && (
@@ -331,15 +587,16 @@ const KnowAboutMe: React.FC = () => {
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
-            {/* <Button 
-              onClick={() => router.push("/")} 
-              className="bg-[#6ac5fe] hover:bg-primary/90 text-white px-6 py-2 rounded-full shadow-md transition-all duration-300 flex items-center gap-2"
-            >
-              <span>Chat</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-              </svg>
-            </Button> */}
+            
+            {/* Debug Cache Info - Only in development */}
+            {/* {process.env.NODE_ENV === 'development' && (
+              <div className="hidden lg:block text-xs text-gray-500 bg-gray-100 rounded px-2 py-1">
+                Cache: {Object.keys(translationCache).length} languages
+                {Object.keys(translationCache).length > 0 && (
+                  <span className="ml-1">({Object.keys(translationCache).join(', ')})</span>
+                )}
+              </div>
+            )} */}
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
