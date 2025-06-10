@@ -76,6 +76,7 @@
     "socks": "latest",
     "sonner": "^2.0.4",
     "tailwind-merge": "^3.3.0",
+    "tailwind-scrollbar": "^4.0.2",
     "tailwindcss-animate": "^1.0.7",
     "tw-animate-css": "^1.3.4",
     "uuid": "^11.1.0",
