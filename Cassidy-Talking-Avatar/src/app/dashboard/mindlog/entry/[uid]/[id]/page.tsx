@@ -4,10 +4,10 @@ import { getJournalEntryById } from "@/lib/actions"
 import { notFound } from "next/navigation"
 import { getCurrentUser } from "@/lib/firebase"
 interface EntryPageProps {
-  params: { 
+  params: Promise<{ 
     uid: string
     id: string 
-  }
+  }>
 }
 export default async function EntryPage({ params }: EntryPageProps) {
   const user = getCurrentUser() ; 

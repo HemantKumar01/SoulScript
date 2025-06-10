@@ -2,8 +2,9 @@ import { JournalForm } from "@/components/journal-form"
 import { getJournalEntryById } from "@/lib/actions"
 import { notFound } from "next/navigation"
 
-export default async function EditEntryPage({ params }: { params: { id: string } }) {
-  const { success, entry } = await getJournalEntryById(params.id)
+export default async function EditEntryPage({ params }: { params: Promise<{ uid: string; id: string }> }) {
+  const { uid, id } = await params
+  const { success, entry } = await getJournalEntryById(uid, id)
 
   if (!success || !entry) {
     notFound()

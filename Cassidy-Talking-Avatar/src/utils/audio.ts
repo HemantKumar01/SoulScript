@@ -5,7 +5,7 @@
 
 import {Blob} from '@google/genai';
 
-function encode(bytes) {
+function encode(bytes: Uint8Array): string {
   let binary = '';
   const len = bytes.byteLength;
   for (let i = 0; i < len; i++) {
@@ -14,7 +14,7 @@ function encode(bytes) {
   return btoa(binary);
 }
 
-function decode(base64) {
+function decode(base64: string): Uint8Array {
   const binaryString = atob(base64);
   const len = binaryString.length;
   const bytes = new Uint8Array(len);
