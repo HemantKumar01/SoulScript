@@ -1,0 +1,51 @@
+# FastAPI and ASGI server
+fastapi
+uvicorn
+
+# CORS Middleware
+starlette
+
+# PDF generation
+reportlab
+svglib
+weasyprint
+
+# Markdown to HTML
+markdown2
+
+# Google Generative AI
+google-generativeai
+
+# Firebase and Firestore
+firebase-admin
+google-cloud-firestore
+
+# Environment variable handling
+python-dotenv
+
+# NLP and sentiment analysis
+nltk
+
+# Data analysis and visualization
+pandas
+fastapi[standard]
+google-ai-generativelanguage
+google-genai
+
+# JSON handling (built-in, but listing for completeness)
+# Standard library modules used: json, re, os s
+
+matplotlib
+seaborn
+
+# Web scraping
+beautifulsoup4
+lxml
+requests
+
+# Built-in modules (no need to install via pip)
+# - smtplib
+# - email
+# - uuid
+# - textwrap
+# - datetime
