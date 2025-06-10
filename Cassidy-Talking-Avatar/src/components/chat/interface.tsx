@@ -7,14 +7,35 @@ import {
   addMessageToHistory,
   MessageHistoryItem,
 } from "@/lib/firebase";
+import { useLiveAPIContext } from "@/contexts/LiveAPIContext";
 
 const AIChatInterface: React.FC = () => {
+  const { client } = useLiveAPIContext();
+  const { messageTranscription } = client;
   const [messages, setMessages] = useState<MessageHistoryItem[]>([]);
   const [inputMessage, setInputMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // console.log("OKM", messageTranscription);
+    if (
+      messageTranscription != null &&
+      messageTranscription.message.trim() !== ""
+    ) {
+      if (messageTranscription != messages[history.length - 1]) {
+        // Add AI response to local state
+        setMessages((prev) => [...prev, messageTranscription]);
+
+        // Add AI response to Firebase
+        addMessageToHistory(messageTranscription).catch((error) => {
+          console.error("Error adding AI response to history:", error);
+        });
+      }
+    }
+  }, [messageTranscription]);
 
   // Load message history on component mount
   useEffect(() => {
@@ -60,18 +81,13 @@ const AIChatInterface: React.FC = () => {
     try {
       // Add user message to Firebase
       await addMessageToHistory(userMessage);
-
-      // Simulate AI response (replace with actual AI API call)
-      const aiResponse: MessageHistoryItem = {
-        message: `I received your message: "${userMessage.message}". This is a simulated AI response. In a real implementation, you would call your AI service here.`,
-        role: "assistant",
-      };
+      client.send(userMessage.message as any);
 
       // Add AI response to local state
-      setMessages((prev) => [...prev, aiResponse]);
+      // setMessages((prev) => [...prev, aiResponse]);
 
       // Add AI response to Firebase
-      await addMessageToHistory(aiResponse);
+      // await addMessageToHistory(aiResponse);
     } catch (error) {
       console.error("Error sending message:", error);
       // Handle error - maybe show a toast notification

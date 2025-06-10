@@ -22,6 +22,7 @@ import {
   Type,
 } from "@google/genai";
 import { getCurrentUser, waitForAuthState } from "@/lib/firebase";
+import { questions } from "@/components/avatar/questions_flat"; // Assuming questions.json is in the same directory
 
 const declaration: FunctionDeclaration = {
   name: "get_question",
@@ -65,6 +66,7 @@ function GeminiLiveComponent() {
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [userName, setUserName] = useState<string | null>(null);
   const [userId, setUserId] = useState<string>("");
+  const [questionIndex, setQuestionIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const user = getCurrentUser();
@@ -85,11 +87,39 @@ function GeminiLiveComponent() {
   }, []);
 
   useEffect(() => {
+    if (client && userId) {
+      const fetchProgress = async () => {
+        try {
+          const { db } = await import("@/lib/firebase");
+          const { doc, getDoc } = await import("firebase/firestore");
+
+          const userDocRef = doc(db, "users", userId);
+          const userDoc = await getDoc(userDocRef);
+
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            const progress = userData.progress ?? -1;
+            setQuestionIndex(progress + 1);
+          } else {
+            setQuestionIndex(0);
+          }
+        } catch (error) {
+          console.error("Error fetching user progress:", error);
+          setQuestionIndex(0);
+        }
+      };
+
+      fetchProgress();
+    }
+  }, [client, userId]);
+
+  useEffect(() => {
     setModel("models/gemini-2.5-flash-preview-native-audio-dialog");
 
-    if (!userName || !userId.length) {
+    if (!userName || !userId.length || questionIndex === null) {
       return;
     }
+
     setConfig({
       responseModalities: [Modality.AUDIO],
       inputAudioTranscription: {},
@@ -101,16 +131,15 @@ function GeminiLiveComponent() {
       systemInstruction: {
         parts: [
           {
-            text: `You are a helpful and supportive friend named cassidy. You talk in a soft and lovely tone and love talking to people.Start by telling hi to first name of the person (or the main name) and be casual. Then introduce yourself and ask the person if they are ready to start. Once they are ready to start get next question to ask. You are also their mental health support agent, and you are here to help ${userName} with their mental health issues. You have to ask some questions your friend. Once the user is ready, after every response you need get a question and ask user that question. you can get questions by calling get_question function. If a previous question is already asked provide ${userName}'s complete response to current main question as argument to get_question function (summarize into one response if multiple small follow ups are asked for a main questoin). If no question is returned, then talk about anything interesting with your friend.
-            The use details are given as below:
-            name: ${userName}
+            text: `You are a helpful and supportive friend named cassidy. You talk in a soft and lovely tone and love talking to people.Start by telling hi to first name of the person (or the main name) and be casual. Then introduce yourself and ask the person if they are ready to start. You are also their mental health support agent, and you are here to help ${userName} with their mental health issues. You have to ask some questions your friend. Ask the user questions one by one from below json. Ask them question in same sequential order, and ask follow up questions if user does not answer all part of the question properly.
+Questions = ${questions.slice(questionIndex as number)}
             `,
           },
         ],
       },
-      tools: [{ functionDeclarations: [declaration] }],
+      // tools: [{ functionDeclarations: [declaration] }],
     });
-  }, [setConfig, setModel, userId, userName]);
+  }, [setConfig, setModel, userId, userName, questionIndex]);
 
   useEffect(() => {
     const onToolCall = async (toolCall: LiveServerToolCall) => {
