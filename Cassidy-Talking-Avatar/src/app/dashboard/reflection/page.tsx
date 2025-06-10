@@ -1,11 +1,14 @@
 "use client"
 
+import "../../App.scss";
+import '../../globals.css'
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Send } from "lucide-react"
 import ReactMarkdown from 'react-markdown'
 import { useRouter } from "next/navigation";
+import { useAuthId } from "@/hooks/use-auth-id"
 
 type Message = {
   id: string;
@@ -15,6 +18,7 @@ type Message = {
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([])
+  const authId = useAuthId()
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -62,12 +66,12 @@ export default function ChatInterface() {
 
     try {
       // Using your Next.js API route instead of calling external API directly
-      const response = await fetch('/api/chat', {
+      const response = await fetch('api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: userMessage.content }),
+        body: JSON.stringify({ authId: authId ,userMessage: userMessage.content }),
       });
 
       const data = await response.json();

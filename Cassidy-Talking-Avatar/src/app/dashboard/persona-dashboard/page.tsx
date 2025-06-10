@@ -1,5 +1,7 @@
 "use client"
 
+import "../../App.scss";
+import '../../globals.css'
 import AuthRequired from "@/components/auth-required"
 import React, { useEffect, useState } from "react";
 import TherapyInsights from "./graphs";
@@ -135,7 +137,7 @@ const KnowAboutMe: React.FC = () => {
           <div className="flex flex-col items-center justify-center h-screen">
             <div className="bg-white shadow-lg rounded-xl p-8 text-center">
               <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Data</h2>
-              <p className="text-gray-700">We couldn't generate your report. Please try again later.</p>
+              <p className="text-gray-700">We couldn&apos;t generate your report. Please try again later.</p>
               <button 
                 onClick={() => window.location.reload()} 
                 className="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-primary/80 transition-colors"

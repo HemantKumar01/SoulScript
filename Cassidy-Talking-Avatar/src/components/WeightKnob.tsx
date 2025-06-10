@@ -143,7 +143,7 @@ const WeightKnob: React.FC<WeightKnobProps> = ({
   }, []);
 
   // Memoize static SVG to prevent unnecessary re-renders
-  const staticSvg = useRef<JSX.Element | null>(null);
+  const staticSvg = useRef<React.ReactElement | null>(null);
   if (!staticSvg.current) {
     staticSvg.current = (
       <svg viewBox="0 0 80 80" className="absolute top-0 left-0 w-full h-full pointer-events-none">

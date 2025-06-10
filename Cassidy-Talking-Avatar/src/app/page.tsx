@@ -51,9 +51,7 @@ export default function Home() {
                 </h1>
 
                 <p className="text-xl md:text-2xl font-light text-gray-300 leading-relaxed max-w-2xl">
-                  Transform your mental wellness journey with AI-powered therapy
-                  that's accessible, confidential, and always available when you
-                  need support.
+                  Transform your mental wellness journey with AI-powered therapy that&apos;s accessible, confidential, and always available when you need support.
                 </p>
 
                 <div className="pt-4">
@@ -71,7 +69,7 @@ export default function Home() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-purple-500/50 text-white hover:bg-purple-900/20 backdrop-blur-sm hover:border-purple-400/70 transition-all duration-300"
+                    className="bg-transparent border-purple-500/50 text-white hover:bg-purple-900/20 backdrop-blur-sm hover:border-purple-400/70 transition-all duration-300"
                   >
                     Watch Demo
                   </Button>
@@ -244,26 +242,21 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="relative group">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-300"></div>
-                  <div className="relative bg-gray-900 rounded-2xl p-8 border border-purple-900/30 hover:border-purple-500/50 transition-all duration-300 transform hover:scale-105">
-                    <div className="bg-gradient-to-r from-green-600 to-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                      <span className="text-2xl font-bold text-white">3</span>
-                    </div>
-                    <h3 className="text-2xl font-bold mb-4 text-white">
-                      Seamless Transition
-                    </h3>
-                    <p className="text-gray-400 leading-relaxed">
-                      When you're ready, seamlessly transition to traditional
-                      therapy sessions with our network of qualified
-                      professionals who already understand your journey and
-                      progress.
-                    </p>
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-300"></div>
+                <div className="relative bg-gray-900 rounded-2xl p-8 border border-purple-900/30 hover:border-purple-500/50 transition-all duration-300 transform hover:scale-105">
+                  <div className="bg-gradient-to-r from-green-600 to-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                    <span className="text-2xl font-bold text-white">3</span>
                   </div>
+                  <h3 className="text-2xl font-bold mb-4 text-white">Seamless Transition</h3>
+                  <p className="text-gray-400 leading-relaxed">
+                    When you&apos;re ready, seamlessly transition to traditional therapy sessions with our network of qualified professionals who already understand your journey and progress.
+                  </p>
                 </div>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
         </ScrollReveal>
         {/* Testimonials Section */}
         <section className="py-24 bg-gradient-to-b from-gray-950 to-black relative overflow-hidden">
@@ -284,9 +277,7 @@ export default function Home() {
                 Transforming Lives Daily
               </h2>
               <p className="text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed">
-                Join thousands who have found support, healing, and personal
-                growth through SoulScript's innovative approach to mental health
-                care.
+                Join thousands who have found support, healing, and personal growth through SoulScript&apos;s innovative approach to mental health care.
               </p>
             </div>
 
@@ -313,10 +304,7 @@ export default function Home() {
                     </div>
                   </div>
                   <p className="text-gray-300 leading-relaxed">
-                    "SoulScript gave me the courage to discuss issues I was too
-                    embarrassed to bring up elsewhere. The AI understood my
-                    anxiety patterns, and when I transitioned to a human
-                    therapist, the process was incredibly smooth."
+                    &quot;SoulScript gave me the courage to discuss issues I was too embarrassed to bring up elsewhere. The AI understood my anxiety patterns, and when I transitioned to a human therapist, the process was incredibly smooth.&quot;
                   </p>
                 </div>
               </div>
@@ -343,10 +331,7 @@ export default function Home() {
                     </div>
                   </div>
                   <p className="text-gray-300 leading-relaxed">
-                    "The journaling features combined with AI insights revealed
-                    patterns about myself I never noticed. It's like having a
-                    wise friend available 24/7 who actually remembers our
-                    previous conversations."
+                    &quot;The journaling features combined with AI insights revealed patterns about myself I never noticed. It&apos;s like having a wise friend available 24/7 who actually remembers our previous conversations.&quot;
                   </p>
                 </div>
               </div>
@@ -373,10 +358,7 @@ export default function Home() {
                     </div>
                   </div>
                   <p className="text-gray-300 leading-relaxed">
-                    "As someone who couldn't afford weekly therapy, SoulScript
-                    has been life-changing. The AI provides surprisingly deep
-                    insights, and knowing real therapists review conversations
-                    gives me complete confidence."
+                   &quot;As someone who couldn&apos;t afford weekly therapy, SoulScript has been life-changing. The AI provides surprisingly deep insights, and knowing real therapists review conversations gives me complete confidence.&quot;
                   </p>
                 </div>
               </div>
@@ -582,7 +564,7 @@ export default function Home() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-purple-500/50 text-white hover:bg-purple-900/20 backdrop-blur-sm hover:border-purple-400/70 transition-all duration-300 px-8 py-4 text-lg"
+                  className="bg-transparent border-purple-500/50 text-white hover:bg-purple-900/20 backdrop-blur-sm hover:border-purple-400/70 transition-all duration-300 px-8 py-4 text-lg"
                 >
                   Book a Demo
                 </Button>

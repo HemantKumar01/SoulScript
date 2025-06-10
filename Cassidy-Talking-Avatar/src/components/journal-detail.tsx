@@ -19,7 +19,8 @@ import type { JournalEntry } from "@/lib/types"
 import { deleteJournalEntry } from "@/lib/actions"
 import { format } from "date-fns"
 import { Pencil, Trash2 } from "lucide-react"
-import { getCurrentUser } from "@/lib/firebase"
+import { useAuth } from "@/hooks/useAuth"
+
 interface JournalDetailProps {
   entry: JournalEntry
 }
@@ -27,18 +28,22 @@ interface JournalDetailProps {
 export function JournalDetail({ entry }: JournalDetailProps) {
   const router = useRouter()
   const [isDeleting, setIsDeleting] = useState(false)
-  const user = getCurrentUser() ; 
+  const { user } = useAuth()
 
   const handleDelete = async () => {
+    if (!user?.uid) {
+      console.error("User not authenticated")
+      return
+    }
+
     setIsDeleting(true)
-    const user = getCurrentUser() ; 
 
     try {
-      console.log("deleting stuff",user);
-      const result = await deleteJournalEntry(user?.uid , entry.id as string)
-      console.log(result) ;
+      console.log("deleting stuff", user);
+      const result = await deleteJournalEntry(user.uid, entry.id as string)
+      console.log(result);
       if (result.success) {
-        router.push("/mindlog/calendar")
+        router.push("/dashboard/mindlog/calendar")
       }
     } catch (error) {
       console.error("Error deleting entry:", error)
@@ -52,7 +57,9 @@ export function JournalDetail({ entry }: JournalDetailProps) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>{entry.title}</CardTitle>
-          <div className="text-sm text-muted-foreground">{format(new Date(entry.date), "MMMM d, yyyy")}</div>
+          <div className="text-sm text-muted-foreground">
+            {format(entry.date instanceof Date ? entry.date : new Date(entry.date.seconds * 1000), "MMMM d, yyyy")}
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -60,7 +67,7 @@ export function JournalDetail({ entry }: JournalDetailProps) {
       </CardContent>
       <CardFooter className="flex justify-between">
         <div className="text-xs text-muted-foreground">
-          Last updated: {format(new Date(entry.updatedAt), "MMM d, yyyy h:mm a")}
+          Last updated: {format(entry.updatedAt instanceof Date ? entry.updatedAt : new Date(entry.updatedAt.seconds * 1000), "MMM d, yyyy h:mm a")}
         </div>
         <div className="flex gap-2">
           {/* <Button

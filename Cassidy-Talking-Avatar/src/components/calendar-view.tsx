@@ -8,26 +8,32 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { getEntriesByMonth } from "@/lib/actions"
 import type { JournalEntry } from "@/lib/types"
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay } from "date-fns"
-import { getCurrentUser } from "@/lib/firebase"
+import { useAuth } from "@/hooks/useAuth"
+
 export function CalendarView() {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [entries, setEntries] = useState<JournalEntry[]>([])
   const [loading, setLoading] = useState(true)
+  const { user, loading: authLoading } = useAuth()
 
   const fetchEntries = async () => {
+    if (!user?.uid) {
+      setLoading(false)
+      return
+    }
+
     setLoading(true)
     const year = currentDate.getFullYear()
     const month = currentDate.getMonth()
-    const user = getCurrentUser()
-    const result = await getEntriesByMonth(user?.uid,year, month)
+    const result = await getEntriesByMonth(user.uid, year, month)
 
     if (result.success) {
       setEntries(
         result.entries.map((entry: any) => ({
           ...entry,
-          date: new Date(entry.date),
-          createdAt: new Date(entry.createdAt),
-          updatedAt: new Date(entry.updatedAt),
+          date: entry.date instanceof Date ? entry.date : new Date(entry.date.seconds * 1000),
+          createdAt: entry.createdAt instanceof Date ? entry.createdAt : new Date(entry.createdAt.seconds * 1000),
+          updatedAt: entry.updatedAt instanceof Date ? entry.updatedAt : new Date(entry.updatedAt.seconds * 1000),
         })),
       )
     }
@@ -36,8 +42,10 @@ export function CalendarView() {
   }
 
   useEffect(() => {
-    fetchEntries()
-  }, [currentDate])
+    if (!authLoading) {
+      fetchEntries()
+    }
+  }, [currentDate, user, authLoading])
 
   const prevMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))
@@ -56,7 +64,10 @@ export function CalendarView() {
 
   // Function to check if a day has entries
   const getDayEntries = (day: Date) => {
-    return entries.filter((entry) => isSameDay(new Date(entry.date), day))
+    return entries.filter((entry) => {
+      const entryDate = entry.date instanceof Date ? entry.date : new Date(entry.date.seconds * 1000)
+      return isSameDay(entryDate, day)
+    })
   }
 
   return (
@@ -74,7 +85,15 @@ export function CalendarView() {
         </div>
       </CardHeader>
       <CardContent>
-        {loading ? (
+        {authLoading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-lg">Loading...</div>
+          </div>
+        ) : !user ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-lg">Please sign in to view your journal calendar</div>
+          </div>
+        ) : loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="text-lg">Loading calendar...</div>
           </div>
@@ -108,7 +127,7 @@ export function CalendarView() {
                       {dayEntries.map((entry) => (
                         <Link
                           key={entry.id}
-                          href={`/mindlog/entry/${getCurrentUser()?.uid}/${entry.id}`}
+                          href={`/dashboard/mindlog/entry/${user?.uid}/${entry.id}`}
                           className="block p-1 text-xs truncate rounded bg-primary/10 hover:bg-primary/20"
                         >
                           {entry.title}
