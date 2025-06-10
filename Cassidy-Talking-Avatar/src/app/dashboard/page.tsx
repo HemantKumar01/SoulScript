@@ -98,11 +98,11 @@ const DualChatbotElement = () => {
       <div
         className={`absolute left-0 ${
           InteractiveMode
-            ? "bottom-0 top-auto rounded-none rounded-tr-xl"
+            ? "bottom-auto top-0 md:bottom-0 md:top-auto rounded-none rounded-br-xl md:rounded-none md:rounded-tr-xl"
             : "hidden"
-        } z-10 bg-black p-5 pb-16 text-white transition-all duration-300 ease-in-out`}
+        } z-10 bg-black/30 p-5 pb-16 text-white transition-all duration-300 ease-in-out`}
       >
-        <Progress className="relative"></Progress>
+        <Progress className="relative" size={80}></Progress>
       </div>
     </div>
   );

@@ -119,7 +119,7 @@ function GeminiLiveComponent() {
     if (!userName || !userId.length || questionIndex === null) {
       return;
     }
-
+    console.log(questions, questions.slice(questionIndex as number));
     setConfig({
       responseModalities: [Modality.AUDIO],
       inputAudioTranscription: {},

@@ -36,7 +36,7 @@ const Cassidy = () => {
   }, [connected, volume]);
   return (
     <div
-      className="avatar absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] m-0 overflow-hidden h-[500px] w-[90%] max-w-[800px] rounded-[30px] text-center bg-[#2a2f313d] break-all bg-[url(/background/bg4_blurred.jpg)] bg-cover bg-center"
+      className="avatar absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[50%] md:-translate-y-[60%] m-0 overflow-hidden h-[500px] w-[90%] max-w-[800px] rounded-[30px] text-center bg-[#2a2f313d] break-all bg-[url(/background/bg4_blurred.jpg)] bg-cover bg-center"
       style={{
         boxShadow: "0 0 10px rgba(255, 255, 255, 0.2)",
       }}
