@@ -24,6 +24,50 @@ class FirebaseQuestionManager:
         if questions_json_path:
             self.load_questions(questions_json_path)
 
+    def updateProgress(self, userId: str, progress: int) -> bool:
+        """
+        Updates the progress field for a user in Firebase.
+
+        Args:
+            userId (str): The ID of the user whose progress to update
+            progress (int): The progress data to update
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            user_ref = self.db.collection("users").document(userId)
+            user_ref.update({"progress": progress})
+            print(f"Updated progress for user {userId}")
+            return True
+        except Exception as e:
+            print(f"Error updating progress for user {userId}: {e}")
+            return False
+
+    def getMessageHistory(self, userId: str) -> Optional[list]:
+        """
+        Gets the message history for a user from Firebase.
+
+        Args:
+            userId (str): The ID of the user whose message history to retrieve
+
+        Returns:
+            Optional[list]: The user's message history or None if not found
+        """
+        try:
+            user_ref = self.db.collection("users").document(userId)
+            user_doc = user_ref.get()
+
+            if user_doc.exists:
+                user_data = user_doc.to_dict()
+                return user_data.get("userHistory", [])
+
+            return None
+
+        except Exception as e:
+            print(f"Error getting message history for user {userId}: {e}")
+            return None
+
     def load_questions(self, questions_json_path: str) -> None:
 
         try:

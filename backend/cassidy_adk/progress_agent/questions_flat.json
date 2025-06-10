@@ -1,0 +1,88 @@
+{
+  "questions": [
+    {
+      "question": "Do you have any family members or significant others?",
+      "expected_answer": "Relevant Family Members/Significant Others: [Mentioned or Not Mentioned]"
+    },
+    {
+      "question": "What is your employment status?",
+      "expected_answer": "Employment Status: [User's Employment Status]"
+    },
+    {
+      "question": "Do you feel supported in your personal and professional life?",
+      "expected_answer": "Feeling Supported in Personal & Professional Life:\nPersonal Life Support: [1-10]\nProfessional Life Support: [1-10]"
+    },
+    {
+      "question": "Who do you turn to for comfort and support?",
+      "expected_answer": "Emotional Support System: [Identified People/Systems, Likelihood of Seeking Support]"
+    },
+    {
+      "question": "How do you feel about yourself overall? Do you struggle with self esteem issues? Is there any aspect of yourself that you find really difficult to accept?",
+      "expected_answer": "Self-Esteem: [1-10]\nSpecific Insecurities: [User's Response]"
+    },
+    {
+      "question": "How do you take care of your physical and emotional health?",
+      "expected_answer": "Physical & Emotional Health Care: [User's Specific Practices]"
+    },
+    {
+      "question": "How would you describe your sleep patterns and food habits?",
+      "expected_answer": "Sleep Patterns & Food Habits:\nFrequency of Meals: [User's Description]\nQuality of Meals: [Healthy/Unhealthy]\nFrequency of Eating Out: [User's Description]\nSleep Duration: [User's Average Sleep Hours]\nSleep Pattern: [Regular/Irregular]\nTime of Sleep: [User's Sleep Schedule]"
+    },
+    {
+      "question": "What activities do you enjoy that help you relax or feel fulfilled?",
+      "expected_answer": "Relaxation & Fulfillment Activities: [Specific Activities, Frequency, Alone/Involving Others]"
+    },
+    {
+      "question": "Have you experienced any traumatic events or adverse experiences in your life (like abuse, accidents, loss of loved ones etc)?",
+      "expected_answer": "Experienced Trauma: [Yes/No/Unclear]\nIf Yes: [Type, Timeframe, Severity]"
+    },
+    {
+      "question": "How have these experiences impacted you emotionally?",
+      "expected_answer": "Emotional Impact: [Specific Emotions, Duration/Frequency, Triggers, Functional Impact]"
+    },
+    {
+      "question": "What coping strategies do you currently use to manage stress or difficult emotions?",
+      "expected_answer": "Coping Strategies: [Yes/No/Unclear]\nIf Yes: [Specific Strategies, When Used, Frequency]"
+    },
+    {
+      "question": "Have you ever been diagnosed with a mental health disorder? If so, what was the diagnosis?",
+      "expected_answer": "Diagnosed Mental Health Disorder: [Yes/No/Unclear]\nIf Yes: [Specific Diagnosis]"
+    },
+    {
+      "question": "Do you have a family history of mental health issues?",
+      "expected_answer": "Family History of Mental Health Issues: [Yes/No/Unclear]\nIf Yes: [Specific Conditions & Family Members]"
+    },
+    {
+      "question": "Do you use any substances such as alcohol, drugs etc? If so then how frequently and in what amount?",
+      "expected_answer": "Substance Use: [Yes/No/Unclear]\nIf Yes: [Specific Substance, Frequency, Triggers, Functional Impact, Current Status]"
+    },
+    {
+      "question": "Do you struggle with addiction or compulsive behaviors (like gambling, porn etc)?",
+      "expected_answer": "Struggle with Addiction/Compulsive Behaviors: [Yes/No/Unclear]\nIf Yes: [Specific Addiction, Frequency, Triggers, Functional Impact, Current Status]"
+    },
+    {
+      "question": "Do you have any significant medical conditions?",
+      "expected_answer": "Significant Medical Conditions: [Yes/No/Unclear]\nIf Yes: [Condition, Timeline, Daily Impact]"
+    },
+    {
+      "question": "Are you currently taking any medications? If so, what are they?",
+      "expected_answer": "Current Medications: [Yes/No/Unclear]\nIf Yes: [Medication Names, Dosage, Frequency, Effectiveness]"
+    },
+    {
+      "question": "How has your mood been recently?",
+      "expected_answer": "Recent Mood: [User's Description]"
+    },
+    {
+      "question": "Do you feel difficulty in focusing and completing tasks / daily activities?",
+      "expected_answer": "Difficulty Focusing/Completing Tasks: [Yes/No]"
+    },
+    {
+      "question": "Have you had hallucinations recently / before?",
+      "expected_answer": "Hallucinations: [Yes/No/Unclear]"
+    },
+    {
+      "question": "What activities do you find yourself doing without realising? (Compulsive habits such as plucking of hairs, scarping off skin, biting nails).",
+      "expected_answer": "Compulsive Habits: [Yes/No]\nIf Yes: [Specific Habit & Frequency]"
+    }
+  ]
+}

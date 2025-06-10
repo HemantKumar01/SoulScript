@@ -2,9 +2,11 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 import logging
-from agent.tools import FirebaseQuestionManager
+from next_ques_agent.tools import FirebaseQuestionManager
 from dotenv import load_dotenv
-from agent.agent import analyze_user_response
+from next_ques_agent.agent import analyze_user_response
+from progress_agent.agent import track_progress
+import json
 
 load_dotenv()  # Load environment variables from .env file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -78,6 +80,70 @@ def health_check():
             "version": "1.0.0",
         }
     )
+
+
+@app.route("/track_progress", methods=["POST"])
+async def track_progress_route():
+    """
+    Track user progress based on message history
+
+    Expects JSON body with:
+        user_id (str): User ID to track progress for
+
+    Returns:
+        JSON response with progress tracking result
+    """
+    try:
+        # Validate request data
+        data = request.get_json()
+        if not data:
+            raise ValidationError("Request body is required")
+
+        user_id = data.get("user_id")
+        user_id = validate_user_id(user_id)
+
+        # Import track_progress function
+
+        # Get message history from Firebase
+        message_history = question_manager.getMessageHistory(user_id)
+
+        if not message_history:
+            return (
+                jsonify(
+                    {"success": False, "message": "No message history found for user"}
+                ),
+                404,
+            )
+
+        # Call track_progress function
+        progress_result = await track_progress(user_id, message_history)
+        if type(progress_result) is str:
+            try:
+                progress_result = json.loads(progress_result)
+            except json.JSONDecodeError:
+                progress_result = {"answered_questions": []}
+        # Update progress field in Firebase
+        question_manager.updateProgress(
+            user_id, progress_result.get("answered_questions", []).__len__()
+        )
+
+        return jsonify(
+            {
+                "success": True,
+                "data": {
+                    "user_id": user_id,
+                    "count": progress_result.get("answered_questions", []).__len__(),
+                    "progress": progress_result,
+                },
+                "message": "Progress tracked and updated successfully",
+            }
+        )
+
+    except ValidationError as e:
+        raise e
+    except Exception as e:
+        logger.error(f"Error tracking progress for user {user_id}: {e}")
+        return jsonify({"success": False, "error": "Failed to track progress"}), 500
 
 
 @app.route("/api/questions/current/<user_id>", methods=["GET"])
