@@ -127,7 +127,7 @@ export function CalendarView() {
                       {dayEntries.map((entry) => (
                         <Link
                           key={entry.id}
-                          href={`/mindlog/entry/${user?.uid}/${entry.id}`}
+                          href={`/dashboard/mindlog/entry/${user?.uid}/${entry.id}`}
                           className="block p-1 text-xs truncate rounded bg-primary/10 hover:bg-primary/20"
                         >
                           {entry.title}
