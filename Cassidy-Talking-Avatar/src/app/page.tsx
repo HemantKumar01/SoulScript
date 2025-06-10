@@ -43,7 +43,7 @@ export default function Home() {
                 </h1>
                 
                 <p className="text-xl md:text-2xl font-light text-gray-300 leading-relaxed max-w-2xl">
-                  Transform your mental wellness journey with AI-powered therapy that's accessible, confidential, and always available when you need support.
+                  Transform your mental wellness journey with AI-powered therapy that&apos;s accessible, confidential, and always available when you need support.
                 </p>
                 
                 <div className="pt-4">
@@ -224,7 +224,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-2xl font-bold mb-4 text-white">Seamless Transition</h3>
                   <p className="text-gray-400 leading-relaxed">
-                    When you're ready, seamlessly transition to traditional therapy sessions with our network of qualified professionals who already understand your journey and progress.
+                    When you&apos;re ready, seamlessly transition to traditional therapy sessions with our network of qualified professionals who already understand your journey and progress.
                   </p>
                 </div>
               </div>
@@ -249,7 +249,7 @@ export default function Home() {
                 Transforming Lives Daily
               </h2>
               <p className="text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed">
-                Join thousands who have found support, healing, and personal growth through SoulScript's innovative approach to mental health care.
+                Join thousands who have found support, healing, and personal growth through SoulScript&apos;s innovative approach to mental health care.
               </p>
             </div>
 
@@ -274,7 +274,7 @@ export default function Home() {
                     </div>
                   </div>
                   <p className="text-gray-300 leading-relaxed">
-                    "SoulScript gave me the courage to discuss issues I was too embarrassed to bring up elsewhere. The AI understood my anxiety patterns, and when I transitioned to a human therapist, the process was incredibly smooth."
+                    &quot;SoulScript gave me the courage to discuss issues I was too embarrassed to bring up elsewhere. The AI understood my anxiety patterns, and when I transitioned to a human therapist, the process was incredibly smooth.&quot;
                   </p>
                 </div>
               </div>
@@ -299,7 +299,7 @@ export default function Home() {
                     </div>
                   </div>
                   <p className="text-gray-300 leading-relaxed">
-                    "The journaling features combined with AI insights revealed patterns about myself I never noticed. It's like having a wise friend available 24/7 who actually remembers our previous conversations."
+                    &quot;The journaling features combined with AI insights revealed patterns about myself I never noticed. It&apos;s like having a wise friend available 24/7 who actually remembers our previous conversations.&quot;
                   </p>
                 </div>
               </div>
@@ -324,7 +324,7 @@ export default function Home() {
                     </div>
                   </div>
                   <p className="text-gray-300 leading-relaxed">
-                    "As someone who couldn't afford weekly therapy, SoulScript has been life-changing. The AI provides surprisingly deep insights, and knowing real therapists review conversations gives me complete confidence."
+                   &quot;As someone who couldn&apos;t afford weekly therapy, SoulScript has been life-changing. The AI provides surprisingly deep insights, and knowing real therapists review conversations gives me complete confidence.&quot;
                   </p>
                 </div>
               </div>
