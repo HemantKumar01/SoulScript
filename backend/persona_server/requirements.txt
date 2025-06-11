@@ -43,6 +43,8 @@ beautifulsoup4
 lxml
 requests
 
+cryptography
+
 # Built-in modules (no need to install via pip)
 # - smtplib
 # - email
