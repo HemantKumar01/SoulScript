@@ -161,19 +161,19 @@ export function JournalForm({ entry, isEditing = false }: JournalFormProps) {
             )}
           </CardContent>
 
-          <CardFooter className="flex justify-end gap-2">
+          <CardFooter className="flex justify-end gap-2 mt-5">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.back()}
-              className="border-[#10B981] text-[#10B981] hover:bg-[#10B981]/10 focus:ring-2 focus:ring-[#10B981]/40 transition"
+              className="border-[#00ffaa] text-[#00ffaa] hover:bg-[#10B981]/10 focus:ring-2 focus:ring-[#10B981]/40 transition"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-[#10B981] hover:bg-[#047857] text-white font-semibold shadow-lg transition focus:ring-2 focus:ring-[#10B981]/40"
+              className="bg-[#08d692] hover:bg-[#10B981] text-black font-semibold shadow-lg transition focus:ring-2 focus:ring-[#10B981]/40"
             >
               {isSubmitting
                 ? "Saving..."

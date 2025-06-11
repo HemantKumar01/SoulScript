@@ -30,11 +30,6 @@ const AIChatInterface: React.FC<{ InteractiveMode: boolean }> = ({
       if (messageTranscription != messages[messages.length - 1]) {
         // Add AI response to local state
         setMessages((prev) => [...prev, messageTranscription]);
-
-        // Add AI response to Firebase
-        addMessageToHistory(messageTranscription).catch((error) => {
-          console.error("Error adding AI response to history:", error);
-        });
       }
     }
   }, [messageTranscription, messages]);
