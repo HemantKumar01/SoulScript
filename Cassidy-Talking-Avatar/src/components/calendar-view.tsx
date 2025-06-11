@@ -17,7 +17,7 @@ export function CalendarView() {
   const { user, loading: authLoading } = useAuth()
 
   const fetchEntries = async () => {
-    if (!user?.uid) {
+    if (!user?.uid || !user?.email) {
       setLoading(false)
       return
     }
@@ -25,7 +25,7 @@ export function CalendarView() {
     setLoading(true)
     const year = currentDate.getFullYear()
     const month = currentDate.getMonth()
-    const result = await getEntriesByMonth(user.uid, year, month)
+    const result = await getEntriesByMonth(user.uid, year, month, user.email)
 
     if (result.success) {
       setEntries(
