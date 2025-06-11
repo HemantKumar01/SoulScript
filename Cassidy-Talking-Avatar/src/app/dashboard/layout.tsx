@@ -1,7 +1,7 @@
 import "../App.scss";
 import "../globals.css";
 import SidePanel from "@/components/SidePanel";
-import { SidebarProvider } from "@/components/SidePanel"; 
+import { SidebarProvider } from "@/components/SidePanel";
 import MainContent from "@/components/MainContent";
 
 export const metadata = {
@@ -17,16 +17,7 @@ export default function DashboardLayout({
   return (
     <SidebarProvider>
       <SidePanel />
-      <MainContent>
-        {children}
-      </MainContent>
+      <MainContent>{children}</MainContent>
     </SidebarProvider>
   );
 }
-
-
-
-
-
-
-  

@@ -109,6 +109,8 @@ export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
       type,
       message,
     };
+    console.log(log)
+    console.log(message)
     this.emit("log", log);
   }
 
@@ -151,12 +153,14 @@ export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
     this.session?.close();
     this._session = null;
     this._status = "disconnected";
+    console.log("Cassidy Disconnected")
 
     this.log("client.close", `Disconnected`);
     return true;
   }
 
   protected onopen() {
+    console.log("Cassidy Connected")
     this.log("client.open", "Connected");
     this.emit("open");
   }

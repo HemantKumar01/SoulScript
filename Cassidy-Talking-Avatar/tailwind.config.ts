@@ -3,18 +3,32 @@ import type { Config } from "tailwindcss"
 const config: Config = {
   darkMode: "class",
   content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
+    "./src/pages/**/*.{ts,tsx}",
+    "./src/components/**/*.{ts,tsx}",
+    "./src/app/**/*.{ts,tsx}",
+    "./src/app/dashboard/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
     "*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    screens: {
+      xs: "320px",
+      sm: "576px",
+      md: "768px",
+      lg: "992px",
+      xl: "1200px",
+      "2xl": "1536px",
+    },
     container: {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": "1400px",
+        xs: "320px",
+        sm: "576px",
+        md: "768px",
+        lg: "992px",
+        xl: "1200px",
+        "2xl": "1536px",
       },
     },
     extend: {
