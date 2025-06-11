@@ -2,7 +2,7 @@ import json
 import firebase_admin
 from firebase_admin import credentials, firestore
 from typing import Dict, Optional, Any
-from encryption import decrypt
+from .encryption import decrypt
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
