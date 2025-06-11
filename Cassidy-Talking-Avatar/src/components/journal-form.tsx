@@ -1,58 +1,73 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { createJournalEntry, updateJournalEntry } from "@/lib/actions"
-import type { JournalEntry } from "@/lib/types"
-import { format } from "date-fns"
-import { useAuth } from "@/hooks/useAuth"
-import { getCurrentUser } from "@/lib/firebase"
+import type React from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { createJournalEntry, updateJournalEntry } from "@/lib/actions";
+import type { JournalEntry } from "@/lib/types";
+import { format } from "date-fns";
+import { useAuth } from "@/hooks/useAuth";
+import { getCurrentUser } from "@/lib/firebase";
 
 interface JournalFormProps {
-  entry?: JournalEntry
-  isEditing?: boolean
+  entry?: JournalEntry;
+  isEditing?: boolean;
 }
 
 export function JournalForm({ entry, isEditing = false }: JournalFormProps) {
-  const router = useRouter()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
-  const { user } = useAuth()
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const { user } = useAuth();
 
-  const today = format(new Date(), "yyyy-MM-dd")
+  const today = format(new Date(), "yyyy-MM-dd");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!user?.uid) {
-      setError("User not authenticated")
-      return
+      setError("User not authenticated");
+      return;
     }
 
-    setIsSubmitting(true)
-    setError("")
-    setSuccess("")
+    setIsSubmitting(true);
+    setError("");
+    setSuccess("");
 
-    const formData = new FormData(e.currentTarget)
+    const formData = new FormData(e.currentTarget);
 
     try {
-      let result
+      let result;
 
       if (isEditing && entry?.id) {
-        result = await updateJournalEntry(user.uid, entry.id,getCurrentUser()?.email || "", formData)
+        result = await updateJournalEntry(
+          user.uid,
+          entry.id,
+          getCurrentUser()?.email || "",
+          formData
+        );
       } else {
-        result = await createJournalEntry(user.uid,getCurrentUser()?.email || "", formData)
+        result = await createJournalEntry(
+          user.uid,
+          getCurrentUser()?.email || "",
+          formData
+        );
       }
       console.log("yaha1");
       if (result.success) {
-        setSuccess(result.message)
+        setSuccess(result.message);
         // if (!isEditing) {
         //   e.currentTarget.reset()
         // }
@@ -60,20 +75,20 @@ export function JournalForm({ entry, isEditing = false }: JournalFormProps) {
         //   router.push("/calendar")
         // }, 1500)
       } else {
-        setError(result.message || "Failed to save journal entry")
+        setError(result.message || "Failed to save journal entry");
       }
       console.log("yaha2");
     } catch (err) {
-      console.error(err)
-      setError("An unexpected error occurred.")
+      console.error(err);
+      setError("An unexpected error occurred.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="  py-2 px-2 flex items-center justify-center">
-      <Card className="w-full max-w-2xl mx-auto bg-[#18181B] shadow-2xl rounded-2xl border border-[#10B981]/20">
+      <Card className="w-full max-w-2xl mx-auto bg-[#29292e] shadow-2xl rounded-2xl border">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-[#10B981] tracking-tight">
             {isEditing ? "Edit Journal Entry" : "New Journal Entry"}
@@ -104,7 +119,16 @@ export function JournalForm({ entry, isEditing = false }: JournalFormProps) {
                 name="date"
                 type="date"
                 required
-                defaultValue={entry?.date ? format(entry.date instanceof Date ? entry.date : new Date(entry.date.seconds * 1000), "yyyy-MM-dd") : today}
+                defaultValue={
+                  entry?.date
+                    ? format(
+                        entry.date instanceof Date
+                          ? entry.date
+                          : new Date(entry.date.seconds * 1000),
+                        "yyyy-MM-dd"
+                      )
+                    : today
+                }
                 className="bg-[#23272F] border border-[#10B981]/30 text-white placeholder-gray-400 focus:border-[#10B981] focus:ring-2 focus:ring-[#10B981]/40 transition"
               />
             </div>
@@ -137,25 +161,29 @@ export function JournalForm({ entry, isEditing = false }: JournalFormProps) {
             )}
           </CardContent>
 
-          <CardFooter className="flex justify-end gap-2">
+          <CardFooter className="flex justify-end gap-2 mt-5">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.back()}
-              className="border-[#10B981] text-[#10B981] hover:bg-[#10B981]/10 focus:ring-2 focus:ring-[#10B981]/40 transition"
+              className="border-[#00ffaa] text-[#00ffaa] hover:bg-[#10B981]/10 focus:ring-2 focus:ring-[#10B981]/40 transition"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-[#10B981] hover:bg-[#047857] text-white font-semibold shadow-lg transition focus:ring-2 focus:ring-[#10B981]/40"
+              className="bg-[#08d692] hover:bg-[#10B981] text-black font-semibold shadow-lg transition focus:ring-2 focus:ring-[#10B981]/40"
             >
-              {isSubmitting ? "Saving..." : isEditing ? "Update Entry" : "Save Entry"}
+              {isSubmitting
+                ? "Saving..."
+                : isEditing
+                ? "Update Entry"
+                : "Save Entry"}
             </Button>
           </CardFooter>
         </form>
       </Card>
     </div>
-  )
+  );
 }

@@ -161,12 +161,17 @@ async function encryptMessageHistory(history: MessageHistoryItem[], userEmail: s
 export const getMessageHistory = async (
 ): Promise<MessageHistoryItem[]> => {
   try {
-    const userId = auth.currentUser?.uid;
-    const userEmail = auth.currentUser?.email;
+    let userId = auth.currentUser?.uid;
+    let userEmail = auth.currentUser?.email;
     
     if (!userId || !userEmail) {
+      const currentUser = await waitForAuthState()
+      if(currentUser){
+        userId = currentUser.uid;
+        userEmail = currentUser.email;
+      }else{
       throw new Error('User is not authenticated');
-    }
+    }}
     
     const userDocRef = doc(db, 'users', userId);
     const userSnapshot = await getDoc(userDocRef);
@@ -174,7 +179,11 @@ export const getMessageHistory = async (
     if (userSnapshot.exists()) {
       const userData = userSnapshot.data();
       const encryptedHistory = userData.userHistory || [];
-      
+      if(!userEmail){
+      console.log('No user document found');
+
+        return []
+      }
       // Decrypt the message history before returning
       return await decryptMessageHistory(encryptedHistory, userEmail);
     } else {
@@ -198,6 +207,12 @@ export const addMessageToHistory = async (
     if (!userId || !userEmail) {
       throw new Error('User is not authenticated');
     }
+    const prevMessage = await getMessageHistory();
+    if(newMessage == prevMessage[prevMessage.length - 1] || (prevMessage.length >= 2 && newMessage == prevMessage[prevMessage.length - 2])){
+      console.log("Message already exists in history, skipping addition.");
+      return
+    }
+    console.log(prevMessage[prevMessage.length - 1], newMessage)
     
     // Get the current encrypted history directly from Firestore
     const userDocRef = doc(db, 'users', userId);

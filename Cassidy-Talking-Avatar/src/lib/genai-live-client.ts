@@ -109,8 +109,8 @@ export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
       type,
       message,
     };
-    console.log(log)
-    console.log(message)
+    // console.log(log)
+    // console.log(message)
     this.emit("log", log);
   }
 
