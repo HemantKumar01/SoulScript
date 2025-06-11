@@ -139,7 +139,7 @@ const MindLogReportViewer = () => {
             <div className="space-y-3">
               <div className="text-lg font-semibold">No Journal Entries Found</div>
               <p className="text-amber-200">
-                You haven't written any journal entries yet. Start your mental health journey by writing your first
+                You haven&apos;t written any journal entries yet. Start your mental health journey by writing your first
                 entry!
               </p>
               <div className="flex items-center gap-2 mt-4">
