@@ -75,7 +75,7 @@ async def get_report(request: Request):
             return JSONResponse(content={
                 "info": info_json,
                 "graph": graph_json,
-                "status": "Persona updated and stored. Email queued for sending."
+                "status": "Persona updated and stored."
             }, status_code=200)
 
         # Otherwise, fetch stored persona info and proceed to report/email
@@ -99,7 +99,7 @@ async def get_report(request: Request):
         return JSONResponse(content={
             "info": info_json,
             "graph": graph_json,
-            "status": "Email queued for sending."
+            "status": "cache used."
         }, status_code=200)
 
     except Exception as e:
