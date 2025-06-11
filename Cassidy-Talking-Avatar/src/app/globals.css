@@ -1,6 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -146,22 +143,22 @@ code {
     scrollbar-width: thin;
     scrollbar-color: #d1d5db #ffffff;
   }
-  
+
   .dropdown-scrollbar::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   .dropdown-scrollbar::-webkit-scrollbar-track {
     background: #ffffff;
     border-radius: 10px;
   }
-  
+
   .dropdown-scrollbar::-webkit-scrollbar-thumb {
     background: #d1d5db;
     border-radius: 10px;
     border: 1px solid #ffffff;
   }
-  
+
   .dropdown-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
   }

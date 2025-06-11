@@ -81,7 +81,10 @@ const Progress: React.FC<ProgressProps> = ({
   }
 
   return (
-    <div className={`${className}`} style={{ width: size, height: size }}>
+    <div
+      className={`relative ${className} flex justify-center items-center`}
+      style={{ width: size + 100, height: size }}
+    >
       <svg width={size} height={size} className="transform -rotate-90">
         {/* Background circle */}
         <circle
@@ -114,8 +117,8 @@ const Progress: React.FC<ProgressProps> = ({
         </span>
       </div>
       {/* Progress text */}
-      <div className="absolute -bottom-12 left-0 right-0 text-center">
-        <span className="text-sm text-gray-100">Quality of Report</span>
+      <div className="absolute -bottom-8 left-0 right-0 text-center">
+        <span className="text-sm text-gray-100">Conversation Quality</span>
       </div>
     </div>
   );

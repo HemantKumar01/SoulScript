@@ -117,6 +117,7 @@ function GeminiLiveComponent() {
     setModel("models/gemini-2.5-flash-preview-native-audio-dialog");
 
     if (!userName || !userId.length || questionIndex === null) {
+      console.log("Initializing");
       return;
     }
     console.log(questions, questions.slice(questionIndex as number));
