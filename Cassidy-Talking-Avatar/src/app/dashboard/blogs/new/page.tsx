@@ -317,7 +317,7 @@ export default function NewPostPage() {
                     <div className="flex justify-end">
                       <Button
                         type="submit"
-                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0 px-8"
+                        className="bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-700 hover:from-emerald-500 hover:via-green-500 hover:to-emerald-600 text-white py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-emerald-500/25 text-white border-0 px-8"
                       >
                         Post
                       </Button>

@@ -19,11 +19,154 @@ import { db } from './firebase'
 import type { BlogPost, Comment } from '@/types/blog'
 
 // Collection names
-const BLOGS_COLLECTION = 'blogs'
-const COMMENTS_SUBCOLLECTION = 'comments'
-const LIKES_SUBCOLLECTION = 'likes'
-const BOOKMARKS_SUBCOLLECTION = 'bookmarks'
-const COMMENT_LIKES_SUBCOLLECTION = 'likes'
+export const BLOGS_COLLECTION = 'blogs'
+export const COMMENTS_SUBCOLLECTION = 'comments'
+export const LIKES_SUBCOLLECTION = 'likes'
+export const BOOKMARKS_SUBCOLLECTION = 'bookmarks'
+export const COMMENT_LIKES_SUBCOLLECTION = 'likes'
+
+export const USERS_COLLECTION = 'users'
+export const FOLLOWING_SUBCOLLECTION = 'following'
+export const FOLLOWERS_SUBCOLLECTION = 'followers'
+
+// Follow/Unfollow a user
+export async function followUser(followerId: string, followingId: string, isFollowing: boolean): Promise<void> {
+  try {
+    const followerRef = doc(db, USERS_COLLECTION, followerId)
+    const followingRef = doc(db, USERS_COLLECTION, followingId)
+    
+    if (isFollowing) {
+      // Add to follower's following list
+      await addDoc(collection(followerRef, FOLLOWING_SUBCOLLECTION), {
+        userId: followingId,
+        createdAt: serverTimestamp()
+      })
+      
+      // Add to following user's followers list
+      await addDoc(collection(followingRef, FOLLOWERS_SUBCOLLECTION), {
+        userId: followerId,
+        createdAt: serverTimestamp()
+      })
+    } else {
+      // Remove from follower's following list
+      const followingQuery = query(
+        collection(followerRef, FOLLOWING_SUBCOLLECTION),
+        where('userId', '==', followingId)
+      )
+      const followingSnapshot = await getDocs(followingQuery)
+      
+      if (!followingSnapshot.empty) {
+        await deleteDoc(followingSnapshot.docs[0].ref)
+      }
+      
+      // Remove from following user's followers list
+      const followersQuery = query(
+        collection(followingRef, FOLLOWERS_SUBCOLLECTION),
+        where('userId', '==', followerId)
+      )
+      const followersSnapshot = await getDocs(followersQuery)
+      
+      if (!followersSnapshot.empty) {
+        await deleteDoc(followersSnapshot.docs[0].ref)
+      }
+    }
+  } catch (error) {
+    console.error('Error following/unfollowing user:', error)
+    throw error
+  }
+}
+
+// Check if user is following another user
+export async function isUserFollowing(followerId: string, followingId: string): Promise<boolean> {
+  try {
+    const followerRef = doc(db, USERS_COLLECTION, followerId)
+    const followingQuery = query(
+      collection(followerRef, FOLLOWING_SUBCOLLECTION),
+      where('userId', '==', followingId)
+    )
+    const followingSnapshot = await getDocs(followingQuery)
+    return !followingSnapshot.empty
+  } catch (error) {
+    console.error('Error checking if user is following:', error)
+    return false
+  }
+}
+
+// Get users that current user is following
+export async function getFollowingUsers(userId: string): Promise<string[]> {
+  try {
+    const userRef = doc(db, USERS_COLLECTION, userId)
+    const followingQuery = query(
+      collection(userRef, FOLLOWING_SUBCOLLECTION),
+      orderBy('createdAt', 'desc')
+    )
+    const followingSnapshot = await getDocs(followingQuery)
+
+    return followingSnapshot.docs
+      .map(doc => doc.data().userId)
+      .filter((id): id is string => typeof id === 'string' && id.trim().length > 0) // fix by filterinn
+  } catch (error) {
+    console.error('Error getting following users:', error)
+    return []
+  }
+}
+
+// Get blog posts from users that current user is following
+export async function getFollowingBlogPosts(userId: string): Promise<BlogPost[]> {
+  try {
+    const followingUserIds = await getFollowingUsers(userId)
+    
+    if (followingUserIds.length === 0) {
+      return []
+    }
+    
+    // Get posts from all following users
+    const followingPosts: BlogPost[] = []
+    
+    for (const authorId of followingUserIds) {
+      const authorPosts = await getBlogPostsByAuthor(authorId)
+      followingPosts.push(...authorPosts)
+    }
+    
+    // Sort by creation date (newest first)
+    return followingPosts.sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    )
+  } catch (error) {
+    console.error('Error getting following blog posts:', error)
+    return []
+  }
+}
+
+// Get all unique tags from blog posts
+export async function getAllTags(): Promise<string[]> {
+  try {
+    const allPosts = await getAllBlogPosts()
+    const tagsSet = new Set<string>()
+    
+    allPosts.forEach(post => {
+      post.tags.forEach(tag => tagsSet.add(tag))
+    })
+    
+    return Array.from(tagsSet).sort()
+  } catch (error) {
+    console.error('Error getting all tags:', error)
+    return []
+  }
+}
+
+// Get blog posts by tag
+export async function getBlogPostsByTag(tag: string): Promise<BlogPost[]> {
+  try {
+    const allPosts = await getAllBlogPosts()
+    return allPosts.filter(post => 
+      post.tags.some(postTag => postTag.toLowerCase() === tag.toLowerCase())
+    )
+  } catch (error) {
+    console.error('Error getting blog posts by tag:', error)
+    return []
+  }
+}
 
 // Convert Firestore document to BlogPost
 function convertFirestoreToBlogPost(docData: DocumentData, id: string): BlogPost {
