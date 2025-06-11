@@ -320,7 +320,7 @@ export default function CalmifyPage() {
             console.error('Session error:', e);
             setConnectionError(true);
             stop();
-            toastRef.current?.show('Connection error, please restart audio by refreshing the page.');
+            toastRef.current?.show('Connection error, please wait for a few minutes before refreshing.');
           },
           onclose: (e: CloseEvent) => {
             console.error('Session closed:', e);
