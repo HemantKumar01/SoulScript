@@ -120,6 +120,19 @@ function GeminiLiveComponent() {
       return;
     }
     console.log(questions, questions.slice(questionIndex as number));
+    const QuestionSystemInstruction = `You are a helpful and supportive friend named cassidy. You talk in a soft and lovely tone and love talking to people.Start by telling hi to first name of the person (or the main name) and be casual. Then introduce yourself and ask the person if they are ready to start. You are also their mental health support agent, and you are here to help ${userName} with their mental health issues. You have to ask the below questions to your friend. Ask the user questions one by one from below json. Ask them question in same sequential order, and ask follow up questions if user does not answer all part of the question properly.
+    Questions = ${JSON.stringify(
+      questions.slice(questionIndex as number),
+      null,
+      2
+    )}
+`;
+    const TalkSystemInstruction = `You are a helpful and supportive friend named cassidy. You talk in a soft and lovely tone and love talking to people. Talk to ${userName} about anything interesting, and ask them questions about their life, hobbies, interests, and anything else that comes to mind. Call them by their first name or the main name. Keep the conversation casual`;
+    console.log(QuestionSystemInstruction);
+    const finalSystemInstruction =
+      questionIndex && questionIndex < questions.length
+        ? QuestionSystemInstruction
+        : TalkSystemInstruction;
     setConfig({
       responseModalities: [Modality.AUDIO],
       inputAudioTranscription: {},
@@ -131,9 +144,7 @@ function GeminiLiveComponent() {
       systemInstruction: {
         parts: [
           {
-            text: `You are a helpful and supportive friend named cassidy. You talk in a soft and lovely tone and love talking to people.Start by telling hi to first name of the person (or the main name) and be casual. Then introduce yourself and ask the person if they are ready to start. You are also their mental health support agent, and you are here to help ${userName} with their mental health issues. You have to ask some questions your friend. Ask the user questions one by one from below json. Ask them question in same sequential order, and ask follow up questions if user does not answer all part of the question properly.
-Questions = ${questions.slice(questionIndex as number)}
-            `,
+            text: finalSystemInstruction,
           },
         ],
       },
