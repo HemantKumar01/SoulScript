@@ -179,7 +179,11 @@ export const getMessageHistory = async (
     if (userSnapshot.exists()) {
       const userData = userSnapshot.data();
       const encryptedHistory = userData.userHistory || [];
-      
+      if(!userEmail){
+      console.log('No user document found');
+
+        return []
+      }
       // Decrypt the message history before returning
       return await decryptMessageHistory(encryptedHistory, userEmail);
     } else {

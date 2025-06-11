@@ -135,7 +135,7 @@ const SidePanel: React.FC = () => {
     <div
       className={`
         fixed left-0 top-0 h-full bg-black border-r border-emerald-500/20 
-        transition-all duration-300 ease-in-out z-50 flex flex-col
+        transition-all duration-300 ease-in-out z-100 flex flex-col
         ${isCollapsed ? "w-16" : "w-64"}
       `}
     >
