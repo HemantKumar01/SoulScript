@@ -2,6 +2,7 @@ import json
 import firebase_admin
 from firebase_admin import credentials, firestore
 from typing import Dict, Optional, Any
+from encryption import decrypt
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -46,13 +47,13 @@ class FirebaseQuestionManager:
 
     def getMessageHistory(self, userId: str) -> Optional[list]:
         """
-        Gets the message history for a user from Firebase.
+        Gets the message history for a user from Firebase, decrypting messages if necessary.
 
         Args:
             userId (str): The ID of the user whose message history to retrieve
 
         Returns:
-            Optional[list]: The user's message history or None if not found
+            Optional[list]: The user's decrypted message history or None if not found
         """
         try:
             user_ref = self.db.collection("users").document(userId)
@@ -60,7 +61,40 @@ class FirebaseQuestionManager:
 
             if user_doc.exists:
                 user_data = user_doc.to_dict()
-                return user_data.get("userHistory", [])
+                user_history = user_data.get("userHistory", [])
+                user_email = user_data.get("email")
+
+                if not user_email:
+                    print(f"User email not found for user {userId} - required for decryption")
+
+                if not user_history:
+                    return []
+
+                if not user_email:
+                    print(f"Warning: Email not found for user {userId}. Encrypted messages will not be decrypted.")
+                    return user_history
+
+
+                decrypted_user_history = []
+                for entry in user_history:
+                    if isinstance(entry, dict):
+                        decrypted_entry = {}
+                        for key, value in entry.items():
+                            if key == 'encryptedMessage' and value and user_email:
+                                try:
+                                    decrypted_message = decrypt(value, user_email)
+                                    decrypted_entry['message'] = decrypted_message
+                                except Exception as e:
+                                    print(f"Failed to decrypt message for user {userId}: {e}")
+                                    decrypted_entry['message'] = "[ENCRYPTED_DATA_COULD_NOT_DECRYPT]"
+                            else:
+                                decrypted_entry[key] = value
+                                
+                        decrypted_user_history.append(decrypted_entry)
+                    else:
+                        decrypted_user_history.append(entry)
+
+                return decrypted_user_history
 
             return None
 
