@@ -12,6 +12,7 @@ import { createJournalEntry, updateJournalEntry } from "@/lib/actions"
 import type { JournalEntry } from "@/lib/types"
 import { format } from "date-fns"
 import { useAuth } from "@/hooks/useAuth"
+import { getCurrentUser } from "@/lib/firebase"
 
 interface JournalFormProps {
   entry?: JournalEntry
@@ -45,9 +46,9 @@ export function JournalForm({ entry, isEditing = false }: JournalFormProps) {
       let result
 
       if (isEditing && entry?.id) {
-        result = await updateJournalEntry(user.uid, entry.id, formData)
+        result = await updateJournalEntry(user.uid, entry.id,getCurrentUser()?.email || "", formData)
       } else {
-        result = await createJournalEntry(user.uid, formData)
+        result = await createJournalEntry(user.uid,getCurrentUser()?.email || "", formData)
       }
       console.log("yaha1");
       if (result.success) {

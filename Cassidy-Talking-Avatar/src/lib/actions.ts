@@ -16,12 +16,28 @@ import {
 import { db } from "./firebase"
 import { JournalEntry } from "./types"
 import { getCurrentUser } from "./firebase"
+import { encrypt, decrypt } from "./crypto/encryption"
+
 // Helper function to convert Firestore data to JournalEntry
-function convertFirestoreEntry(docData: any, docId: string, userId: string): JournalEntry {
+async function convertFirestoreEntry(docData: any, docId: string, userId: string, userEmail: string): Promise<JournalEntry> {
+  let title = ""
+  let content = ""
+  
+  try {
+    // Decrypt the encrypted fields
+    title = docData.encryptedTitle ? await decrypt(docData.encryptedTitle, userEmail) : docData.title || ""
+    content = docData.encryptedContent ? await decrypt(docData.encryptedContent, userEmail) : docData.content || ""
+  } catch (error) {
+    console.error("Error decrypting journal entry:", error)
+    // Fallback to non-encrypted data if decryption fails
+    title = docData.title || "Unable to decrypt title"
+    content = docData.content || "Unable to decrypt content"
+  }
+  
   return {
     id: docId,
-    title: docData.title,
-    content: docData.content,
+    title,
+    content,
     date: docData.date.toDate ? docData.date.toDate() : docData.date,
     createdAt: docData.createdAt.toDate ? docData.createdAt.toDate() : docData.createdAt,
     updatedAt: docData.updatedAt.toDate ? docData.updatedAt.toDate() : docData.updatedAt,
@@ -32,6 +48,7 @@ function convertFirestoreEntry(docData: any, docId: string, userId: string): Jou
 // Create a new journal entry
 export async function createJournalEntry(
   userId: string, 
+  email: string,
   data: FormData | { title: string; content: string; date: string }
 ) {
   try {
@@ -59,9 +76,12 @@ export async function createJournalEntry(
     const date = new Date(dateStr)
     const now = new Date()
 
+    const encryptedTitle = await encrypt(title, email)
+    const encryptedContent = await encrypt(content, email)
+
     const entry = {
-      title,
-      content,
+      encryptedTitle,
+      encryptedContent,
       date: Timestamp.fromDate(date),
       createdAt: Timestamp.fromDate(now),
       updatedAt: Timestamp.fromDate(now)
@@ -81,7 +101,7 @@ export async function createJournalEntry(
 }
 
 // Get all journal entries for a specific user
-export async function getJournalEntries(userId: string) {
+export async function getJournalEntries(userId: string, userEmail: string) {
   try {
     if (!userId) {
       return { success: false, entries: [], message: "User not authenticated" }
@@ -95,9 +115,11 @@ export async function getJournalEntries(userId: string) {
     const querySnapshot = await getDocs(q)
     const entries: JournalEntry[] = []
 
-    querySnapshot.forEach((doc) => {
-      entries.push(convertFirestoreEntry(doc.data(), doc.id, userId))
-    })
+    // Process entries sequentially to handle async decryption
+    for (const doc of querySnapshot.docs) {
+      const entry = await convertFirestoreEntry(doc.data(), doc.id, userId, userEmail)
+      entries.push(entry)
+    }
 
     return { success: true, entries }
   } catch (error) {
@@ -107,7 +129,7 @@ export async function getJournalEntries(userId: string) {
 }
 
 // Get a single journal entry by ID for a specific user
-export async function getJournalEntryById(userId: string, entryId: string) {
+export async function getJournalEntryById(userId: string, entryId: string, userEmail: string) {
   try {
     console.log(userId);
     if (!userId) {
@@ -121,7 +143,7 @@ export async function getJournalEntryById(userId: string, entryId: string) {
       return { success: false, entry: null, message: "Entry not found" }
     }
 
-    const entry = convertFirestoreEntry(docSnap.data(), docSnap.id, userId)
+    const entry = await convertFirestoreEntry(docSnap.data(), docSnap.id, userId, userEmail)
     console.log("meow,",entry)
     return { success: true, entry }
   } catch (error) {
@@ -134,6 +156,7 @@ export async function getJournalEntryById(userId: string, entryId: string) {
 export async function updateJournalEntry(
   userId: string, 
   entryId: string, 
+  email: string,
   data: FormData | { title: string; content: string; date: string }
 ) {
   try {
@@ -168,9 +191,12 @@ export async function updateJournalEntry(
 
     const date = new Date(dateStr)
 
+    const encryptedTitle = await encrypt(title, email)
+    const encryptedContent = await encrypt(content, email)
+
     await updateDoc(docRef, {
-      title,
-      content,
+      encryptedTitle,
+      encryptedContent,
       date: Timestamp.fromDate(date),
       updatedAt: Timestamp.fromDate(new Date()),
     })
@@ -214,7 +240,7 @@ export async function deleteJournalEntry(userId: string, entryId: string) {
 }
 
 // Get entries for a specific month for a specific user
-export async function getEntriesByMonth(userId: string, year: number, month: number) {
+export async function getEntriesByMonth(userId: string, year: number, month: number, userEmail: string) {
   try {
     if (!userId) {
       return { success: false, entries: [], message: "User not authenticated" }
@@ -232,15 +258,16 @@ export async function getEntriesByMonth(userId: string, year: number, month: num
     const querySnapshot = await getDocs(q)
     const entries: JournalEntry[] = []
 
-    // Filter entries by date range on the client side
-    querySnapshot.forEach((doc) => {
+    // Filter entries by date range and decrypt them
+    for (const doc of querySnapshot.docs) {
       const entryData = doc.data()
       const entryDate = entryData.date.toDate()
       
       if (entryDate >= startDate && entryDate <= endDate) {
-        entries.push(convertFirestoreEntry(entryData, doc.id, userId))
+        const entry = await convertFirestoreEntry(entryData, doc.id, userId, userEmail)
+        entries.push(entry)
       }
-    })
+    }
 
     return { success: true, entries }
   } catch (error) {
