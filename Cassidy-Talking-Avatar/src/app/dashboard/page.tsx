@@ -25,6 +25,7 @@ import { requireAuth } from "@/lib/firebase";
 import { useEffect, useState } from "react";
 import { useLiveAPIContext } from "@/contexts/LiveAPIContext";
 import Progress from "@/components/avatar/progress/progress";
+import { Inter } from "next/font/google";
 
 const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY as string;
 if (typeof API_KEY !== "string") {
@@ -83,7 +84,7 @@ const DualChatbotElement = () => {
           display: InteractiveMode ? "none" : "block",
         }}
       >
-        <AIChatInterface></AIChatInterface>
+        <AIChatInterface InteractiveMode={InteractiveMode}></AIChatInterface>
       </main>
       <div className="absolute top-0 right-5  z-50 flex items-center gap-2 justify-center p-5 rounded-lg">
         <div className="text-zinc-700">Chat</div>
