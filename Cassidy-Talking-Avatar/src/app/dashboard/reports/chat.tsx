@@ -70,10 +70,10 @@ const ChatSummaryViewer = () => {
 
   return (
     <div className="space-y-8">
-      <Card className="border border-slate-700 bg-gradient-to-br from-slate-800/50 via-slate-800/50 to-purple-900/20 shadow-lg shadow-purple-500/10">
+      <Card className="border border-slate-700 bg-gradient-to-br from-slate-800/50 via-slate-800/50 to-cyan-900/20 shadow-lg shadow-cyan-500/10">
         <CardHeader className="pb-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/50">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00ff77] to-[#00bfff] flex items-center justify-center shadow-lg shadow-cyan-500/50">
               <MessageSquare className="h-8 w-8 text-white" />
             </div>
             <div className="flex-1">
@@ -91,7 +91,7 @@ const ChatSummaryViewer = () => {
               onClick={handleGenerateReport}
               disabled={loading || !authId}
               size="lg"
-              className="min-w-[220px] bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-md hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300 text-lg py-6"
+              className="min-w-[220px] bg-gradient-to-r from-[#00ff77] to-[#00bfff] hover:from-[#00e66d] hover:to-[#00aaff] text-white border-0 shadow-md hover:shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 text-lg py-6"
             >
               {loading ? (
                 <>
@@ -115,14 +115,14 @@ const ChatSummaryViewer = () => {
           </div>
 
           {loading && (
-            <div className="space-y-4 p-6 bg-gradient-to-br from-slate-700/30 via-purple-900/20 to-pink-900/20 rounded-xl">
+            <div className="space-y-4 p-6 bg-gradient-to-br from-slate-700/30 via-cyan-900/20 to-blue-900/20 rounded-xl">
               <div className="flex items-center justify-between text-lg">
                 <span className="text-white font-medium">Analyzing your conversations...</span>
-                <span className="text-purple-400 font-bold">{progress}%</span>
+                <span className="text-cyan-400 font-bold">{progress}%</span>
               </div>
               <div className="w-full bg-slate-600/50 rounded-full h-3 overflow-hidden">
                 <div
-                  className="h-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-500 ease-out"
+                  className="h-3 rounded-full bg-gradient-to-r from-[#00ff77] to-[#00bfff] transition-all duration-500 ease-out"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -139,7 +139,7 @@ const ChatSummaryViewer = () => {
       </Card>
 
       {pdfUrl && (
-        <Card className="border border-slate-700 bg-gradient-to-br from-slate-800/50 via-slate-800/50 to-purple-900/20 shadow-lg shadow-purple-500/10">
+        <Card className="border border-slate-700 bg-gradient-to-br from-slate-800/50 via-slate-800/50 to-cyan-900/20 shadow-lg shadow-cyan-500/10">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
