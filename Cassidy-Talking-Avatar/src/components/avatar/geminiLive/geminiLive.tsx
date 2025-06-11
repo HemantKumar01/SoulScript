@@ -134,7 +134,7 @@ function GeminiLiveComponent() {
         ? QuestionSystemInstruction
         : TalkSystemInstruction;
     setConfig({
-      // responseModalities: [Modality.AUDIO],
+      responseModalities: [Modality.AUDIO],
       inputAudioTranscription: {},
       outputAudioTranscription: {},
       speechConfig: {
