@@ -128,7 +128,7 @@ export default function ChatInterface() {
             alt="reflection"
             className="h-[1.5em] w-auto mr-2"
           />
-          Know Yourself Better
+           Reflections
         </h1>
         {/* <Button
           variant="outline"
@@ -141,6 +141,11 @@ export default function ChatInterface() {
 
       {/* Chat Container */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6">
+         <div
+        className={`banner-text fixed z-[20] pointer-events-none w-[100vh] h-auto top-1/2 transform -translate-y-1/2 right-0 text-[95px] font-[900] text-[#ffffff] text-center opacity-5 origin-center -rotate-90 translate-x-[calc(50%-0.5em)] select-none ${ClashDisplay.className}`}
+      >
+      Reflections
+      </div>
         <div className="max-w-3xl mx-auto space-y-6">
           {messages.length === 0 ? (
             <div className="text-center py-12 text-slate-400">

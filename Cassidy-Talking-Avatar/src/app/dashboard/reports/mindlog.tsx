@@ -172,47 +172,47 @@ const MindLogReportViewer = () => {
       );
     }
 
-    if (errorCode === "INSUFFICIENT_ENTRIES") {
-      return (
-        <Alert className="border-blue-500/50 bg-blue-500/10">
-          <Info className="h-5 w-5 text-blue-400" />
-          <AlertDescription className="text-blue-300">
-            <div className="space-y-3">
-              <div className="text-lg font-semibold">
-                Need More Journal Entries
-              </div>
-              <p className="text-blue-200">
-                You have only {entriesFound} journal{" "}
-                {entriesFound === 1 ? "entry" : "entries"}.
-              </p>
-              <div className="bg-blue-500/20 rounded-lg p-4 mt-3">
-                <div className="text-sm text-blue-100">
-                  <strong>Tips for better analysis:</strong>
-                  <ul className="list-disc list-inside mt-2 space-y-1">
-                    <li>Write entries regularly (daily or every few days)</li>
-                    <li>Include your thoughts, feelings, and experiences</li>
-                    <li>Be honest and detailed in your reflections</li>
-                  </ul>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 mt-4">
-                <Button
-                  size="sm"
-                  className="bg-blue-500 hover:bg-blue-600 text-white"
-                  onClick={() => {
-                    // Navigate to journal writing page - adjust the path as needed
-                    window.location.href = "/dashboard/mindlog";
-                  }}
-                >
-                  <PenTool className="h-4 w-4 mr-2" />
-                  Add More Entries
-                </Button>
-              </div>
+   if (errorCode === "INSUFFICIENT_ENTRIES") {
+  return (
+    <Alert className="border-pink-500/50 bg-pink-500/10">
+      <Info className="h-5 w-5 text-pink-400" />
+      <AlertDescription className="text-pink-300">
+        <div className="space-y-3">
+          <div className="text-lg font-semibold">
+            Need More Journal Entries
+          </div>
+          <p className="text-pink-200">
+            You have only {entriesFound} journal{" "}
+            {entriesFound === 1 ? "entry" : "entries"}.
+          </p>
+          <div className="bg-pink-500/20 rounded-lg p-4 mt-3">
+            <div className="text-sm text-pink-100">
+              <strong>Tips for better analysis:</strong>
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Write entries regularly (daily or every few days)</li>
+                <li>Include your thoughts, feelings, and experiences</li>
+                <li>Be honest and detailed in your reflections</li>
+              </ul>
             </div>
-          </AlertDescription>
-        </Alert>
-      );
-    }
+          </div>
+          <div className="flex items-center gap-2 mt-4">
+            <Button
+              size="sm"
+              className="bg-pink-500 hover:bg-pink-600 text-white"
+              onClick={() => {
+                window.location.href = "/dashboard/mindlog";
+              }}
+            >
+              <PenTool className="h-4 w-4 mr-2" />
+              Add More Entries
+            </Button>
+          </div>
+        </div>
+      </AlertDescription>
+    </Alert>
+  );
+}
+
 
     // Default error handling
     return (
@@ -227,10 +227,10 @@ const MindLogReportViewer = () => {
 
   return (
     <div className="space-y-8">
-      <Card className="border border-slate-700 bg-gradient-to-br from-slate-800/50 via-slate-800/50 to-purple-900/20 shadow-lg shadow-purple-500/10">
+      <Card className="border border-slate-700 bg-gradient-to-br from-slate-800/50 via-slate-800/50 to-cyan-900/20 shadow-lg shadow-cyan-500/10">
         <CardHeader className="pb-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/50">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00ff77] to-[#00bfff] flex items-center justify-center shadow-lg shadow-cyan-500/50">
               <Brain className="h-8 w-8 text-white" />
             </div>
             <div className="flex-1">
@@ -247,7 +247,7 @@ const MindLogReportViewer = () => {
 
         <CardContent className="space-y-6">
           {/* Day Selection */}
-          <div className="p-6 bg-gradient-to-br from-slate-700/30 via-purple-900/20 to-pink-900/20 rounded-xl border border-slate-600/50">
+          <div className="p-6 bg-gradient-to-br from-slate-700/30 via-cyan-900/20 to-blue-900/20 rounded-xl border border-slate-600/50">
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-white mb-1">
                 Report Duration
@@ -271,8 +271,8 @@ const MindLogReportViewer = () => {
                   onClick={() => setNumDays(option.days)}
                   className={`p-4 rounded-xl border-2 transition-all duration-300 text-center ${
                     numDays === option.days
-                      ? "border-purple-500 bg-gradient-to-br from-purple-500/20 to-pink-500/20 shadow-md shadow-purple-500/25"
-                      : "border-slate-600 bg-slate-700/50 hover:bg-gradient-to-br hover:from-slate-700 hover:to-purple-900/30 hover:border-slate-500"
+                      ? "border-cyan-500 bg-gradient-to-br from-[#00ff77]/20 to-[#00bfff]/20 shadow-md shadow-cyan-500/25"
+                      : "border-slate-600 bg-slate-700/50 hover:bg-gradient-to-br hover:from-slate-700 hover:to-cyan-900/30 hover:border-slate-500"
                   }`}
                 >
                   <div className="text-white font-semibold text-lg">
@@ -282,7 +282,7 @@ const MindLogReportViewer = () => {
                     {option.subtitle}
                   </div>
                   {numDays === option.days && (
-                    <div className="w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mt-2"></div>
+                    <div className="w-2 h-2 bg-gradient-to-r from-[#00ff77] to-[#00bfff] rounded-full mx-auto mt-2"></div>
                   )}
                 </button>
               ))}
@@ -291,7 +291,7 @@ const MindLogReportViewer = () => {
             {/* Custom Input */}
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm text-slate-300">
-                <div className="w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-gradient-to-r from-[#00ff77] to-[#00bfff] rounded-full"></div>
                 <span>Or enter a custom number of days:</span>
               </div>
 
@@ -308,7 +308,7 @@ const MindLogReportViewer = () => {
                         setNumDays(value);
                       }
                     }}
-                    className="bg-slate-800/50 border-slate-600 text-white placeholder-slate-400 focus:border-purple-500 focus:ring-purple-500/20"
+                    className="bg-slate-800/50 border-slate-600 text-white placeholder-slate-400 focus:border-cyan-500 focus:ring-cyan-500/20"
                     placeholder="Enter days (1-365)"
                   />
                 </div>
@@ -317,7 +317,7 @@ const MindLogReportViewer = () => {
             </div>
 
             <div className="flex items-center gap-2 text-sm text-slate-400 mt-4 pt-4 border-t border-slate-600/50">
-              <div className="w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-gradient-to-r from-[#00ff77] to-[#00bfff] rounded-full"></div>
               <span>
                 Analyzing your mental health patterns over the last {numDays}{" "}
                 days
@@ -330,7 +330,7 @@ const MindLogReportViewer = () => {
               onClick={handleGenerateReport}
               disabled={loading || !authId}
               size="lg"
-              className="min-w-[220px] bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-md hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300 text-lg py-6"
+              className="min-w-[220px] bg-gradient-to-r from-[#00ff77] to-[#00bfff] hover:from-[#00e66d] hover:to-[#00aaff] text-white border-0 shadow-md hover:shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 text-lg py-6"
             >
               {loading ? (
                 <>
@@ -359,11 +359,11 @@ const MindLogReportViewer = () => {
                 <span className="text-white font-medium">
                   Generating your {numDays}-day personalized report...
                 </span>
-                <span className="text-purple-400 font-bold">{progress}%</span>
+                <span className="text-cyan-400 font-bold">{progress}%</span>
               </div>
               <div className="w-full bg-slate-600/50 rounded-full h-3 overflow-hidden">
                 <div
-                  className="h-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-500 ease-out"
+                  className="h-3 rounded-full bg-gradient-to-r from-[#00ff77] to-[#00bfff] transition-all duration-500 ease-out"
                   style={{ width: `${progress}%` }}
                 />
               </div>
