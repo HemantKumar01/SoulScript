@@ -9,15 +9,20 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useCurrentUser } from "@/hooks/use-current-user"
 import {
-  User,
-  Home,
-  Brain,
+  UserCircle,
+  Users,
+  Briefcase,
+  BrainCircuit,
   FileText,
-  Shield,
-  Activity,
-  Heart,
-  Clipboard,
-  TrendingUp,
+  ShieldCheck,
+  FlaskConical,
+  HeartPulse,
+  Pill,
+  Repeat,
+  AlertTriangle,
+  Puzzle,
+  Star,
+  ScrollText,
   ChevronDown, Globe, Check, Search, Mail
 } from "lucide-react"; // assuming you're using lucide icons
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
@@ -868,7 +873,7 @@ const formatArrayValue = (value: string) => {
   }) => (
     <div className="bg-white rounded-xl p-6  hover:shadow-2xl transition-shadow duration-200">
       <div className="flex items-center mb-4">
-        <Icon className="w-8 h-8 text-red-600 mr-3" />
+        <Icon className="w-10 h-10 text-red-600 mr-3" />
 
         <h2 className="text-xl font-bold text-gray-800">{title}</h2>
       </div>
@@ -887,24 +892,26 @@ const formatArrayValue = (value: string) => {
   const formatTitle = (key: string): string =>
     key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase()).trim();
 
-  const getSectionIcon = (key: string) => {
-    const iconMap: { [key: string]: React.ElementType } = {
-      demographics: User,
-      familyEmployment: Home,
-      therapyReasons: Brain,
-      mentalHealthHistory: FileText,
-      traumaAndAdverseExperiences: Shield,
-      substanceUse: Activity,
-      healthAndLifestyle: Heart,
-      medicalAndMedicationHistory: Clipboard,
-      behavioralPatterns: Brain,
-      riskAssessment: Shield,
-      psychologicalFormulation: Brain,
-      strengthsAndResources: TrendingUp,
-      therapyRecommendations: FileText,
-    };
-    return iconMap[key] || FileText;
+ 
+const getSectionIcon = (key: string) => {
+  const iconMap: { [key: string]: React.ElementType } = {
+    demographics: UserCircle,                         // More personal
+    familyEmployment: Briefcase,                     // More workplace-oriented
+    therapyReasons: BrainCircuit,                    // More detailed brain
+    mentalHealthHistory: ScrollText,                 // Feels historic/documented
+    traumaAndAdverseExperiences: ShieldCheck,        // Protection/recovery
+    substanceUse: FlaskConical,                      // Represents substance/lab
+    healthAndLifestyle: HeartPulse,                  // Better than plain heart
+    medicalAndMedicationHistory: Pill,              // Represents meds clearly
+    behavioralPatterns: Repeat,                      // Represents habit/loop
+    riskAssessment: AlertTriangle,                   // Clear warning sign
+    psychologicalFormulation: Puzzle,                // Represents complexity
+    strengthsAndResources: Star,                     // Feels positive, ability
+    therapyRecommendations: FileText,                // Same, fits documentation
   };
+
+  return iconMap[key] || FileText;
+};
 export default function PersonaDashboardPage() {
   return (
     <KnowAboutMe />
