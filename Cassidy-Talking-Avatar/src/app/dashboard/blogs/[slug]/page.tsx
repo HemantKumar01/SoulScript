@@ -5,6 +5,8 @@ import { getBlogPostBySlug } from "@/lib/firebase-blog"
 import type { BlogPost } from "@/types/blog"
 import CommentSection from "@/components/blog/CommentSection"
 import BlogPostActions from "@/components/blog/BlogPostActions"
+import { followUser } from "@/lib/firebase-blog"
+import FollowCard from "@/components/blog/FollowCard"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -46,19 +48,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <div className="mb-8">
               <h1 className="text-3xl md:text-4xl font-bold mb-4">{typedPost.title}</h1>
 
-              <div className="flex items-center mb-6">
-                <img
-                  src={typedPost.author.avatar || "/placeholder.svg"}
-                  alt={typedPost.author.name}
-                  className="w-10 h-10 rounded-full mr-3"
-                />
-                <div>
-                  <div className="font-medium">{typedPost.author.name}</div>
-                  <div className="text-sm text-gray-400">
-                    {new Date(typedPost.date).toLocaleDateString()} · {typedPost.readTime} min read
-                  </div>
-                </div>
-              </div>
+              <FollowCard
+                targetUserId={typedPost.author.id}
+                avatarUrl={typedPost.author.avatar}
+                authorName={typedPost.author.name}
+                postDate={typedPost.date}
+                readTime={typedPost.readTime}
+              />
 
               <div className="flex flex-wrap gap-2 mb-6">
                 {typedPost.tags.map((tag, index) => (
@@ -70,7 +66,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   </span>
                 ))}
               </div>
-
               <div className="aspect-video overflow-hidden rounded-lg mb-8">
                 <img
                   src={typedPost.coverImage || "/placeholder.svg"}

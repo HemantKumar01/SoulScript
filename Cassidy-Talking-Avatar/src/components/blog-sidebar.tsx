@@ -7,7 +7,7 @@ import { ChevronDown, Bookmark, Clock, History, Tag, Users, Award, MessageSquare
 export default function BlogSidebar() {
   const [openSections, setOpenSections] = useState({
     feeds: true,
-    bookmarks: false,
+    bookmarks: true,
     discover: false,
   })
 
@@ -19,121 +19,112 @@ export default function BlogSidebar() {
   }
 
   return (
-    <div className="bg-gray-900 rounded-lg p-4">
-      <div className="mb-6">
-        <Link
-          href="/dashboard/blogs/new"
-          className="w-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-2 px-4 rounded-md transition-colors"
-        >
-          <span className="mr-2">+</span> New post
-        </Link>
-      </div>
+  <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900/20 rounded-xl p-6 border border-gray-700/50 backdrop-blur-sm">
+    <div className="mb-8">
+      <Link
+        href="/dashboard/blogs/new"
+        className="w-full flex items-center justify-center bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-700 hover:from-emerald-500 hover:via-green-500 hover:to-emerald-600 text-white py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-emerald-500/25"
+      >
+        <span className="mr-2 text-lg">+</span> 
+        <span className="font-medium">New Post</span>
+      </Link>
+    </div>
 
-      {/* Feeds Section */}
-      <div className="mb-4">
-        <button
-          onClick={() => toggleSection("feeds")}
-          className="flex items-center justify-between w-full text-left font-medium mb-2"
-        >
-          <span>Feeds</span>
-          <ChevronDown className={`h-4 w-4 transition-transform ${openSections.feeds ? "transform rotate-180" : ""}`} />
-        </button>
-        {openSections.feeds && (
-          <div className="space-y-2 pl-2">
-            <Link href="/dashboard/blogs" className="flex items-center text-sm text-purple-400 hover:text-purple-300">
-              <MessageSquare className="h-4 w-4 mr-2" />
-              My feed
-            </Link>
-            <Link href="/dashboard/blogs/following" className="flex items-center text-sm text-gray-400 hover:text-white">
-              <Users className="h-4 w-4 mr-2" />
-              Following
-            </Link>
-            <Link href="/dashboard/blogs/explore" className="flex items-center text-sm text-gray-400 hover:text-white">
-              <Tag className="h-4 w-4 mr-2" />
-              Explore
-            </Link>
-            <Link href="/dashboard/blogs/history" className="flex items-center text-sm text-gray-400 hover:text-white">
-              <History className="h-4 w-4 mr-2" />
-              History
-            </Link>
-          </div>
-        )}
-      </div>
-
-      {/* Bookmarks Section */}
-      <div className="mb-4">
-        <button
-          onClick={() => toggleSection("bookmarks")}
-          className="flex items-center justify-between w-full text-left font-medium mb-2"
-        >
-          <span>Bookmarks</span>
-          <ChevronDown
-            className={`h-4 w-4 transition-transform ${openSections.bookmarks ? "transform rotate-180" : ""}`}
-          />
-        </button>
-        {openSections.bookmarks && (
-          <div className="space-y-2 pl-2">
-            <Link href="/dashboard/blogs/saved" className="flex items-center text-sm text-gray-400 hover:text-white">
-              <Bookmark className="h-4 w-4 mr-2" />
-              Saved articles
-            </Link>
-            <Link href="/dashboard/blogs/reading-list" className="flex items-center text-sm text-gray-400 hover:text-white">
-              <Clock className="h-4 w-4 mr-2" />
-              Reading list
-            </Link>
-          </div>
-        )}
-      </div>
-
-      {/* Discover Section */}
-      <div className="mb-4">
-        <button
-          onClick={() => toggleSection("discover")}
-          className="flex items-center justify-between w-full text-left font-medium mb-2"
-        >
-          <span>Discover</span>
-          <ChevronDown
-            className={`h-4 w-4 transition-transform ${openSections.discover ? "transform rotate-180" : ""}`}
-          />
-        </button>
-        {openSections.discover && (
-          <div className="space-y-2 pl-2">
-            <Link href="/dashboard/blogs/tags" className="flex items-center text-sm text-gray-400 hover:text-white">
-              <Tag className="h-4 w-4 mr-2" />
-              Tags
-            </Link>
-            <Link href="/dashboard/blogs/top-authors" className="flex items-center text-sm text-gray-400 hover:text-white">
-              <Award className="h-4 w-4 mr-2" />
-              Top authors
-            </Link>
-          </div>
-        )}
-      </div>
-
-      {/* Popular Tags */}
-      <div className="mt-6">
-        <h3 className="font-medium mb-3">Popular Tags</h3>
-        <div className="flex flex-wrap gap-2">
-          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-1 rounded hover:bg-purple-900/30 hover:text-purple-300 cursor-pointer transition-colors">
-            #mentalhealth
-          </span>
-          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-1 rounded hover:bg-purple-900/30 hover:text-purple-300 cursor-pointer transition-colors">
-            #therapy
-          </span>
-          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-1 rounded hover:bg-purple-900/30 hover:text-purple-300 cursor-pointer transition-colors">
-            #selfcare
-          </span>
-          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-1 rounded hover:bg-purple-900/30 hover:text-purple-300 cursor-pointer transition-colors">
-            #anxiety
-          </span>
-          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-1 rounded hover:bg-purple-900/30 hover:text-purple-300 cursor-pointer transition-colors">
-            #wellness
-          </span>
-          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-1 rounded hover:bg-purple-900/30 hover:text-purple-300 cursor-pointer transition-colors">
-            #mindfulness
-          </span>
+    {/* Feeds Section */}
+    <div className="mb-6">
+      <button
+        onClick={() => toggleSection("feeds")}
+        className="flex items-center justify-between w-full text-left font-semibold mb-3 text-emerald-300 hover:text-emerald-200 transition-colors"
+      >
+        <span className="text-lg">Feeds</span>
+        <ChevronDown className={`h-5 w-5 transition-transform duration-200 ${openSections.feeds ? "transform rotate-180" : ""}`} />
+      </button>
+      {openSections.feeds && (
+        <div className="space-y-3 pl-3 border-l-2 border-emerald-800/50">
+          <Link href="/dashboard/blogs" className="flex items-center text-sm text-emerald-400 hover:text-emerald-300 transition-colors group">
+            <MessageSquare className="h-4 w-4 mr-3 group-hover:scale-110 transition-transform" />
+            <span>My Feed</span>
+          </Link>
+          
+          <Link href="/dashboard/blogs/history" className="flex items-center text-sm text-gray-300 hover:text-emerald-300 transition-colors group">
+            <History className="h-4 w-4 mr-3 group-hover:scale-110 transition-transform" />
+            <span>My Posts</span>
+          </Link>
         </div>
+      )}
+    </div>
+
+    {/* Bookmarks Section -- nah its discover now*/}
+    <div className="mb-6">
+      <button
+        onClick={() => toggleSection("bookmarks")}
+        className="flex items-center justify-between w-full text-left font-semibold mb-3 text-emerald-300 hover:text-emerald-200 transition-colors"
+      >
+        <span className="text-lg"> Discover</span>
+        <ChevronDown
+          className={`h-5 w-5 transition-transform duration-200 ${openSections.bookmarks ? "transform rotate-180" : ""}`}
+        />
+      </button>
+      {openSections.bookmarks && (
+        <div className="space-y-3 pl-3 border-l-2 border-emerald-800/50">
+         
+           <Link href="/dashboard/blogs/following" className="flex items-center text-sm text-gray-300 hover:text-emerald-300 transition-colors group">
+            <Users className="h-4 w-4 mr-3 group-hover:scale-110 transition-transform" />
+            <span>Following</span>
+          </Link>
+          
+        </div>
+      )}
+    </div>
+
+    {/* Discover Section */}
+    {/* <div className="mb-6">
+      <button
+        onClick={() => toggleSection("discover")}
+        className="flex items-center justify-between w-full text-left font-semibold mb-3 text-emerald-300 hover:text-emerald-200 transition-colors"
+      >
+        <span className="text-lg">Discover</span>
+        <ChevronDown
+          className={`h-5 w-5 transition-transform duration-200 ${openSections.discover ? "transform rotate-180" : ""}`}
+        />
+      </button>
+      {openSections.discover && (
+        <div className="space-y-3 pl-3 border-l-2 border-emerald-800/50">
+          <Link href="/dashboard/blogs/tags" className="flex items-center text-sm text-gray-300 hover:text-emerald-300 transition-colors group">
+            <Tag className="h-4 w-4 mr-3 group-hover:scale-110 transition-transform" />
+            <span>Tags</span>
+          </Link>
+          <Link href="/dashboard/blogs/top-authors" className="flex items-center text-sm text-gray-300 hover:text-emerald-300 transition-colors group">
+            <Award className="h-4 w-4 mr-3 group-hover:scale-110 transition-transform" />
+            <span>Top Authors</span>
+          </Link>
+        </div>
+      )}
+    </div> */}
+
+    {/* Popular Tags */}
+    <div className="mt-8 p-4 bg-gradient-to-br from-gray-800/50 to-emerald-900/10 rounded-lg border border-gray-700/30">
+      <h3 className="font-semibold mb-4 text-emerald-300 text-lg">Popular Tags</h3>
+      <div className="flex flex-wrap gap-2">
+        <span className="text-xs bg-gradient-to-r from-gray-700 to-gray-600 text-gray-200 px-3 py-2 rounded-full hover:from-emerald-800 hover:to-green-800 hover:text-emerald-100 cursor-pointer transition-all duration-300 transform hover:scale-105 border border-gray-600/50 hover:border-emerald-600/50">
+          #mentalhealth
+        </span>
+        <span className="text-xs bg-gradient-to-r from-gray-700 to-gray-600 text-gray-200 px-3 py-2 rounded-full hover:from-emerald-800 hover:to-green-800 hover:text-emerald-100 cursor-pointer transition-all duration-300 transform hover:scale-105 border border-gray-600/50 hover:border-emerald-600/50">
+          #therapy
+        </span>
+        <span className="text-xs bg-gradient-to-r from-gray-700 to-gray-600 text-gray-200 px-3 py-2 rounded-full hover:from-emerald-800 hover:to-green-800 hover:text-emerald-100 cursor-pointer transition-all duration-300 transform hover:scale-105 border border-gray-600/50 hover:border-emerald-600/50">
+          #selfcare
+        </span>
+        <span className="text-xs bg-gradient-to-r from-gray-700 to-gray-600 text-gray-200 px-3 py-2 rounded-full hover:from-emerald-800 hover:to-green-800 hover:text-emerald-100 cursor-pointer transition-all duration-300 transform hover:scale-105 border border-gray-600/50 hover:border-emerald-600/50">
+          #anxiety
+        </span>
+        <span className="text-xs bg-gradient-to-r from-gray-700 to-gray-600 text-gray-200 px-3 py-2 rounded-full hover:from-emerald-800 hover:to-green-800 hover:text-emerald-100 cursor-pointer transition-all duration-300 transform hover:scale-105 border border-gray-600/50 hover:border-emerald-600/50">
+          #wellness
+        </span>
+        <span className="text-xs bg-gradient-to-r from-gray-700 to-gray-600 text-gray-200 px-3 py-2 rounded-full hover:from-emerald-800 hover:to-green-800 hover:text-emerald-100 cursor-pointer transition-all duration-300 transform hover:scale-105 border border-gray-600/50 hover:border-emerald-600/50">
+          #mindfulness
+        </span>
       </div>
     </div>
-  )
-}
+  </div>
+)}
