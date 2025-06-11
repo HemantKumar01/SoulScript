@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useCurrentUser } from "@/hooks/use-current-user"
 
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent } from "@/components/ui/dropdown-menu";
 import { languageOptions } from "@/components/languageOptions";
@@ -48,6 +48,8 @@ interface DataStructure {
 const KnowAboutMe: React.FC = () => {
   const router = useRouter();
   const [data, setData] = useState<DataStructure | null>(null);
+  // Add a new state for error message
+const [errorMessage, setErrorMessage] = useState("");
   const [originalData, setOriginalData] = useState<DataStructure | null>(null); // Store original data
   const [translatedData, setTranslatedData] = useState<DataStructure | null>(null); // Store translated data
   const [translationCache, setTranslationCache] = useState<{ [key: string]: DataStructure }>(() => {
@@ -381,64 +383,121 @@ const KnowAboutMe: React.FC = () => {
   // Move useCurrentUser hook to the top level
   const { user, loading: userLoading } = useCurrentUser();
 
-  useEffect(() => {
-    // Don't proceed if user is still loading or user doesn't exist
-    if (userLoading || !user) return;
+useEffect(() => {
+  // Don't proceed if user is still loading or user doesn't exist
+  if (userLoading || !user) return;
 
-    setLoading(true);
+  setLoading(true);
+  setError(false); // Reset error state
+  setErrorMessage(""); // Reset error message
 
-    // Main async function to handle API request
-    const fetchData = async () => {
-      try {
-        // Query Firestore for user document
-        const q = query(collection(db, "users"), where("email", "==", user.email));
-        const snapshot = await getDocs(q);
+  // Main async function to handle API request
+  const fetchData = async () => {
+    try {
+      // Query Firestore for user document
+      const q = query(collection(db, "users"), where("email", "==", user.email));
+      const snapshot = await getDocs(q);
 
-        // Get the document ID (authId)
-        let authId = "";
-        if (!snapshot.empty) {
-          authId = snapshot.docs[0].id;
-        } else {
-          throw new Error("User document not found");
-        }
-
-        console.log("Auth ID:", authId);
-
-        // Make the API request
-        const response = await fetch("api/getReport", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            "authId": authId,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`API responded with status ${response.status}`);
-        }
-
-        const responseData = await response.json();
-        console.log("API Response:", responseData);
-
-        // Update state with the response data
-        setOriginalData(responseData.info); // Store original data
-        setData(responseData.info);
-        setGraphData(responseData.graph);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error in data fetching process:", error);
-        setError(true);
-        setLoading(false);
+      // Get the document ID (authId)
+      let authId = "";
+      if (!snapshot.empty) {
+        authId = snapshot.docs[0].id;
+      } else {
+        throw new Error("USER_NOT_FOUND");
       }
-    };
 
-    // Execute the data fetching
-    fetchData();
-  }, [user, userLoading]); // Add dependencies
+      console.log("Auth ID:", authId);
 
-  // This is the colorful background style
+      // Check if user document exists and has required fields
+      const userDocRef = doc(db, "users", authId);
+      const userDocSnap = await getDoc(userDocRef);
+      
+      if (!userDocSnap.exists()) {
+        throw new Error("USER_DOC_MISSING");
+      }
+
+      // Check if userHistory field exists in the user document
+      const userData = userDocSnap.data();
+      if (!userData.userHistory) {
+        throw new Error("USER_HISTORY_MISSING");
+      }
+
+      // Check if journalEntries collection exists and has documents
+      const journalEntriesRef = collection(db, "users", authId, "journalEntries");
+      const journalSnapshot = await getDocs(journalEntriesRef);
+      
+      if (journalSnapshot.empty) {
+        throw new Error("JOURNAL_ENTRIES_MISSING");
+      }
+
+      // Make the API request
+      const response = await fetch("api/getReport", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          "authId": authId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API_ERROR_${response.status}`);
+      }
+
+      const responseData = await response.json();
+      console.log("API Response:", responseData);
+
+      // Update state with the response data
+      setOriginalData(responseData.info); // Store original data
+      setData(responseData.info);
+      setGraphData(responseData.graph);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error in data fetching process:", error);
+      
+      // Set specific error messages based on error type
+      let message = "We couldn't generate your report. Please try again later.";
+      
+      if (typeof error === "object" && error !== null && "message" in error && typeof (error as any).message === "string") {
+        const errorMessage = (error as any).message as string;
+        switch (errorMessage) {
+          case "USER_NOT_FOUND":
+            message = "Your user account was not found. Please contact support.";
+            break;
+          case "USER_DOC_MISSING":
+            message = "Your user profile is incomplete. Please contact support.";
+            break;
+          case "USER_HISTORY_MISSING":
+            message = "Your Chat history is missing. Try starting a conversation with Cassidy to begin.";
+            break;
+          case "JOURNAL_ENTRIES_MISSING":
+            message = "No journal entries found. Please add some journal entries first.";
+            break;
+          case "API_ERROR_404":
+            message = "Report service not found. Please contact support.";
+            break;
+          case "API_ERROR_500":
+            message = "Server error occurred. Please try again later.";
+            break;
+          default:
+            if (errorMessage.startsWith("API_ERROR_")) {
+              message = "API service is currently unavailable. Please try again later.";
+            }
+            break;
+        }
+      }
+      
+      setErrorMessage(message);
+      setError(true);
+      setLoading(false);
+    }
+  };
+
+  // Execute the data fetching
+  fetchData();
+}, [user, userLoading]);
+
   const backgroundStyle = "bg-[linear-gradient(60deg,_rgb(247,_149,_51),_rgb(243,_112,_85),_rgb(239,_78,_123),_rgb(161,_102,_171),_rgb(80,_115,_184),_rgb(16,_152,_173),_rgb(7,_179,_155),_rgb(111,_186,_130))] min-h-screen py-12 text-black";
 
   if (loading || userLoading) {
@@ -460,26 +519,50 @@ const KnowAboutMe: React.FC = () => {
     );
   }
 
-  if (error || !data) {
-    return (
-      <AuthRequired>
-        <div className={backgroundStyle}>
-          <div className="flex flex-col items-center justify-center h-screen">
-            <div className="bg-white shadow-lg rounded-xl p-8 text-center">
-              <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Data</h2>
-              <p className="text-gray-700">We couldn&apos;t generate your report. Please try again later.</p>
+// Updated error display component
+if (error || !data) {
+  return (
+    <AuthRequired>
+      <div className={backgroundStyle}>
+        <div className="flex flex-col items-center justify-center h-screen">
+          <div className="bg-white shadow-lg rounded-xl p-8 text-center max-w-md">
+            <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Data</h2>
+            <p className="text-gray-700 mb-6">
+              {errorMessage || "We couldn't generate your report. Please try again later."}
+            </p>
+            <div className="space-y-3">
               <button
                 onClick={() => window.location.reload()}
-                className="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-primary/80 transition-colors"
+                className="w-full px-4 py-2 bg-primary text-white rounded hover:bg-primary/80 transition-colors"
               >
                 Try Again
               </button>
+              {errorMessage.includes("journal entries") && (
+                <button
+                  onClick={() => window.location.href = '/dashboard/mindlog'}
+                  className="w-full px-4 py-2 bg-emerald-500 text-white rounded hover:bg-blue-600 transition-colors"
+                >
+                  Add Journal Entries
+                </button>
+              )}
+              {errorMessage.includes("history") && (
+                <button
+                  onClick={() =>  window.location.href = '/dashboard'}
+                  className="w-full px-4 py-2 bg-emerald-500 text-white rounded hover:bg-blue-600 transition-colors"
+                >
+                  Talk With Cassidy
+                </button>
+              )}
+            </div>
+            <div className="mt-4 text-sm text-gray-500">
+              <p>If this problem persists, please contact support.</p>
             </div>
           </div>
         </div>
-      </AuthRequired>
-    );
-  }
+      </div>
+    </AuthRequired>
+  );
+}
 
   return (
     <AuthRequired>
