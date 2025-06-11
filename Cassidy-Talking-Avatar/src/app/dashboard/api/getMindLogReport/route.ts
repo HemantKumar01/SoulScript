@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     console.log('Forwarding request to external API with authId:', body.authId);
 
     // Forward the request to the external API
-    const response = await fetch(process.env.NEXT_PRIVATE_REPORTGEN_CHATBOT+'/getMindLogReport', {
+    const response = await fetch('http://127.0.0.1:8000/getMindLogReport', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

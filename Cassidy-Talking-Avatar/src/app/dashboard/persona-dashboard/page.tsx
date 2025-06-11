@@ -13,7 +13,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent } from "@/components/ui/dropdown-menu";
 import { languageOptions } from "@/components/languageOptions";
-import { ChevronDown, Globe, Check, Search } from "lucide-react";
+import { ChevronDown, Globe, Check, Search, Mail } from "lucide-react";
 
 interface DataItem {
   label: string;
@@ -75,7 +75,12 @@ const KnowAboutMe: React.FC = () => {
     languageOptions.find(lang => lang.language === "English") || languageOptions[0]
   ); // Default to English or first language
   const [searchTerm, setSearchTerm] = useState("");
-  
+
+  // Email functionality states
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [notification, setNotification] = useState({ show: false, message: '', type: '' });
+
   // Filter languages based on search term
   const filteredLanguages = languageOptions.filter(lang =>
     lang.language.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -84,12 +89,12 @@ const KnowAboutMe: React.FC = () => {
 
   // Popular languages to show at the top
   const popularLanguages = ["English", "Spanish", "French", "German", "Chinese", "Japanese", "Arabic", "Hindi"];
-  
+
   // Separate popular and other languages
-  const popularFiltered = filteredLanguages.filter(lang => 
+  const popularFiltered = filteredLanguages.filter(lang =>
     popularLanguages.includes(lang.language)
   );
-  const otherFiltered = filteredLanguages.filter(lang => 
+  const otherFiltered = filteredLanguages.filter(lang =>
     !popularLanguages.includes(lang.language)
   );
 
@@ -112,19 +117,75 @@ const KnowAboutMe: React.FC = () => {
     return { cacheSize, titleCacheSize, cachedLanguages };
   };
 
+  // Email sending function
+  const sendReportEmail = async () => {
+    setSendingEmail(true);
+    try {
+      // Get authId (reusing the logic from useEffect)
+      const q = query(collection(db, "users"), where("email", "==", user?.email));
+      const snapshot = await getDocs(q);
+      let authId = "";
+      if (!snapshot.empty) {
+        authId = snapshot.docs[0].id;
+      } else {
+        throw new Error("User document not found");
+      }
+
+      const response = await fetch("api/getMailReport", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: user?.email,
+          authId: authId,
+        }),
+      });
+
+      if (response.ok) {
+        setEmailSent(true);
+        setNotification({
+          show: true,
+          message: 'Report sent successfully to your email!',
+          type: 'success'
+        });
+        // Hide notification after 5 seconds
+        setTimeout(() => {
+          setNotification({ show: false, message: '', type: '' });
+        }, 5000);
+      } else {
+        throw new Error('Failed to send email');
+      }
+    } catch (error) {
+      console.error("Error sending email:", error);
+      setNotification({
+        show: true,
+        message: 'Failed to send email. Please try again.',
+        type: 'error'
+      });
+      // Hide notification after 5 seconds
+      setTimeout(() => {
+        setNotification({ show: false, message: '', type: '' });
+      }, 5000);
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
   // Handle language selection
   const handleLanguageSelect = async (option: typeof languageOptions[0]) => {
     setSelectedLanguage(option);
     setSearchTerm("");
+    setEmailSent(false); // Reset email state when language changes
     console.log(`Selected language: ${option.language} (${option.code})`);
-    
+
     // If English is selected, show original data
     if (option.language === "English") {
       setData(originalData);
-      setPageTitle("Know About Me");
+      setPageTitle("Persona Dashboard");
       return;
     }
-    
+
     // Check if we have cached translations for this language
     if (translationCache[option.code] && titleCache[option.code]) {
       console.log(`Using cached translation for ${option.language}`);
@@ -132,13 +193,13 @@ const KnowAboutMe: React.FC = () => {
       setPageTitle(titleCache[option.code]);
       return;
     }
-    
+
     // Translate the page title and data if not cached
     console.log(`Translating to ${option.language} for the first time`);
-    
+
     // Translate the page title
     await translatePageTitle(option.code);
-    
+
     // Translate data
     await translateData(option.code);
   };
@@ -155,7 +216,7 @@ const KnowAboutMe: React.FC = () => {
           sourceLanguage: 'en'
         })
       });
-      
+
       if (response.ok) {
         const result = await response.json();
         const translatedTitle = result.translatedText;
@@ -177,15 +238,15 @@ const KnowAboutMe: React.FC = () => {
   // Translation function with batching for better performance
   const translateData = async (targetLanguage: string) => {
     if (!originalData) return;
-    
+
     setTranslating(true);
     try {
       const translatedStructure: DataStructure = { ...originalData };
-      
+
       // Collect all text that needs translation
       const textsToTranslate: string[] = [];
       const textMapping: { [key: string]: { sectionKey: string; itemIndex: number; field: string } } = {};
-      
+
       // Collect all texts for translation
       for (const [sectionKey, sectionData] of Object.entries(originalData)) {
         if (Array.isArray(sectionData)) {
@@ -195,19 +256,19 @@ const KnowAboutMe: React.FC = () => {
               textsToTranslate.push(item.label);
               textMapping[item.label] = { sectionKey, itemIndex, field: 'label' };
             }
-            
+
             if ('value' in item && item.value) {
               const key = `${sectionKey}_${itemIndex}_value`;
               textsToTranslate.push(item.value);
               textMapping[item.value] = { sectionKey, itemIndex, field: 'value' };
             }
-            
+
             if ('score' in item && item.score) {
               const key = `${sectionKey}_${itemIndex}_score`;
               textsToTranslate.push(item.score);
               textMapping[item.score] = { sectionKey, itemIndex, field: 'score' };
             }
-            
+
             if ('effectiveness' in item && item.effectiveness) {
               const key = `${sectionKey}_${itemIndex}_effectiveness`;
               textsToTranslate.push(item.effectiveness);
@@ -216,14 +277,14 @@ const KnowAboutMe: React.FC = () => {
           });
         }
       }
-      
+
       // Translate in smaller batches to avoid overwhelming the API
       const batchSize = 10;
       const translations: { [key: string]: string } = {};
-      
+
       for (let i = 0; i < textsToTranslate.length; i += batchSize) {
         const batch = textsToTranslate.slice(i, i + batchSize);
-        
+
         // Translate each item in the batch
         const batchPromises = batch.map(async (text) => {
           try {
@@ -236,7 +297,7 @@ const KnowAboutMe: React.FC = () => {
                 sourceLanguage: 'en'
               })
             });
-            
+
             if (response.ok) {
               const result = await response.json();
               return { original: text, translated: result.translatedText };
@@ -247,50 +308,50 @@ const KnowAboutMe: React.FC = () => {
             return { original: text, translated: text }; // Fallback to original
           }
         });
-        
+
         const batchResults = await Promise.all(batchPromises);
         batchResults.forEach(({ original, translated }) => {
           translations[original] = translated;
         });
-        
+
         // Small delay between batches to be respectful to the API
         if (i + batchSize < textsToTranslate.length) {
           await new Promise(resolve => setTimeout(resolve, 100));
         }
       }
-      
+
       // Apply translations to the data structure
       for (const [sectionKey, sectionData] of Object.entries(originalData)) {
         if (Array.isArray(sectionData)) {
           const translatedSection = sectionData.map((item: DataItem | ChartDataItem) => {
             const translatedItem = { ...item };
-            
+
             if (item.label && translations[item.label]) {
               translatedItem.label = translations[item.label];
             }
-            
+
             if ('value' in item && item.value && translations[item.value]) {
               (translatedItem as DataItem).value = translations[item.value];
             }
-            
+
             if ('score' in item && item.score && translations[item.score]) {
               (translatedItem as ChartDataItem).score = translations[item.score];
             }
-            
+
             if ('effectiveness' in item && item.effectiveness && translations[item.effectiveness]) {
               (translatedItem as ChartDataItem).effectiveness = translations[item.effectiveness];
             }
-            
+
             return translatedItem;
           });
-          
+
           translatedStructure[sectionKey as keyof DataStructure] = translatedSection as any;
         }
       }
-      
+
       setTranslatedData(translatedStructure);
       setData(translatedStructure);
-      
+
       // Cache the translated data for future use
       setTranslationCache(prev => {
         const newCache = { ...prev, [targetLanguage]: translatedStructure };
@@ -304,28 +365,35 @@ const KnowAboutMe: React.FC = () => {
     } catch (error) {
       console.error('Translation error:', error);
       // Show error message to user
-      alert('Translation failed. Please try again.');
+      setNotification({
+        show: true,
+        message: 'Translation failed. Please try again.',
+        type: 'error'
+      });
+      setTimeout(() => {
+        setNotification({ show: false, message: '', type: '' });
+      }, 5000);
     } finally {
       setTranslating(false);
     }
   };
-  
+
   // Move useCurrentUser hook to the top level
   const { user, loading: userLoading } = useCurrentUser();
 
   useEffect(() => {
     // Don't proceed if user is still loading or user doesn't exist
     if (userLoading || !user) return;
-    
+
     setLoading(true);
-    
+
     // Main async function to handle API request
     const fetchData = async () => {
       try {
         // Query Firestore for user document
         const q = query(collection(db, "users"), where("email", "==", user.email));
         const snapshot = await getDocs(q);
-        
+
         // Get the document ID (authId)
         let authId = "";
         if (!snapshot.empty) {
@@ -335,7 +403,7 @@ const KnowAboutMe: React.FC = () => {
         }
 
         console.log("Auth ID:", authId);
-        
+
         // Make the API request
         const response = await fetch("api/getReport", {
           method: 'POST',
@@ -346,14 +414,14 @@ const KnowAboutMe: React.FC = () => {
             "authId": authId,
           }),
         });
-        
+
         if (!response.ok) {
           throw new Error(`API responded with status ${response.status}`);
         }
-        
+
         const responseData = await response.json();
         console.log("API Response:", responseData);
-        
+
         // Update state with the response data
         setOriginalData(responseData.info); // Store original data
         setData(responseData.info);
@@ -365,7 +433,7 @@ const KnowAboutMe: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     // Execute the data fetching
     fetchData();
   }, [user, userLoading]); // Add dependencies
@@ -400,8 +468,8 @@ const KnowAboutMe: React.FC = () => {
             <div className="bg-white shadow-lg rounded-xl p-8 text-center">
               <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Data</h2>
               <p className="text-gray-700">We couldn&apos;t generate your report. Please try again later.</p>
-              <button 
-                onClick={() => window.location.reload()} 
+              <button
+                onClick={() => window.location.reload()}
                 className="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-primary/80 transition-colors"
               >
                 Try Again
@@ -417,6 +485,29 @@ const KnowAboutMe: React.FC = () => {
     <AuthRequired>
       <div className={backgroundStyle}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Notification Toast */}
+          {notification.show && (
+            <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 ${notification.type === 'success'
+                ? 'bg-green-500 text-white'
+                : 'bg-red-500 text-white'
+              }`}>
+              <div className="flex items-center gap-2">
+                {notification.type === 'success' ? (
+                  <Check className="h-5 w-5" />
+                ) : (
+                  <Mail className="h-5 w-5" />
+                )}
+                <span className="font-medium">{notification.message}</span>
+                <button
+                  onClick={() => setNotification({ show: false, message: '', type: '' })}
+                  className="ml-2 text-white hover:text-gray-200 transition-colors"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Translation loading overlay */}
           {translating && (
             <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
@@ -428,166 +519,197 @@ const KnowAboutMe: React.FC = () => {
               </div>
             </div>
           )}
-          
+
           <div className="flex justify-between items-center bg-white shadow-lg rounded-xl mb-8 p-6">
             <h1 className="text-4xl font-extrabold text-gray-800">{pageTitle}</h1>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="outline"
-                  className="h-11 px-4 py-2 bg-white border-2 border-gray-200 hover:border-blue-400 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 active:scale-95 transition-all duration-200 shadow-sm hover:shadow-lg flex items-center gap-3 min-w-[200px] justify-between group"
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 group-hover:from-blue-200 group-hover:to-indigo-200 transition-colors duration-200">
-                      <Globe className="h-4 w-4 text-blue-600" />
-                    </div>
-                    <div className="flex flex-col items-start">
-                      <span className="font-semibold text-gray-800 text-sm leading-tight">{selectedLanguage.language}</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-500 leading-tight">{selectedLanguage.code.toUpperCase()}</span>
-                        {selectedLanguage.language !== "English" && (
-                          <span className="text-xs bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-2 py-0.5 rounded-full font-medium">
-                            {translating ? "Translating..." : 
-                             (translationCache[selectedLanguage.code] ? "Cached" : "Translate")}
-                          </span>
-                        )}
+
+            <div className="flex items-center gap-4">
+              {/* Email Button */}
+              <Button
+                onClick={sendReportEmail}
+                disabled={sendingEmail || emailSent}
+                className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-all duration-200 font-semibold ${emailSent
+                    ? 'bg-green-500 hover:bg-green-600 text-white shadow-lg'
+                    : 'bg-blue-500 hover:bg-blue-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
+                  } disabled:transform-none disabled:shadow-lg`}
+              >
+                {sendingEmail ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    Sending Email...
+                  </>
+                ) : emailSent ? (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Email Sent
+                  </>
+                ) : (
+                  <>
+                    <Mail className="h-4 w-4" />
+                    Email Report
+                  </>
+                )}
+              </Button>
+
+              {/* Language Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="h-11 px-4 py-2 bg-white border-2 border-gray-200 hover:border-blue-400 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 active:scale-95 transition-all duration-200 shadow-sm hover:shadow-lg flex items-center gap-3 min-w-[200px] justify-between group"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 group-hover:from-blue-200 group-hover:to-indigo-200 transition-colors duration-200">
+                        <Globe className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <div className="flex flex-col items-start">
+                        <span className="font-semibold text-gray-800 text-sm leading-tight">{selectedLanguage.language}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-500 leading-tight">{selectedLanguage.code.toUpperCase()}</span>
+                          {selectedLanguage.language !== "English" && (
+                            <span className="text-xs bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-2 py-0.5 rounded-full font-medium">
+                              {translating ? "Translating..." :
+                                (translationCache[selectedLanguage.code] ? "Cached" : "Translate")}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
+                    <ChevronDown className="h-4 w-4 text-gray-500 group-hover:text-blue-600 transition-all duration-200 group-data-[state=open]:rotate-180" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className="w-64 max-h-96 bg-white border border-gray-200 shadow-xl rounded-lg p-2 animate-in slide-in-from-top-2 duration-200"
+                  align="end"
+                  sideOffset={8}
+                >
+                  {/* Search Input with Counter */}
+                  <div className="relative mb-3">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder={`Search ${languageOptions.length} languages...`}
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-12 py-2.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 transition-all duration-200"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
+                      {searchTerm && filteredLanguages.length > 0 && (
+                        <span className="text-xs text-blue-600 font-medium bg-blue-50 px-2 py-1 rounded-full">
+                          {filteredLanguages.length}
+                        </span>
+                      )}
+                      {searchTerm && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSearchTerm("");
+                          }}
+                          className="text-gray-400 hover:text-gray-600 transition-colors duration-150 p-1 rounded-full hover:bg-gray-100"
+                        >
+                          <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <ChevronDown className="h-4 w-4 text-gray-500 group-hover:text-blue-600 transition-all duration-200 group-data-[state=open]:rotate-180" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                className="w-64 max-h-96 bg-white border border-gray-200 shadow-xl rounded-lg p-2 animate-in slide-in-from-top-2 duration-200"
-                align="end"
-                sideOffset={8}
-              >
-                {/* Search Input with Counter */}
-                <div className="relative mb-3">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder={`Search ${languageOptions.length} languages...`}
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-12 py-2.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 transition-all duration-200"
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
-                    {searchTerm && filteredLanguages.length > 0 && (
-                      <span className="text-xs text-blue-600 font-medium bg-blue-50 px-2 py-1 rounded-full">
-                        {filteredLanguages.length}
-                      </span>
-                    )}
-                    {searchTerm && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSearchTerm("");
-                        }}
-                        className="text-gray-400 hover:text-gray-600 transition-colors duration-150 p-1 rounded-full hover:bg-gray-100"
-                      >
-                        <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-                </div>
-                
-                {/* Language Options */}
-                <div className="max-h-72 overflow-y-auto dropdown-scrollbar">
-                  {filteredLanguages.length > 0 ? (
-                    <>
-                      {/* Popular Languages Section */}
-                      {!searchTerm && popularFiltered.length > 0 && (
-                        <>
-                          <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                            Popular Languages
-                          </div>
-                          {popularFiltered.map((option) => (
-                            <DropdownMenuItem 
-                              key={option.code} 
-                              onSelect={() => handleLanguageSelect(option)}
-                              className="px-3 py-2.5 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 cursor-pointer rounded-md transition-all duration-200 flex items-center justify-between group"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-indigo-200 flex items-center justify-center text-xs font-bold text-blue-700 border border-blue-200 group-hover:from-blue-200 group-hover:to-indigo-300 transition-all duration-200">
-                                  {option.code.toUpperCase().slice(0, 2)}
-                                </div>
-                                <div className="flex flex-col">
-                                  <span className="font-semibold text-gray-800 group-hover:text-blue-700 transition-colors duration-200">{option.language}</span>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-xs text-gray-500 group-hover:text-blue-500 transition-colors duration-200">Code: {option.code}</span>
-                                    {translationCache[option.code] && (
-                                      <span className="text-xs bg-green-100 text-green-700 px-1 py-0.5 rounded-full font-medium">
-                                        Cached
-                                      </span>
-                                    )}
+
+                  {/* Language Options */}
+                  <div className="max-h-72 overflow-y-auto dropdown-scrollbar">
+                    {filteredLanguages.length > 0 ? (
+                      <>
+                        {/* Popular Languages Section */}
+                        {!searchTerm && popularFiltered.length > 0 && (
+                          <>
+                            <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                              Popular Languages
+                            </div>
+                            {popularFiltered.map((option) => (
+                              <DropdownMenuItem
+                                key={option.code}
+                                onSelect={() => handleLanguageSelect(option)}
+                                className="px-3 py-2.5 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 cursor-pointer rounded-md transition-all duration-200 flex items-center justify-between group"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-indigo-200 flex items-center justify-center text-xs font-bold text-blue-700 border border-blue-200 group-hover:from-blue-200 group-hover:to-indigo-300 transition-all duration-200">
+                                    {option.code.toUpperCase().slice(0, 2)}
+                                  </div>
+                                  <div className="flex flex-col">
+                                    <span className="font-semibold text-gray-800 group-hover:text-blue-700 transition-colors duration-200">{option.language}</span>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs text-gray-500 group-hover:text-blue-500 transition-colors duration-200">Code: {option.code}</span>
+                                      {translationCache[option.code] && (
+                                        <span className="text-xs bg-green-100 text-green-700 px-1 py-0.5 rounded-full font-medium">
+                                          Cached
+                                        </span>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                              {selectedLanguage.code === option.code && (
-                                <div className="flex items-center justify-center w-5 h-5 bg-blue-100 rounded-full">
-                                  <Check className="h-3 w-3 text-blue-600 font-bold" />
-                                </div>
-                              )}
-                            </DropdownMenuItem>
-                          ))}
-                          
-                          {/* Divider */}
-                          {otherFiltered.length > 0 && (
-                            <div className="my-2 border-t border-gray-200">
-                              <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                                All Languages
-                              </div>
-                            </div>
-                          )}
-                        </>
-                      )}
-                      
-                      {/* All Languages or Search Results */}
-                      {(searchTerm ? filteredLanguages : otherFiltered).map((option) => (
-                        <DropdownMenuItem 
-                          key={option.code} 
-                          onSelect={() => handleLanguageSelect(option)}
-                          className="px-3 py-2.5 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 cursor-pointer rounded-md transition-all duration-200 flex items-center justify-between group"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 group-hover:from-blue-100 group-hover:to-indigo-200 flex items-center justify-center text-xs font-bold text-gray-600 group-hover:text-blue-700 border border-gray-200 group-hover:border-blue-200 transition-all duration-200">
-                              {option.code.toUpperCase().slice(0, 2)}
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="font-medium text-gray-800 group-hover:text-blue-700 transition-colors duration-200">{option.language}</span>
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs text-gray-500 group-hover:text-blue-500 transition-colors duration-200">Code: {option.code}</span>
-                                {translationCache[option.code] && (
-                                  <span className="text-xs bg-green-100 text-green-700 px-1 py-0.5 rounded-full font-medium">
-                                    Cached
-                                  </span>
+                                {selectedLanguage.code === option.code && (
+                                  <div className="flex items-center justify-center w-5 h-5 bg-blue-100 rounded-full">
+                                    <Check className="h-3 w-3 text-blue-600 font-bold" />
+                                  </div>
                                 )}
+                              </DropdownMenuItem>
+                            ))}
+
+                            {/* Divider */}
+                            {otherFiltered.length > 0 && (
+                              <div className="my-2 border-t border-gray-200">
+                                <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                                  All Languages
+                                </div>
+                              </div>
+                            )}
+                          </>
+                        )}
+
+                        {/* All Languages or Search Results */}
+                        {(searchTerm ? filteredLanguages : otherFiltered).map((option) => (
+                          <DropdownMenuItem
+                            key={option.code}
+                            onSelect={() => handleLanguageSelect(option)}
+                            className="px-3 py-2.5 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 cursor-pointer rounded-md transition-all duration-200 flex items-center justify-between group"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 group-hover:from-blue-100 group-hover:to-indigo-200 flex items-center justify-center text-xs font-bold text-gray-600 group-hover:text-blue-700 border border-gray-200 group-hover:border-blue-200 transition-all duration-200">
+                                {option.code.toUpperCase().slice(0, 2)}
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="font-medium text-gray-800 group-hover:text-blue-700 transition-colors duration-200">{option.language}</span>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs text-gray-500 group-hover:text-blue-500 transition-colors duration-200">Code: {option.code}</span>
+                                  {translationCache[option.code] && (
+                                    <span className="text-xs bg-green-100 text-green-700 px-1 py-0.5 rounded-full font-medium">
+                                      Cached
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          {selectedLanguage.code === option.code && (
-                            <div className="flex items-center justify-center w-5 h-5 bg-blue-100 rounded-full">
-                              <Check className="h-3 w-3 text-blue-600 font-bold" />
-                            </div>
-                          )}
-                        </DropdownMenuItem>
-                      ))}
-                    </>
-                  ) : (
-                    <div className="px-3 py-8 text-center text-gray-500">
-                      <Search className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                      <p className="text-sm font-medium text-gray-600">No languages found</p>
-                      <p className="text-xs text-gray-400 mt-1">Try a different search term</p>
-                    </div>
-                  )}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            
+                            {selectedLanguage.code === option.code && (
+                              <div className="flex items-center justify-center w-5 h-5 bg-blue-100 rounded-full">
+                                <Check className="h-3 w-3 text-blue-600 font-bold" />
+                              </div>
+                            )}
+                          </DropdownMenuItem>
+                        ))}
+                      </>
+                    ) : (
+                      <div className="px-3 py-8 text-center text-gray-500">
+                        <Search className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                        <p className="text-sm font-medium text-gray-600">No languages found</p>
+                        <p className="text-xs text-gray-400 mt-1">Try a different search term</p>
+                      </div>
+                    )}
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
             {/* Debug Cache Info - Only in development */}
             {/* {process.env.NODE_ENV === 'development' && (
               <div className="hidden lg:block text-xs text-gray-500 bg-gray-100 rounded px-2 py-1">
@@ -598,7 +720,6 @@ const KnowAboutMe: React.FC = () => {
               </div>
             )} */}
           </div>
-
           <div className="grid md:grid-cols-2 gap-6">
             {Object.entries(data).map(([sectionTitle, sectionData]) =>
               Array.isArray(sectionData) ? (
