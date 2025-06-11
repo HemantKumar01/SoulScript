@@ -36,7 +36,7 @@ const ChatSummaryViewer = () => {
     }, 200)
 
     try {
-      const res = await fetch(process.env.NEXT_PUBLIC_REPORTGEN_CHATBOT+"/getChatSummary", {
+      const res = await fetch("https://fastapi-backend-370305669096.asia-south1.run.app/getChatSummary", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
