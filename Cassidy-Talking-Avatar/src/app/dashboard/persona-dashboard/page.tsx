@@ -528,7 +528,7 @@ const KnowAboutMe: React.FC = () => {
         }
 
         // Make the API request
-        const response = await fetch(process.env.NEXT_PUBLIC_REPORTGEN_CHATBOT+"/getReport", {
+        const response = await fetch("https://fastapi-backend-370305669096.asia-south1.run.app/getReport", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

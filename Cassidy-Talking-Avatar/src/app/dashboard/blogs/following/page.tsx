@@ -14,7 +14,7 @@ export default function FollowingPage() {
   const [error, setError] = useState<string | null>(null)
   
   // You'll need to get current user ID from your auth context
-   const [currentUserId, setCurrentUserId] = useState<string | null>(null) // Replace with actual user ID from auth
+   const [currentUserId, setCurrentUserId] = useState<string>("") // Replace with actual user ID from auth
 
   useEffect(() => {
     async function fetchFollowingPosts() {
@@ -102,7 +102,7 @@ export default function FollowingPage() {
             <Users className="h-16 w-16 text-gray-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-400 mb-2">No posts yet</h3>
             <p className="text-gray-500 mb-6">
-              You're not following anyone yet, or they haven't posted anything.
+              You&apos;re not following anyone yet, or they haven&apos;t posted anything.
             </p>
             <Link 
               href="/dashboard/blogs/top-authors"
