@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     // Forward the request to the external API
     const externalApiResponse = await fetch(
-      process.env.NEXT_PRIVATE_REPORTGEN_CHATBOT+'/getMindLogReport',
+      process.env.NEXT_PUBLIC_REPORTGEN_CHATBOT+'/getMindLogReport',
       {
         method: 'POST',
         headers: {

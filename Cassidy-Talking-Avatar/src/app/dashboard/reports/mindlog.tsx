@@ -65,15 +65,16 @@ const MindLogReportViewer = () => {
     }, 200);
 
     try {
-      const res = await fetch("api/getMindLogReport", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          authId,
-          email: user?.email,
-          numdays: numDays,
-        }),
-      });
+
+        const res = await fetch(process.env.NEXT_PUBLIC_REPORTGEN_CHATBOT+"/getMindLogReport", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            authId,
+            email: user?.email,
+            numdays: numDays,
+          }),
+        })
 
       // Always try to parse JSON response, regardless of status
       let data;
