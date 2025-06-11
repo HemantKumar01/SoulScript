@@ -8,7 +8,27 @@ import TherapyInsights from "./graphs";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useCurrentUser } from "@/hooks/use-current-user";
-
+import {
+  UserCircle,
+  Users,
+  Briefcase,
+  BrainCircuit,
+  FileText,
+  ShieldCheck,
+  FlaskConical,
+  HeartPulse,
+  Pill,
+  Repeat,
+  AlertTriangle,
+  Puzzle,
+  Star,
+  ScrollText,
+  ChevronDown,
+  Globe,
+  Check,
+  Search,
+  Mail,
+} from "lucide-react"; // assuming you're using lucide icons
 import {
   collection,
   query,
@@ -25,13 +45,15 @@ import {
   DropdownMenuContent,
 } from "@/components/ui/dropdown-menu";
 import { languageOptions } from "@/components/languageOptions";
-import { ChevronDown, Globe, Check, Search, Mail } from "lucide-react";
+
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 interface DataItem {
   label: string;
   value: string;
 }
-
+type InfoData = {
+  [key: string]: DataItem[];
+};
 interface ChartDataItem {
   label: string;
   score?: string;
@@ -83,16 +105,16 @@ const KnowAboutMe: React.FC = () => {
         const savedTitleCache = localStorage.getItem("titleCache");
         return savedTitleCache
           ? JSON.parse(savedTitleCache)
-          : { en: "Know About Me" };
+          : { en: "Persona Dashboard" };
       }
-      return { en: "Know About Me" };
+      return { en: "Persona Dashboard" };
     }
   ); // Cache titles
   const [graphData, setGraphData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [translating, setTranslating] = useState(false); // Translation loading state
-  const [pageTitle, setPageTitle] = useState("Know About Me"); // Title translation state
+  const [pageTitle, setPageTitle] = useState("Persona Dashboard"); // Title translation state
   const [selectedLanguage, setSelectedLanguage] = useState(
     languageOptions.find((lang) => lang.language === "English") ||
       languageOptions[0]
@@ -138,7 +160,7 @@ const KnowAboutMe: React.FC = () => {
   // Clear translation cache
   const clearTranslationCache = () => {
     setTranslationCache({});
-    setTitleCache({ en: "Know About Me" });
+    setTitleCache({ en: "Persona Dashboard" });
     if (typeof window !== "undefined") {
       localStorage.removeItem("translationCache");
       localStorage.removeItem("titleCache");
@@ -251,7 +273,7 @@ const KnowAboutMe: React.FC = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          text: "Know About Me",
+          text: "Persona Dashboard",
           targetLanguage: targetLanguage,
           sourceLanguage: "en",
         }),
@@ -958,6 +980,7 @@ const KnowAboutMe: React.FC = () => {
                   key={sectionTitle}
                   title={formatTitle(sectionTitle)}
                   data={sectionData}
+                  icon={getSectionIcon(sectionTitle)}
                 />
               ) : null
             )}
@@ -968,28 +991,84 @@ const KnowAboutMe: React.FC = () => {
     </AuthRequired>
   );
 };
+const formatArrayValue = (value: string) => {
+  if (
+    typeof value === "string" &&
+    value.startsWith("[") &&
+    value.endsWith("]")
+  ) {
+    try {
+      const parsed = JSON.parse(value);
+      return (
+        <div className="space-y-2">
+          {parsed.map((item: string, index: number) => (
+            <div
+              key={index}
+              className="ml-4 text-sm text-gray-700 flex items-start"
+            >
+              <span className="text-blue-500 mr-2 mt-1">•</span>
+              <span>{item.replace(/^"/, "").replace(/"$/, "")}</span>
+            </div>
+          ))}
+        </div>
+      );
+    } catch {
+      return <span className="text-gray-700">{value}</span>;
+    }
+  }
+  return <span className="text-gray-700">{value}</span>;
+};
 
-const Section: React.FC<{ title: string; data: DataItem[] }> = ({
-  title,
-  data,
-}) => (
-  <div className="bg-white shadow-md rounded-xl p-6">
-    <h2 className="text-xl font-bold text-gray-800 mb-4">{title}</h2>
-    {data.map((item, index) => (
-      <div key={index} className="mb-2 border-b pb-2 last:border-none">
-        <strong className="text-blue-800">{item.label}:</strong> {item.value}
-      </div>
-    ))}
+const Section: React.FC<{
+  title: string;
+  data: DataItem[];
+  icon: React.ElementType;
+}> = ({ title, data, icon: Icon }) => (
+  <div className="bg-white rounded-xl p-6  hover:shadow-2xl transition-shadow duration-200">
+    <div className="flex items-center mb-4">
+      <Icon className="w-10 h-10 text-red-600 mr-3" />
+
+      <h2 className="text-xl font-bold text-gray-800">{title}</h2>
+    </div>
+    <div className="space-y-4">
+      {data.map((item, index) => (
+        <div
+          key={index}
+          className="border-b border-gray-300 pb-3 last:border-none"
+        >
+          <h4 className="font-semibold text-blue-800  mb-2">{item.label}:</h4>
+          <div>{formatArrayValue(item.value)}</div>
+        </div>
+      ))}
+    </div>
   </div>
 );
 
-const formatTitle = (key: string) => {
-  return key
+const formatTitle = (key: string): string =>
+  key
     .replace(/([A-Z])/g, " $1")
     .replace(/^./, (str) => str.toUpperCase())
     .trim();
-};
 
+const getSectionIcon = (key: string) => {
+  const iconMap: { [key: string]: React.ElementType } = {
+    demographics: UserCircle, // More personal
+    familyEmployment: Briefcase, // More workplace-oriented
+    therapyReasons: BrainCircuit, // More detailed brain
+    mentalHealthHistory: ScrollText, // Feels historic/documented
+    traumaAndAdverseExperiences: ShieldCheck, // Protection/recovery
+    substanceUse: FlaskConical, // Represents substance/lab
+    healthAndLifestyle: HeartPulse, // Better than plain heart
+    medicalAndMedicationHistory: Pill, // Represents meds clearly
+    behavioralPatterns: Repeat, // Represents habit/loop
+    riskAssessment: AlertTriangle, // Clear warning sign
+    psychologicalFormulation: Puzzle, // Represents complexity
+    strengthsAndResources: Star, // Feels positive, ability
+    therapyRecommendations: FileText, // Same, fits documentation
+  };
+
+  return iconMap[key] || FileText;
+};
 export default function PersonaDashboardPage() {
   return <KnowAboutMe />;
 }
