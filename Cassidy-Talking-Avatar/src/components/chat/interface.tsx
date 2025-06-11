@@ -9,7 +9,9 @@ import {
 } from "@/lib/firebase";
 import { useLiveAPIContext } from "@/contexts/LiveAPIContext";
 
-const AIChatInterface: React.FC = () => {
+const AIChatInterface: React.FC<{ InteractiveMode: boolean }> = ({
+  InteractiveMode,
+}) => {
   const { client } = useLiveAPIContext();
   const { messageTranscription } = client;
   const [messages, setMessages] = useState<MessageHistoryItem[]>([]);
@@ -55,8 +57,10 @@ const AIChatInterface: React.FC = () => {
 
   // Auto-scroll to bottom when new messages are added
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (!InteractiveMode) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, InteractiveMode]);
 
   // Focus input after sending message
   useEffect(() => {

@@ -103,9 +103,12 @@ export interface MessageHistoryItem {
 export const getMessageHistory = async (
 ): Promise<MessageHistoryItem[]> => {
   try {
-    const userId = auth.currentUser?.uid;
+    let userId = auth.currentUser?.uid;
     if (!userId) {
-      throw new Error('User is not authenticated');
+      userId = (await waitForAuthState())?.uid;
+      if(!userId) {
+        throw new Error('User is not authenticated');
+      }
     }
     const userDocRef = doc(db, 'users', userId);
     const userSnapshot = await getDoc(userDocRef);
@@ -142,7 +145,7 @@ export const addMessageToHistory = async (
     console.log('Message added to history successfully');
     
     //track progress
-    fetch( "https://cassidyadk-d5afltb5ba-em.a.run.app/track_progress/", {
+    fetch( "https://cassidyadk-d5afltb5ba-em.a.run.app/track_progress", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
