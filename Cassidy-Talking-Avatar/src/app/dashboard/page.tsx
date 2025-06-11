@@ -77,7 +77,7 @@ const DualChatbotElement = () => {
       >
         <Cassidy></Cassidy>
         <GeminiLive></GeminiLive>
-        <ControlTray></ControlTray>
+        <ControlTray InteractiveMode={InteractiveMode}></ControlTray>
       </main>
       <main
         style={{

@@ -23,12 +23,14 @@ import AudioPulse from "../audio-pulse/AudioPulse";
 import "./control-tray.scss";
 import { MessagesSquare, Mic, MicOff, Pause, Play } from "lucide-react";
 import { Part } from "@google/genai";
+import { Inter } from "next/font/google";
 
 export type ControlTrayProps = {
   children?: ReactNode;
+  InteractiveMode: boolean;
 };
 
-function ControlTray({ children }: ControlTrayProps) {
+function ControlTray({ children, InteractiveMode }: ControlTrayProps) {
   const [inVolume, setInVolume] = useState(0);
 
   const [audioRecorder] = useState(() => new AudioRecorder());
@@ -63,7 +65,7 @@ function ControlTray({ children }: ControlTrayProps) {
         },
       ]);
     };
-    if (connected && !muted && audioRecorder) {
+    if (connected && !muted && audioRecorder && InteractiveMode) {
       audioRecorder.on("data", onData).on("volume", setInVolume).start();
     } else {
       audioRecorder.stop();
@@ -71,7 +73,7 @@ function ControlTray({ children }: ControlTrayProps) {
     return () => {
       audioRecorder.off("data", onData).off("volume", setInVolume);
     };
-  }, [connected, client, muted, audioRecorder]);
+  }, [connected, client, muted, audioRecorder, InteractiveMode]);
 
   return (
     <section className="control-tray">
