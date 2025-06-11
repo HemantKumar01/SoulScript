@@ -26,6 +26,10 @@ import { useEffect, useState } from "react";
 import { useLiveAPIContext } from "@/contexts/LiveAPIContext";
 import Progress from "@/components/avatar/progress/progress";
 import { Inter } from "next/font/google";
+import localFont from "next/font/local";
+const ClashDisplay = localFont({
+  src: "../../fonts/ClashDisplay_Complete/Fonts/WEB/fonts/ClashDisplay-Variable.woff2",
+});
 
 const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY as string;
 if (typeof API_KEY !== "string") {
@@ -51,6 +55,7 @@ function Home() {
 const DualChatbotElement = () => {
   const [InteractiveMode, setInteractiveMode] = useState<boolean>(true);
   const { connected, connect, disconnect } = useLiveAPIContext();
+
   useEffect(() => {
     if (!InteractiveMode) {
       if (!connected) {
@@ -64,9 +69,15 @@ const DualChatbotElement = () => {
       className="relative h-full w-full bg-[#00ce8d]"
       style={{
         background: "linear-gradient(135deg, #00ce8d 0%, #00a1e4 100%)",
+        // background:
+        //   "linear-gradient(135deg, hsla(178, 100%, 50%, 1) 0%, hsla(302, 100%, 50%, 1) 100%)",
+        // background:
+        //   "linear-gradient(90deg, hsla(285, 42%, 33%, 1) 0%, hsla(333, 54%, 51%, 1) 100%)",
       }}
     >
-      <div className="banner-text fixed z-[0] w-[100vh] h-auto top-1/2 transform -translate-y-1/2 right-0 text-[150px] font-[900] text-[#ffffff] text-center opacity-15 origin-center -rotate-90 translate-x-[calc(50%-0.5em)] select-none">
+      <div
+        className={`banner-text fixed z-[0] w-[100vh] h-auto top-1/2 transform -translate-y-1/2 right-0 text-[120px] font-[900] text-[#ffffff] text-center opacity-10 origin-center -rotate-90 translate-x-[calc(50%-0.5em)] select-none ${ClashDisplay.className}`}
+      >
         CASSIDY
       </div>
 
@@ -97,13 +108,13 @@ const DualChatbotElement = () => {
         <div className="text-zinc-700">Talk</div>
       </div>
       <div
-        className={`absolute left-0  z-10 bg-black p-5 pb-12 text-white transition-all duration-300 ease-in-out ${
+        className={`absolute   z-10 bg-white/20 p-5  text-white transition-all duration-300 ease-in-out ${
           InteractiveMode
-            ? "hidden md:block md:bottom-0 md:top-auto rounded-none rounded-br-xl md:rounded-none md:rounded-tr-xl"
+            ? "hidden md:block left-auto right-2 bottom-2 rounded-xl"
             : "hidden"
         }`}
       >
-        <Progress className="relative" size={80}></Progress>
+        <Progress className="relative"></Progress>
       </div>
     </div>
   );

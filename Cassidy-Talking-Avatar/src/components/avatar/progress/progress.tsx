@@ -15,7 +15,7 @@ const Progress: React.FC<ProgressProps> = ({
   strokeWidth = 8,
   className = "",
 }) => {
-  const [progress, setProgress] = useState<number>(0);
+  const [progress, setProgress] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
   const [userName, setUserName] = useState<string | null>(null);
   const [userId, setUserId] = useState<string>("");
@@ -48,7 +48,7 @@ const Progress: React.FC<ProgressProps> = ({
       (docSnapshot) => {
         if (docSnapshot.exists()) {
           const data = docSnapshot.data();
-          const userProgress = data.progress || 0;
+          const userProgress = data.progress || 1;
           setProgress(userProgress);
         }
         setLoading(false);
@@ -63,7 +63,10 @@ const Progress: React.FC<ProgressProps> = ({
   }, [userId]);
 
   const totalQuestions = questions.length;
-  const progressPercentage = Math.min((progress / totalQuestions) * 100, 100);
+  const progressPercentage = Math.max(
+    Math.min(((progress - 1) / totalQuestions) * 100, 100),
+    0
+  );
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const strokeDashoffset =
@@ -82,43 +85,13 @@ const Progress: React.FC<ProgressProps> = ({
 
   return (
     <div
-      className={`relative ${className} flex justify-center items-center`}
-      style={{ width: size + 100, height: size }}
+      className={`relative ${className} flex justify-center items-center w-50`}
     >
-      <svg width={size} height={size} className="transform -rotate-90">
-        {/* Background circle */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke="currentColor"
-          strokeWidth={strokeWidth}
-          fill="transparent"
-          className="text-gray-200"
-        />
-        {/* Progress circle */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke="currentColor"
-          strokeWidth={strokeWidth}
-          fill="transparent"
-          strokeDasharray={circumference}
-          strokeDashoffset={strokeDashoffset}
-          strokeLinecap="round"
-          className="text-blue-500 transition-all duration-300 ease-in-out"
-        />
-      </svg>
-      {/* Percentage text */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-lg font-semibold text-gray-300">
-          {Math.round(progressPercentage)}%
-        </span>
-      </div>
       {/* Progress text */}
-      <div className="absolute -bottom-8 left-0 right-0 text-center">
-        <span className="text-sm text-gray-100">Conversation Quality</span>
+      <div className="text-center">
+        <span className="text-sm text-slate-700">
+          Conversation Quality : {Math.round(progressPercentage)}%
+        </span>
       </div>
     </div>
   );

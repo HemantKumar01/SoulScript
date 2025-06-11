@@ -17,6 +17,9 @@ import {
   User as UserIcon,
   MapIcon,
   ChartColumn,
+  Notebook,
+  Music,
+  MapPinned,
 } from "lucide-react";
 import { ChatBubbleIcon } from "@radix-ui/react-icons";
 
@@ -52,19 +55,23 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: "Home", href: "/dashboard", icon: <Home size={20} /> },
-  { label: "Mind Log", href: "/dashboard/mindlog", icon: <Brain size={20} /> },
-  { label: "Calmify", href: "/dashboard/calmify", icon: <Waves size={20} /> },
+  { label: "Cassidy", href: "/dashboard", icon: <Home size={20} /> },
   {
-    label: "Dashboard",
+    label: "Mind Log",
+    href: "/dashboard/mindlog",
+    icon: <Notebook size={20} />,
+  },
+  { label: "Calmify", href: "/dashboard/calmify", icon: <Music size={20} /> },
+  {
+    label: "Your Persona",
     href: "/dashboard/persona-dashboard",
     icon: <LayoutDashboard size={20} />,
   },
   { label: "Community", href: "/dashboard/blogs", icon: <Users size={20} /> },
   {
-    label: "Therapist",
+    label: "Therapists Nearby",
     href: "/dashboard/therapists-near-you",
-    icon: <MapIcon size={20} />,
+    icon: <MapPinned size={20} />,
   },
   { label: "Reports", href: "/dashboard/reports", icon: <ChartColumn /> },
   {
