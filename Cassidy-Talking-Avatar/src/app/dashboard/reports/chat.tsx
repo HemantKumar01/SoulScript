@@ -1,10 +1,7 @@
 "use client"
 
-import type React from "react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useCurrentUser } from "@/hooks/use-current-user"
-import { collection, query, where, getDocs } from "firebase/firestore"
-import { db } from "@/lib/firebase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -12,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { MessageSquare, Download, AlertCircle, CheckCircle, Loader2, Sparkles } from "lucide-react"
 import { useAuthId } from "@/hooks/use-auth-id"
 
-const ChatSummaryViewer: React.FC = () => {
+const ChatSummaryViewer = () => {
   const { user, loading: userLoading } = useCurrentUser()
   const authId = useAuthId()
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
@@ -73,14 +70,11 @@ const ChatSummaryViewer: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      <Card className="border-0 bg-white/5 backdrop-blur-xl shadow-2xl">
+      <Card className="border border-slate-700 bg-gradient-to-br from-slate-800/50 via-slate-800/50 to-purple-900/20 shadow-lg shadow-purple-500/10">
         <CardHeader className="pb-6">
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 flex items-center justify-center shadow-2xl">
-                <MessageSquare className="h-8 w-8 text-white" />
-              </div>
-              <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur opacity-75" />
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/50">
+              <MessageSquare className="h-8 w-8 text-white" />
             </div>
             <div className="flex-1">
               <CardTitle className="text-3xl text-white font-bold mb-2">Chat Summary Report</CardTitle>
@@ -97,7 +91,7 @@ const ChatSummaryViewer: React.FC = () => {
               onClick={handleGenerateReport}
               disabled={loading || !authId}
               size="lg"
-              className="min-w-[220px] bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300 text-lg py-6"
+              className="min-w-[220px] bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-md hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300 text-lg py-6"
             >
               {loading ? (
                 <>
@@ -113,7 +107,7 @@ const ChatSummaryViewer: React.FC = () => {
             </Button>
 
             {authId && (
-              <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg flex items-center gap-2 px-4 py-2">
+              <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-md flex items-center gap-2 px-4 py-2">
                 <CheckCircle className="h-4 w-4" />
                 User Verified
               </Badge>
@@ -121,24 +115,22 @@ const ChatSummaryViewer: React.FC = () => {
           </div>
 
           {loading && (
-            <div className="space-y-4 p-6 bg-white/5 rounded-xl backdrop-blur-sm">
+            <div className="space-y-4 p-6 bg-gradient-to-br from-slate-700/30 via-purple-900/20 to-pink-900/20 rounded-xl">
               <div className="flex items-center justify-between text-lg">
                 <span className="text-white font-medium">Analyzing your conversations...</span>
-                <span className="text-pink-400 font-bold">{progress}%</span>
+                <span className="text-purple-400 font-bold">{progress}%</span>
               </div>
-              <div className="w-full bg-white/10 rounded-full h-3 overflow-hidden">
+              <div className="w-full bg-slate-600/50 rounded-full h-3 overflow-hidden">
                 <div
-                  className="h-3 rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 transition-all duration-500 ease-out relative"
+                  className="h-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-500 ease-out"
                   style={{ width: `${progress}%` }}
-                >
-                  <div className="absolute inset-0 bg-white/30 animate-pulse" />
-                </div>
+                />
               </div>
             </div>
           )}
 
           {error && (
-            <Alert className="border-red-500/50 bg-red-500/10 backdrop-blur-sm">
+            <Alert className="border-red-500/50 bg-red-500/10">
               <AlertCircle className="h-5 w-5 text-red-400" />
               <AlertDescription className="text-red-300 text-lg">{error}</AlertDescription>
             </Alert>
@@ -147,7 +139,7 @@ const ChatSummaryViewer: React.FC = () => {
       </Card>
 
       {pdfUrl && (
-        <Card className="border-0 bg-white/5 backdrop-blur-xl shadow-2xl">
+        <Card className="border border-slate-700 bg-gradient-to-br from-slate-800/50 via-slate-800/50 to-purple-900/20 shadow-lg shadow-purple-500/10">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -156,7 +148,7 @@ const ChatSummaryViewer: React.FC = () => {
               </div>
               <Button
                 onClick={downloadPdf}
-                className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300"
+                className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white border-0 shadow-md hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-300"
               >
                 <Download className="h-4 w-4 mr-2" />
                 Download PDF
@@ -164,7 +156,7 @@ const ChatSummaryViewer: React.FC = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="border border-white/20 rounded-xl overflow-hidden bg-white shadow-2xl">
+            <div className="border border-slate-600 rounded-xl overflow-hidden bg-white shadow-lg">
               <iframe src={pdfUrl} className="w-full h-[700px]" title="Chat Summary PDF" />
             </div>
           </CardContent>

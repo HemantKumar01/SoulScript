@@ -115,7 +115,7 @@ export default function ChatInterface() {
       {/* Header */}
       <header className="bg-slate-800/50 backdrop-blur-md text-white py-4 px-6 shadow-lg flex justify-between items-center border-b border-slate-700">
         <h1 className="text-xl md:text-2xl font-semibold tracking-tight">Know Yourself Better</h1>
-        <Button variant="outline" className="text-white border-slate-600 hover:bg-slate-700 hover:text-white" onClick={() => router.push("/dashboard")}>Dashboard</Button>
+        <Button variant="outline" className="text-black border-slate-600 hover:bg-slate-900 hover:text-white" onClick={() => router.push("/dashboard")}>Dashboard</Button>
       </header>
 
 
