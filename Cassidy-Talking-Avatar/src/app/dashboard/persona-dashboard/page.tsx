@@ -431,7 +431,7 @@ useEffect(() => {
       }
 
       // Make the API request
-      const response = await fetch("api/getReport", {
+      const response = await fetch(process.env.NEXT_PUBLIC_REPORTGEN_CHATBOT+"/getReport", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

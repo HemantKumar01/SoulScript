@@ -36,7 +36,7 @@ const ChatSummaryViewer = () => {
     }, 200)
 
     try {
-      const res = await fetch("api/getChatSummary", {
+      const res = await fetch(process.env.NEXT_PUBLIC_REPORTGEN_CHATBOT+"/getChatSummary", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
