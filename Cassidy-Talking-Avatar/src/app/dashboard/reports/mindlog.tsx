@@ -49,32 +49,31 @@ const MindLogReportViewer = () => {
     }, 200)
 
     try {
-      console.log("Making request with:", { authId, email: user?.email, numdays: numDays })
+     
 
-      const res = await fetch("https://fastapi-backend-370305669096.asia-south1.run.app/getMindLogReport", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          authId,
-          email: user?.email,
-          numdays: numDays,
-        }),
-      })
+        const res = await fetch("api/getMindLogReport", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            authId,
+            email: user?.email,
+            numdays: numDays,
+          }),
+        })
 
-      console.log("Response status:", res.status)
-      console.log("Response headers:", Object.fromEntries(res.headers.entries()))
+     
 
       // Always try to parse JSON response, regardless of status
       let data
       let responseText = ""
       try {
         responseText = await res.text()
-        console.log("Raw response:", responseText)
+      
         data = JSON.parse(responseText)
-        console.log("Parsed response:", data)
+      
       } catch (parseError) {
-        console.error("JSON parse error:", parseError)
-        console.error("Response text:", responseText)
+       
+      
         throw new Error(`Failed to parse server response. Status: ${res.status}`)
       }
 
@@ -102,7 +101,7 @@ const MindLogReportViewer = () => {
         throw new Error("No PDF data received from server")
       }
     } catch (err: any) {
-      console.error("Report generation error:", err)
+   
 
       // Handle different types of errors
       if (err.name === "TypeError" && err.message.includes("fetch")) {
@@ -169,8 +168,7 @@ const MindLogReportViewer = () => {
             <div className="space-y-3">
               <div className="text-lg font-semibold">Need More Journal Entries</div>
               <p className="text-blue-200">
-                You have {entriesFound} journal {entriesFound === 1 ? "entry" : "entries"}, but we recommend at least 3
-                entries for a meaningful analysis.
+                You have only {entriesFound} journal {entriesFound === 1 ? "entry" : "entries"}.
               </p>
               <div className="bg-blue-500/20 rounded-lg p-4 mt-3">
                 <div className="text-sm text-blue-100">
