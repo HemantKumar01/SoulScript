@@ -14,7 +14,7 @@ import { db } from "@/lib/firebase";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent } from "@/components/ui/dropdown-menu";
 import { languageOptions } from "@/components/languageOptions";
 import { ChevronDown, Globe, Check, Search, Mail } from "lucide-react";
-
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 interface DataItem {
   label: string;
   value: string;
@@ -499,25 +499,31 @@ useEffect(() => {
 }, [user, userLoading]);
 
   const backgroundStyle = "bg-[linear-gradient(60deg,_rgb(247,_149,_51),_rgb(243,_112,_85),_rgb(239,_78,_123),_rgb(161,_102,_171),_rgb(80,_115,_184),_rgb(16,_152,_173),_rgb(7,_179,_155),_rgb(111,_186,_130))] min-h-screen py-12 text-black";
-
-  if (loading || userLoading) {
-    return (
-      <AuthRequired>
-        <div className={backgroundStyle}>
-          <div className="flex flex-col items-center justify-center h-screen">
-            <div className="bg-white shadow-lg rounded-xl p-8 text-center">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Generating Report</h2>
-              <div className="flex justify-center">
-                {/* Loading spinner */}
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-              </div>
-              <p className="mt-4 text-gray-600">This may take a moment as we analyze your information...</p>
+if (loading || userLoading) {
+  return (
+    <AuthRequired>
+      <div className={backgroundStyle}>
+        <div className="flex flex-col items-center justify-center h-screen">
+          <div className="bg-white shadow-lg rounded-xl p-8 text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Generating Report</h2>
+            <div className="flex justify-center">
+              {/* Lottie loader */}
+              <DotLottieReact
+                src="https://lottie.host/00918141-1a56-47ba-8ba8-5c5902aba48b/2jp7AfTff5.lottie"
+                loop
+                autoplay
+                style={{ height: '120px' }}
+              />
             </div>
+            <p className="mt-4 text-gray-600">
+              This may take 1–2 minutes as we analyze your information...
+            </p>
           </div>
         </div>
-      </AuthRequired>
-    );
-  }
+      </div>
+    </AuthRequired>
+  );
+}
 
 // Updated error display component
 if (error || !data) {
