@@ -51,7 +51,7 @@ const MindLogReportViewer = () => {
     try {
      
 
-        const res = await fetch("api/getMindLogReport", {
+        const res = await fetch(process.env.NEXT_PUBLIC_REPORTGEN_CHATBOT+"/getMindLogReport", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
