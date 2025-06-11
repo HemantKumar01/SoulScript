@@ -97,18 +97,13 @@ const DualChatbotElement = () => {
         <div className="text-zinc-700">Talk</div>
       </div>
       <div
-        className={`absolute left-0  z-10 bg-black/30 p-5 pb-16 text-white transition-all duration-300 ease-in-out ${
+        className={`absolute left-0  z-10 bg-black p-5 pb-12 text-white transition-all duration-300 ease-in-out ${
           InteractiveMode
-            ? "w-[100vh] md:bottom-0 md:top-auto rounded-none rounded-br-xl md:rounded-none md:rounded-tr-xl"
+            ? "hidden md:block md:bottom-0 md:top-auto rounded-none rounded-br-xl md:rounded-none md:rounded-tr-xl"
             : "hidden"
         }`}
       >
-        {/* <Progress className="relative" size={80}></Progress> */}
-        <div className="w-max">Hey there</div>
-        <div className="w-max">Hey there</div>
-        <div className="w-max">Hey there</div>
-        <div className="w-max">Hey there</div>
-        <div className="w-max">Hey there</div>
+        <Progress className="relative" size={80}></Progress>
       </div>
     </div>
   );
