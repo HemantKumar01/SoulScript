@@ -6,3 +6,4 @@ python-dotenv
 google-adk
 Deprecated
 Flask[async]
+cryptography

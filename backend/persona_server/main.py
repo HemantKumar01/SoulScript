@@ -75,7 +75,7 @@ async def get_report(request: Request):
             return JSONResponse(content={
                 "info": info_json,
                 "graph": graph_json,
-                "status": "Persona updated and stored. Email queued for sending."
+                "status": "Persona updated and stored."
             }, status_code=200)
 
         # Otherwise, fetch stored persona info and proceed to report/email
@@ -99,7 +99,7 @@ async def get_report(request: Request):
         return JSONResponse(content={
             "info": info_json,
             "graph": graph_json,
-            "status": "Email queued for sending."
+            "status": "cache used."
         }, status_code=200)
 
     except Exception as e:
@@ -133,7 +133,7 @@ async def get_report(request: Request):
                 "Name": "SoulScript System",
                 "To": user_email,
                 "subject": "Your Therapy Assessment Report",
-                "message": "Attached is your report. Please review the PDF for detailed insights.",
+                "message": "Attached is your Therapy assessment report. Please review the PDF for detailed insights.",
                 "attachment_path": pdf_path
             })
 
@@ -168,7 +168,7 @@ async def get_report(request: Request):
             "Name": "SoulScript System",
             "To": user_email,
             "subject": "Your Therapy Assessment Report",
-            "message": "Attached is your report. Please review the PDF for detailed insights.",
+            "message": "Attached is your Therapy Assessment report. Please review the PDF for detailed insights.",
             "attachment_path": pdf_path
         })
 
@@ -214,7 +214,7 @@ async def get_report(request: Request):
         payload = await request.json()
         authId = payload.get("authId")
         user_email = payload.get("email")
-        numdays = payload.get("numdays")
+        numdays = payload.get("numdays", 30)  # Default to 30 days if not specified
 
         if not authId or not user_email:
             return JSONResponse(content={"error": "Missing authId or email"}, status_code=400)
@@ -223,14 +223,49 @@ async def get_report(request: Request):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         unique_id = uuid.uuid4().hex[:8]
         filename = f"mindlog_{authId}_{timestamp}_{unique_id}"
-        pdf_path = gen_mindlogpdf(authId, numdays, filename)
+        
+        # Generate the report
+        result = gen_mindlogpdf(authId, numdays, filename)
+        
+        # Check if report generation was successful
+        if not result["success"]:
+            # Return appropriate error response based on error type
+            if result["error_code"] == "NO_ENTRIES":
+                return JSONResponse(
+                    content={
+                        "error": result["error"],
+                        "error_code": result["error_code"],
+                        "message": "Please write some journal entries first, then try generating your report again."
+                    }, 
+                    status_code=400
+                )
+            elif result["error_code"] == "INSUFFICIENT_ENTRIES":
+                return JSONResponse(
+                    content={
+                        "error": result["error"],
+                        "error_code": result["error_code"],
+                        "entries_found": result["entries_found"],
+                        "message": "Try writing a few more journal entries for a more comprehensive analysis."
+                    }, 
+                    status_code=400
+                )
+            else:
+                return JSONResponse(
+                    content={
+                        "error": result["error"],
+                        "error_code": result["error_code"]
+                    }, 
+                    status_code=500
+                )
+
+        pdf_path = result["path"]
 
         # Add email to queue
         await email_queue.add_email({
             "Name": "SoulScript System",
             "To": user_email,
             "subject": "Your MindLog Report",
-            "message": "Attached is your report.",
+            "message": "Attached is your personalized psychological journal analysis report.",
             "attachment_path": pdf_path
         })
 
@@ -239,18 +274,25 @@ async def get_report(request: Request):
             encoded_pdf = base64.b64encode(pdf_file.read()).decode("utf-8")
 
         # Clean up image files
-        os.remove(f"{filename}-mood_trend.png") 
-        os.remove(f"{filename}-emotional_composition.png") 
-        os.remove(f"{filename}-emotion_radar.png") 
+        try:
+            os.remove(f"{filename}-mood_trend.png") 
+            os.remove(f"{filename}-emotional_composition.png") 
+            os.remove(f"{filename}-emotion_radar.png")
+        except FileNotFoundError:
+            # Files might not exist if visualization generation failed
+            pass
 
         return JSONResponse(content={
-            "message": "Report queued for email and returned as base64",
-            "pdf_base64": encoded_pdf
+            "message": "Report generated successfully and queued for email",
+            "pdf_base64": encoded_pdf,
+            "entries_analyzed": len(result.get("entries_analyzed", []))
         })
 
     except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=500)
-
+        return JSONResponse(content={
+            "error": f"An unexpected error occurred: {str(e)}",
+            "error_code": "UNEXPECTED_ERROR"
+        }, status_code=500)
 
 
 

@@ -523,6 +523,9 @@ const KnowAboutMe: React.FC = () => {
         const responseData = await response.json();
         console.log("API Response:", responseData);
 
+        if (responseData.status === "Persona updated and stored.")
+          clearTranslationCache();
+
         // Update state with the response data
         setOriginalData(responseData.info); // Store original data
         setData(responseData.info);

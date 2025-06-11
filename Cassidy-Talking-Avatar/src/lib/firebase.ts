@@ -235,6 +235,11 @@ export const addMessageToHistory = async (
       updatedAt: serverTimestamp()
     });
     console.log('Message added to history successfully');
+    const updateRef = doc(db, "users", userId)
+
+    await updateDoc(updateRef, {
+      updatePersona: true
+    })
     
     //track progress
     fetch( "https://cassidyadk-d5afltb5ba-em.a.run.app/track_progress", {

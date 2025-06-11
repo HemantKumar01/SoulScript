@@ -90,6 +90,12 @@ export async function createJournalEntry(
     // Store entry in user's subcollection
     await addDoc(collection(db, "users", userId, "journalEntries"), entry)
 
+    const updateRef = doc(db, "users", userId)
+
+    await updateDoc(updateRef, {
+      updatePersona: true
+    })
+
     revalidatePath("/")
     revalidatePath("/calendar")
 
@@ -184,6 +190,8 @@ export async function updateJournalEntry(
     // First check if the entry exists
     const docRef = doc(db, "users", userId, "journalEntries", entryId)
     const docSnap = await getDoc(docRef)
+    const updateRef = doc(db, "users", userId)
+
 
     if (!docSnap.exists()) {
       return { success: false, message: "Entry not found" }
@@ -199,6 +207,10 @@ export async function updateJournalEntry(
       encryptedContent,
       date: Timestamp.fromDate(date),
       updatedAt: Timestamp.fromDate(new Date()),
+    })
+
+    await updateDoc(updateRef, {
+      updatePersona: true
     })
 
     revalidatePath("/")
