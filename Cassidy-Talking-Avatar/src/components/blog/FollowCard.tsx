@@ -21,13 +21,13 @@ export default function FollowCard({
 }: FollowCardProps) {
   const [isFollowing, setIsFollowing] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [currentUserId, setCurrentUserId] = useState<string>("")
 
   useEffect(() => {
     async function checkFollowStatus() {
       await requireAuth();
       const user = getCurrentUser();
-      setCurrentUserId(user.uid)
+      setCurrentUserId(user?.uid || "");
       const following = await isUserFollowing(currentUserId, targetUserId)
       setIsFollowing(following)
     }

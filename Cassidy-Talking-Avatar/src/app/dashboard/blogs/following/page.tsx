@@ -14,7 +14,7 @@ export default function FollowingPage() {
   const [error, setError] = useState<string | null>(null)
   
   // You'll need to get current user ID from your auth context
-   const [currentUserId, setCurrentUserId] = useState<string | null>(null) // Replace with actual user ID from auth
+   const [currentUserId, setCurrentUserId] = useState<string>("") // Replace with actual user ID from auth
 
   useEffect(() => {
     async function fetchFollowingPosts() {
