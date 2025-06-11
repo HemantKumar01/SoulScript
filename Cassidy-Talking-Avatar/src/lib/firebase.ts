@@ -15,6 +15,7 @@ import {
   updateDoc,
   serverTimestamp 
 } from 'firebase/firestore';
+import { encrypt, decrypt } from './crypto/encryption';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -98,24 +99,84 @@ export interface MessageHistoryItem {
   role: 'user' | 'assistant';
 }
 
+// Helper function to decrypt message history
+async function decryptMessageHistory(encryptedHistory: any[], userEmail: string): Promise<MessageHistoryItem[]> {
+  const decryptedHistory: MessageHistoryItem[] = []
+  
+  for (const item of encryptedHistory) {
+    try {
+      let message = ""
+      
+      // Decrypt the message if it's encrypted
+      if (item.encryptedMessage) {
+        message = await decrypt(item.encryptedMessage, userEmail)
+      } else {
+        // Fallback to unencrypted message for backward compatibility
+        message = item.message || "Unable to decrypt message"
+      }
+      
+      decryptedHistory.push({
+        message,
+        role: item.role
+      })
+    } catch (error) {
+      console.error("Error decrypting message:", error)
+      // Add a fallback message if decryption fails
+      decryptedHistory.push({
+        message: "Unable to decrypt message",
+        role: item.role || 'user'
+      })
+    }
+  }
+  
+  return decryptedHistory
+}
+
+// Helper function to encrypt message history
+async function encryptMessageHistory(history: MessageHistoryItem[], userEmail: string): Promise<any[]> {
+  const encryptedHistory = []
+  
+  for (const item of history) {
+    try {
+      const encryptedMessage = await encrypt(item.message, userEmail)
+      encryptedHistory.push({
+        encryptedMessage,
+        role: item.role
+      })
+    } catch (error) {
+      console.error("Error encrypting message:", error)
+      // Fallback to unencrypted for this item if encryption fails
+      encryptedHistory.push({
+        message: item.message,
+        role: item.role
+      })
+    }
+  }
+  
+  return encryptedHistory
+}
+
 
 // Get message history for a user
 export const getMessageHistory = async (
 ): Promise<MessageHistoryItem[]> => {
   try {
-    let userId = auth.currentUser?.uid;
-    if (!userId) {
-      userId = (await waitForAuthState())?.uid;
-      if(!userId) {
-        throw new Error('User is not authenticated');
-      }
+    const userId = auth.currentUser?.uid;
+    const userEmail = auth.currentUser?.email;
+    
+    if (!userId || !userEmail) {
+      throw new Error('User is not authenticated');
     }
+    
     const userDocRef = doc(db, 'users', userId);
     const userSnapshot = await getDoc(userDocRef);
     
     if (userSnapshot.exists()) {
       const userData = userSnapshot.data();
-      return userData.userHistory || [];
+      const encryptedHistory = userData.userHistory || [];
+      
+      // Decrypt the message history before returning
+      return await decryptMessageHistory(encryptedHistory, userEmail);
     } else {
       console.log('No user document found');
       return [];
@@ -132,14 +193,34 @@ export const addMessageToHistory = async (
 ): Promise<void> => {
   try {
     const userId = auth.currentUser?.uid;
-    if (!userId) {
+    const userEmail = auth.currentUser?.email;
+    
+    if (!userId || !userEmail) {
       throw new Error('User is not authenticated');
     }
-    const currentHistory = await getMessageHistory();
-    const updatedHistory = [...currentHistory, newMessage];
+    
+    // Get the current encrypted history directly from Firestore
     const userDocRef = doc(db, 'users', userId);
+    const userSnapshot = await getDoc(userDocRef);
+    
+    let currentEncryptedHistory = [];
+    if (userSnapshot.exists()) {
+      const userData = userSnapshot.data();
+      currentEncryptedHistory = userData.userHistory || [];
+    }
+    
+    // Encrypt only the new message
+    const encryptedNewMessage = await encrypt(newMessage.message, userEmail);
+    const newEncryptedItem = {
+      encryptedMessage: encryptedNewMessage,
+      role: newMessage.role
+    };
+    
+    // Add the new encrypted message to the existing encrypted history
+    const updatedEncryptedHistory = [...currentEncryptedHistory, newEncryptedItem];
+    
     await updateDoc(userDocRef, {
-      userHistory: updatedHistory,
+      userHistory: updatedEncryptedHistory,
       updatedAt: serverTimestamp()
     });
     console.log('Message added to history successfully');

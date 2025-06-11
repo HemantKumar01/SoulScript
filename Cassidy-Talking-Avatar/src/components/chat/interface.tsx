@@ -27,7 +27,7 @@ const AIChatInterface: React.FC<{ InteractiveMode: boolean }> = ({
       messageTranscription != null &&
       messageTranscription.message.trim() !== ""
     ) {
-      if (messageTranscription != messages[history.length - 1]) {
+      if (messageTranscription != messages[messages.length - 1]) {
         // Add AI response to local state
         setMessages((prev) => [...prev, messageTranscription]);
 
@@ -37,7 +37,7 @@ const AIChatInterface: React.FC<{ InteractiveMode: boolean }> = ({
         });
       }
     }
-  }, [messageTranscription]);
+  }, [messageTranscription, messages]);
 
   // Load message history on component mount
   useEffect(() => {

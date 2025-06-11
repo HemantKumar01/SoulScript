@@ -333,8 +333,8 @@ def analyze_journal_entries(authId):
         for doc in snapshot:
             entry_data = doc.to_dict()
             entries.append({
-                "title": entry_data.get("title", "Untitled"),
-                "content": entry_data.get("content", ""),
+                "title": entry_data.get("encryptedTitle", entry_data.get("title", "Untitled")),
+                "content": entry_data.get("encryptedContent", entry_data.get("content", "")),
                 "date": entry_data.get("date", datetime.now())
             })
 
