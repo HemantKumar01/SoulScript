@@ -19,6 +19,12 @@
 export type GetAudioContextOptions = AudioContextOptions & {
   id?: string;
 };
+import { ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 const map: Map<string, AudioContext> = new Map();
 

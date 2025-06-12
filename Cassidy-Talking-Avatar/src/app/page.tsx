@@ -1,688 +1,276 @@
-import { Button } from "@/components/ui/button";
+"use client";
+import React, { useState, useEffect } from "react";
 import {
-  ChevronRight,
-  MessageSquare,
-  Shield,
-  Sparkles,
+  Leaf,
+  Heart,
   BookOpen,
+  MessageCircle,
+  ExternalLink,
 } from "lucide-react";
-import MorphingText from "@/components/landing-page/morphing-text";
-import FeatureCard from "@/components/landing-page/feature-card";
-import HeroImage from "@/components/landing-page/hero-image";
-import Navbar from "@/components/navbar";
-import ScrollReveal from "@/components/landing-page/scroll-reveal";
-import "./globals.css"; // Ensure global styles are imported
+import Link from "next/link";
+import localFont from "next/font/local";
+const ClashDisplay = localFont({
+  src: "../fonts/ClashDisplay_Complete/Fonts/WEB/fonts/ClashDisplay-Variable.woff2",
+});
 
-export default function Home() {
+const HeroSection: React.FC = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [floatingElements, setFloatingElements] = useState<
+    Array<{ id: number; x: number; y: number; delay: number }>
+  >([]);
+
+  useEffect(() => {
+    setIsVisible(true);
+
+    // Generate floating elements for ambient animation
+    const elements = Array.from({ length: 8 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      delay: Math.random() * 4,
+    }));
+    setFloatingElements(elements);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-black text-white">
-      <Navbar />
-      <div className="pt-16">
-        {" "}
-        {/* Add padding-top to account for fixed navbar */}
-        {/* Hero Section */}
-        <section className="relative overflow-hidden min-h-screen flex items-center">
-          {/* Enhanced Background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 via-black to-blue-900/20 z-0"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-500/10 via-transparent to-transparent z-0"></div>
+    <div
+      className={`min-h-screen bg-gradient-to-br from-slate-800 via-teal-900 to-slate-900 relative overflow-hidden ${ClashDisplay.className}`}
+    >
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0">
+        {floatingElements.map((element) => (
+          <div
+            key={element.id}
+            className="absolute w-2 h-2 bg-teal-300 rounded-full opacity-20 animate-pulse"
+            style={{
+              left: `${element.x}%`,
+              top: `${element.y}%`,
+              animationDelay: `${element.delay}s`,
+              animationDuration: "3s",
+            }}
+          />
+        ))}
+      </div>
 
-          {/* Animated Background Particles */}
-          <div className="absolute inset-0 overflow-hidden z-0">
-            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-purple-400 rounded-full animate-pulse opacity-60 animate-bounce"></div>
-            <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-pink-400 rounded-full animate-pulse opacity-40 animation-delay-1000 animate-bounce"></div>
-            <div className="absolute top-1/2 left-1/6 w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse opacity-50 animation-delay-2000 animate-bounce"></div>
-            <div className="absolute top-1/6 right-1/3 w-1 h-1 bg-purple-300 rounded-full animate-pulse opacity-30 animation-delay-3000 animate-bounce"></div>
-            <div className="absolute top-1/3 right-1/6 w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse opacity-45 animation-delay-4000 animate-bounce"></div>
-            <div className="absolute bottom-1/4 left-1/3 w-1 h-1 bg-pink-300 rounded-full animate-pulse opacity-35 animation-delay-5000 animate-bounce"></div>
-          </div>
+      {/* Gradient Orbs */}
+      <div className="absolute top-20 left-20 w-64 h-64 bg-teal-500 rounded-full opacity-10 blur-3xl animate-pulse animation-duration-[10s]" />
+      <div
+        className="absolute bottom-20 right-20 w-80 h-80 bg-emerald-400 rounded-full opacity-10 blur-3xl animate-pulse animation-duration-[10s]"
+        style={{ animationDelay: "5s" }}
+      />
 
-          <div className="container mx-auto px-4 py-24 md:py-32 relative z-10">
-            <div className="flex flex-col md:flex-row items-center gap-12">
-              <div className="flex-1 space-y-8">
-                <div className="inline-flex items-center px-6 py-2 bg-gradient-to-r from-purple-900/40 to-pink-900/40 rounded-full border border-purple-500/30 backdrop-blur-sm mb-6 hover:border-purple-400/50 transition-all duration-300">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse mr-3"></div>
-                  <p className="text-sm font-medium text-purple-300">
-                    AI-Powered Therapy • Now Available
-                  </p>
-                </div>
-
-                <h1 className="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-500 leading-tight">
-                  SoulScript
-                </h1>
-
-                <p className="text-xl md:text-2xl font-light text-gray-300 leading-relaxed max-w-2xl">
-                  Transform your mental wellness journey with AI-powered therapy that&apos;s accessible, confidential, and always available when you need support.
-                </p>
-
-                <div className="pt-4">
-                  <MorphingText />
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-4 pt-8">
-                  <Button
-                    size="lg"
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0 shadow-2xl shadow-purple-500/25 hover:shadow-purple-500/40 transition-all duration-300 transform hover:scale-105"
-                  >
-                    Start Your Journey
-                    <ChevronRight className="ml-2 h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="bg-transparent border-purple-500/50 text-white hover:bg-purple-900/20 backdrop-blur-sm hover:border-purple-400/70 transition-all duration-300"
-                  >
-                    Watch Demo
-                  </Button>
-                </div>
-
-                {/* Trust Indicators */}
-                <div className="flex items-center gap-8 pt-8 text-sm text-gray-400">
-                  <div className="flex items-center gap-2">
-                    <Shield className="h-4 w-4 text-green-400" />
-                    <span>HIPAA Compliant</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4 text-blue-400" />
-                    <span>24/7 Available</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-purple-400" />
-                    <span>AI-Powered</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex-1">
-                <HeroImage />
-              </div>
-            </div>
-          </div>
-        </section>
-        {/* Rest of the content remains the same */}
-        {/* Features Section */}
-        <ScrollReveal>
-          <section className="py-24 bg-gradient-to-b from-black via-gray-900/50 to-black relative">
-            {/* Background decoration */}
-            <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(168,85,247,0.02)_50%,transparent_75%)] bg-[length:60px_60px]"></div>
-
-            <div className="container mx-auto px-4 relative z-10">
-              <div className="text-center mb-20">
-                <div className="inline-flex items-center px-4 py-2 bg-purple-900/20 rounded-full border border-purple-500/30 mb-6">
-                  <Sparkles className="h-4 w-4 text-purple-400 mr-2" />
-                  <span className="text-sm text-purple-300 font-medium">
-                    Comprehensive Platform
-                  </span>
-                </div>
-
-                <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-white">
-                  Mental Wellness Redefined
-                </h2>
-                <p className="text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed">
-                  SoulScript combines cutting-edge AI technology with human
-                  expertise to provide accessible, comprehensive mental health
-                  support that adapts to your unique needs.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-                <FeatureCard
-                  icon={<BookOpen className="h-8 w-8 text-purple-400" />}
-                  title="Smart Journal"
-                  description="Advanced journaling with AI insights that help you understand patterns and progress in your mental health journey."
-                  features={[
-                    "Rich text editing with markdown support",
-                    "AI-powered mood tracking and insights",
-                    "Personal reflection prompts",
-                    "Dark/light mode with accessibility",
-                    "Secure cloud synchronization",
-                  ]}
-                />
-
-                <FeatureCard
-                  icon={<Sparkles className="h-8 w-8 text-pink-400" />}
-                  title="Persona Dashboard"
-                  description="Create and manage therapeutic personas tailored to different aspects of your mental health needs."
-                  features={[
-                    "Multiple therapeutic personas",
-                    "Interactive data visualizations",
-                    "Real-time progress tracking",
-                    "Customizable interface themes",
-                    "Advanced analytics and reports",
-                  ]}
-                />
-
-                <FeatureCard
-                  icon={<MessageSquare className="h-8 w-8 text-blue-400" />}
-                  title="AI Companion"
-                  description="24/7 conversational support with context-aware responses and emotional intelligence."
-                  features={[
-                    "Natural language understanding",
-                    "Emotion-aware conversations",
-                    "Crisis intervention protocols",
-                    "Multi-language support",
-                    "Seamless therapist handoff",
-                  ]}
-                />
-
-                <FeatureCard
-                  icon={<Shield className="h-8 w-8 text-green-400" />}
-                  title="Safety First"
-                  description="Enterprise-grade security with NVIDIA-powered safety monitoring for your protection."
-                  features={[
-                    "End-to-end encryption",
-                    "HIPAA compliance standards",
-                    "Real-time safety monitoring",
-                    "Automatic escalation protocols",
-                    "Privacy-first architecture",
-                  ]}
-                />
-              </div>
-            </div>
-          </section>
-        </ScrollReveal>
-        {/* How It Works Section */}
-        <ScrollReveal delay={0.2}>
-          <section className="py-24 bg-gradient-to-b from-black to-gray-950 relative">
-            {/* Animated background grid */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(168,85,247,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(168,85,247,0.03)_1px,transparent_1px)] bg-[size:44px_44px]"></div>
-
-            <div className="container mx-auto px-4 relative z-10">
-              <div className="text-center mb-20">
-                <div className="inline-flex items-center px-4 py-2 bg-blue-900/20 rounded-full border border-blue-500/30 mb-6">
-                  <MessageSquare className="h-4 w-4 text-blue-400 mr-2" />
-                  <span className="text-sm text-blue-300 font-medium">
-                    How It Works
-                  </span>
-                </div>
-
-                <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-200 to-white">
-                  Your Path to Better Mental Health
-                </h2>
-                <p className="text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed">
-                  Experience a seamless blend of AI innovation and human
-                  expertise designed to support your unique mental health
-                  journey.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <div className="relative group">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-300"></div>
-                  <div className="relative bg-gray-900 rounded-2xl p-8 border border-purple-900/30 hover:border-purple-500/50 transition-all duration-300 transform hover:scale-105">
-                    <div className="bg-gradient-to-r from-purple-600 to-pink-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                      <span className="text-2xl font-bold text-white">1</span>
-                    </div>
-                    <h3 className="text-2xl font-bold mb-4 text-white">
-                      AI-Powered Conversations
-                    </h3>
-                    <p className="text-gray-400 leading-relaxed">
-                      Start with intelligent, empathetic AI conversations that
-                      understand context, emotions, and provide personalized
-                      support tailored to your specific needs and mental health
-                      goals.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="relative group">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-300"></div>
-                  <div className="relative bg-gray-900 rounded-2xl p-8 border border-purple-900/30 hover:border-purple-500/50 transition-all duration-300 transform hover:scale-105">
-                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                      <span className="text-2xl font-bold text-white">2</span>
-                    </div>
-                    <h3 className="text-2xl font-bold mb-4 text-white">
-                      Professional Oversight
-                    </h3>
-                    <p className="text-gray-400 leading-relaxed">
-                      Licensed therapists continuously monitor and review AI
-                      interactions to ensure quality care, identify patterns,
-                      and determine when additional human intervention may be
-                      beneficial.
-                    </p>
-                  </div>
-                </div>
-
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-300"></div>
-                <div className="relative bg-gray-900 rounded-2xl p-8 border border-purple-900/30 hover:border-purple-500/50 transition-all duration-300 transform hover:scale-105">
-                  <div className="bg-gradient-to-r from-green-600 to-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                    <span className="text-2xl font-bold text-white">3</span>
-                  </div>
-                  <h3 className="text-2xl font-bold mb-4 text-white">Seamless Transition</h3>
-                  <p className="text-gray-400 leading-relaxed">
-                    When you&apos;re ready, seamlessly transition to traditional therapy sessions with our network of qualified professionals who already understand your journey and progress.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        </ScrollReveal>
-        {/* Testimonials Section */}
-        <section className="py-24 bg-gradient-to-b from-gray-950 to-black relative overflow-hidden">
-          {/* Background decorations */}
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-pink-500/10 rounded-full blur-3xl"></div>
-
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="text-center mb-20">
-              <div className="inline-flex items-center px-4 py-2 bg-green-900/20 rounded-full border border-green-500/30 mb-6">
-                <MessageSquare className="h-4 w-4 text-green-400 mr-2" />
-                <span className="text-sm text-green-300 font-medium">
-                  User Stories
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center pt-20">
+        {/* Logo */}
+        <div
+          className={`absolute top-0 left-0 flex items-center justify-start md:justify-center  px-5 gap-2 mb-12 py-4 w-full transition-all duration-1000  ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8"
+          }`}
+        >
+          {/* <Leaf className="w-8 h-8 py-2 text-emerald-400 " /> */}
+          <h1 className="text-2xl font-regular text-white text-center">
+            🍀SoulScript
+          </h1>
+          <div className="absolute left-auto right-4 top-1/2 flex gap-3 items-center justify-center transform -translate-y-1/2 ">
+            <Link href="/dashboard">
+              <button className="group  px-6 py-2 bg-[#00FF8C] cursor-pointer rounded-full text-slate-800 font-semibold text-md overflow-hiddenhover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-emerald-500/25">
+                {/* <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" /> */}
+                <span className="relative flex items-center gap-2">
+                  Try Now <ExternalLink></ExternalLink>
                 </span>
-              </div>
-
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-green-200 to-white">
-                Transforming Lives Daily
-              </h2>
-              <p className="text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed">
-                Join thousands who have found support, healing, and personal growth through SoulScript&apos;s innovative approach to mental health care.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-20 group-hover:opacity-60 transition duration-300"></div>
-                <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-2xl p-8 border border-purple-900/30 hover:border-purple-500/50 transition-all duration-300">
-                  <div className="flex items-center mb-6">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 mr-4 flex items-center justify-center">
-                      <span className="text-white font-bold text-lg">A</span>
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-white">Alex T.</h4>
-                      <p className="text-sm text-gray-400">
-                        6 months with SoulScript
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <div className="flex text-yellow-400 mb-2">
-                      {[...Array(5)].map((_, i) => (
-                        <span key={i}>★</span>
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-gray-300 leading-relaxed">
-                    &quot;SoulScript gave me the courage to discuss issues I was too embarrassed to bring up elsewhere. The AI understood my anxiety patterns, and when I transitioned to a human therapist, the process was incredibly smooth.&quot;
-                  </p>
-                </div>
-              </div>
-
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-60 transition duration-300"></div>
-                <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-2xl p-8 border border-purple-900/30 hover:border-purple-500/50 transition-all duration-300">
-                  <div className="flex items-center mb-6">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 mr-4 flex items-center justify-center">
-                      <span className="text-white font-bold text-lg">J</span>
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-white">Jamie K.</h4>
-                      <p className="text-sm text-gray-400">
-                        3 months with SoulScript
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <div className="flex text-yellow-400 mb-2">
-                      {[...Array(5)].map((_, i) => (
-                        <span key={i}>★</span>
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-gray-300 leading-relaxed">
-                    &quot;The journaling features combined with AI insights revealed patterns about myself I never noticed. It&apos;s like having a wise friend available 24/7 who actually remembers our previous conversations.&quot;
-                  </p>
-                </div>
-              </div>
-
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl blur opacity-20 group-hover:opacity-60 transition duration-300"></div>
-                <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-2xl p-8 border border-purple-900/30 hover:border-purple-500/50 transition-all duration-300">
-                  <div className="flex items-center mb-6">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-600 to-blue-600 mr-4 flex items-center justify-center">
-                      <span className="text-white font-bold text-lg">S</span>
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-white">Sam R.</h4>
-                      <p className="text-sm text-gray-400">
-                        1 year with SoulScript
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <div className="flex text-yellow-400 mb-2">
-                      {[...Array(5)].map((_, i) => (
-                        <span key={i}>★</span>
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-gray-300 leading-relaxed">
-                   &quot;As someone who couldn&apos;t afford weekly therapy, SoulScript has been life-changing. The AI provides surprisingly deep insights, and knowing real therapists review conversations gives me complete confidence.&quot;
-                  </p>
-                </div>
-              </div>
-            </div>
+              </button>
+            </Link>
+            <Link href="mailto:ytbhemant@gmail.com>">
+              {" "}
+              <button className="hidden md:flex group px-6 py-2 bg-[#e40050] cursor-pointer rounded-full text-white font-semibold text-md overflow-hidden transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-emerald-500/25">
+                {/* <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" /> */}
+                <span className="relative flex items-center gap-2">
+                  Sponsor <Heart fill="white"></Heart>
+                </span>
+              </button>
+            </Link>
           </div>
-        </section>
-        {/* Pricing Section */}
-        <section className="py-24 bg-black relative">
-          {/* Background pattern */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-900/5 via-transparent to-transparent"></div>
+        </div>
 
-          {/* <div className="container mx-auto px-4 relative z-10">
-            <div className="text-center mb-20">
-              <div className="inline-flex items-center px-4 py-2 bg-purple-900/20 rounded-full border border-purple-500/30 mb-6">
-                <Sparkles className="h-4 w-4 text-purple-400 mr-2" />
-                <span className="text-sm text-purple-300 font-medium">Flexible Plans</span>
-              </div>
-              
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-white">
-                Choose Your Journey
-              </h2>
-              <p className="text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed">
-                Transparent pricing designed to make mental health support accessible to everyone, regardless of your budget or needs.
-              </p>
+        {/* Main Heading */}
+        <div
+          className={`w-full px-[10vw] mb-16 transition-all duration-1000 delay-300 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+        >
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-semibold text-[#B2DFC8] leading-tight mb-4 flex flex-col items-center justify-center w-full mt-10">
+            <div className="w-full text-left">Mental Health Issues</div>
+            <div className="text-[#B2DFC8] w-full text-right">
+              {"Don't Always "}
+              <span className="text-[#00FF8C]">Scream</span>
             </div>
+          </h2>
+        </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-gray-600 to-gray-800 rounded-2xl blur opacity-20 group-hover:opacity-60 transition duration-300"></div>
-                <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/50 hover:border-gray-500/50 transition-all duration-300">
-                  <div className="text-center">
-                    <h3 className="text-2xl font-bold mb-2 text-white">Starter</h3>
-                    <p className="text-gray-400 mb-8">Perfect for exploring AI therapy</p>
-                    <div className="mb-8">
-                      <span className="text-5xl font-bold text-white">$9</span>
-                      <span className="text-gray-400 text-lg">/month</span>
-                    </div>
-                  </div>
-                  
-                  <ul className="space-y-4 mb-8">
-                    <li className="flex items-center text-gray-300">
-                      <ChevronRight className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-                      <span>AI Chatbot Access</span>
-                    </li>
-                    <li className="flex items-center text-gray-300">
-                      <ChevronRight className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-                      <span>Basic Journaling</span>
-                    </li>
-                    <li className="flex items-center text-gray-300">
-                      <ChevronRight className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-                      <span>Weekly AI Insights</span>
-                    </li>
-                    <li className="flex items-center text-gray-300">
-                      <ChevronRight className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-                      <span>Email Support</span>
-                    </li>
-                  </ul>
-                  
-                  <Button className="w-full bg-gray-800 hover:bg-gray-700 text-white border-gray-600 hover:border-gray-500 transition-all duration-300">
-                    Start Free Trial
-                  </Button>
-                </div>
-              </div>
+        {/* Central Illustration with Features */}
+        <div
+          className={`relative mb-16 transition-all duration-1000 delay-600 ${
+            isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+          }`}
+        >
+          {/* <div className="relative w-96 h-96 md:w-[500px] md:h-[500px]">
+            <div
+              className="absolute inset-0 border-2 border-teal-400/20 rounded-full animate-spin"
+              style={{ animationDuration: "20s" }}
+            />
+            <div
+              className="absolute inset-12 border border-teal-300/15 rounded-full animate-spin"
+              style={{
+                animationDuration: "15s",
+                animationDirection: "reverse",
+              }}
+            />
 
-              
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-60 group-hover:opacity-90 transition duration-300"></div>
-                <div className="relative bg-gradient-to-b from-purple-950/80 to-gray-900/80 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/50 transform md:-translate-y-6">
-                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">
-                      Most Popular
-                    </div>
-                  </div>
-                  
-                  <div className="text-center mt-4">
-                    <h3 className="text-2xl font-bold mb-2 text-white">Premium</h3>
-                    <p className="text-purple-200 mb-8">Enhanced support & features</p>
-                    <div className="mb-8">
-                      <span className="text-5xl font-bold text-white">$19</span>
-                      <span className="text-purple-200 text-lg">/month</span>
-                    </div>
-                  </div>
-                  
-                  <ul className="space-y-4 mb-8">
-                    <li className="flex items-center text-purple-100">
-                      <ChevronRight className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-                      <span>Everything in Starter</span>
-                    </li>
-                    <li className="flex items-center text-purple-100">
-                      <ChevronRight className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-                      <span>Unlimited AI Conversations</span>
-                    </li>
-                    <li className="flex items-center text-purple-100">
-                      <ChevronRight className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-                      <span>Advanced Journaling Tools</span>
-                    </li>
-                    <li className="flex items-center text-purple-100">
-                      <ChevronRight className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-                      <span>Persona Dashboard</span>
-                    </li>
-                    <li className="flex items-center text-purple-100">
-                      <ChevronRight className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-                      <span>Monthly Therapist Review</span>
-                    </li>
-                  </ul>
-                  
-                  <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                    Start Premium
-                  </Button>
-                </div>
-              </div>
-
-              
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl blur opacity-20 group-hover:opacity-60 transition duration-300"></div>
-                <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-2xl p-8 border border-blue-700/50 hover:border-blue-500/50 transition-all duration-300">
-                  <div className="text-center">
-                    <h3 className="text-2xl font-bold mb-2 text-white">Professional</h3>
-                    <p className="text-gray-400 mb-8">Complete therapy integration</p>
-                    <div className="mb-8">
-                      <span className="text-5xl font-bold text-white">$49</span>
-                      <span className="text-gray-400 text-lg">/month</span>
-                    </div>
-                  </div>
-                  
-                  <ul className="space-y-4 mb-8">
-                    <li className="flex items-center text-gray-300">
-                      <ChevronRight className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-                      <span>Everything in Premium</span>
-                    </li>
-                    <li className="flex items-center text-gray-300">
-                      <ChevronRight className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-                      <span>2 Video Therapy Sessions</span>
-                    </li>
-                    <li className="flex items-center text-gray-300">
-                      <ChevronRight className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-                      <span>Priority Therapist Review</span>
-                    </li>
-                    <li className="flex items-center text-gray-300">
-                      <ChevronRight className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-                      <span>Personalized Growth Plan</span>
-                    </li>
-                    <li className="flex items-center text-gray-300">
-                      <ChevronRight className="h-5 w-5 text-green-400 mr-3 flex-shrink-0" />
-                      <span>24/7 Priority Support</span>
-                    </li>
-                  </ul>
-                  
-                  <Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white border-0 transition-all duration-300">
-                    Start Professional
-                  </Button>
-                </div>
-              </div>
-            </div>
-            
-            
-            <div className="text-center mt-16">
-              <div className="inline-flex items-center px-6 py-3 bg-green-900/20 rounded-full border border-green-500/30">
-                <Shield className="h-5 w-5 text-green-400 mr-2" />
-                <span className="text-green-300 font-medium">30-day money-back guarantee on all plans</span>
-              </div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-[70%] w-[70%] overflow-hidden rounded-full">
+              <img
+                src="/girl_bg_removed.png"
+                alt="meditating girl"
+                className="relative z-10 -top-10 w-full h-full"
+              />
+              <div className="absolute h-[80%] w-[80%] rounded-full left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-br bg-[#B2DFC8] z-0"></div>
             </div>
           </div> */}
-        </section>
-        {/* CTA Section */}
-        <section className="py-24 bg-gradient-to-br from-black via-purple-950/50 to-black relative overflow-hidden">
-          {/* Enhanced background effects */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-500/20 via-pink-500/10 to-transparent"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+          <img
+            src="/illustration.png"
+            alt="Meditation illustration"
+            className="hidden md:block mx-auto w-[80%] pointer-events-none"
+          />
+        </div>
 
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-4xl mx-auto text-center">
-              <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-900/40 to-pink-900/40 rounded-full border border-purple-500/30 backdrop-blur-sm mb-8 hover:border-purple-400/50 transition-all duration-300">
-                <Sparkles className="h-5 w-5 text-purple-400 mr-2 animate-pulse" />
-                <span className="text-purple-300 font-medium">
-                  Join 50,000+ users transforming their mental health
-                </span>
-              </div>
+        {/* CTA Button */}
+        <div
+          className={`transition-all duration-1000 delay-900 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+        >
+          <Link href="/dashboard">
+            <button className="group relative px-12 py-4 bg-[#00FF8C] cursor-pointer rounded-full text-slate-800 font-semibold text-xl overflow-hidden transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-emerald-500/25">
+              {/* <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" /> */}
+              <span className="relative flex items-center gap-2">
+                Try Now <ExternalLink></ExternalLink>
+              </span>
+            </button>
+          </Link>
+          <div className="text-sm text-white mt-2">🔴 Beta Release</div>
+        </div>
+      </div>
 
-              <h2 className="text-5xl md:text-6xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-pink-200 leading-tight">
-                Your Healing Journey
-                <br />
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
-                  Starts Today
-                </span>
-              </h2>
-
-              <p className="text-xl md:text-2xl text-gray-300 mb-10 leading-relaxed max-w-3xl mx-auto">
-                Take the first step towards better mental health with AI-powered
-                support that understands, cares, and grows with you.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-8">
-                <Button
-                  size="lg"
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0 shadow-2xl shadow-purple-500/25 hover:shadow-purple-500/40 transition-all duration-300 transform hover:scale-105 px-8 py-4 text-lg"
-                >
-                  Start Free Trial
-                  <ChevronRight className="ml-2 h-5 w-5" />
-                </Button>
-
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="bg-transparent border-purple-500/50 text-white hover:bg-purple-900/20 backdrop-blur-sm hover:border-purple-400/70 transition-all duration-300 px-8 py-4 text-lg"
-                >
-                  Book a Demo
-                </Button>
-              </div>
-
-              {/* Trust indicators */}
-              <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-400">
-                <div className="flex items-center gap-2">
-                  <Shield className="h-4 w-4 text-green-400" />
-                  <span>HIPAA Compliant</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4 text-blue-400" />
-                  <span>24/7 Support</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <BookOpen className="h-4 w-4 text-purple-400" />
-                  <span>No Credit Card Required</span>
-                </div>
-              </div>
-            </div>
+      {/* Bottom ambient glow */}
+      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full h-32 bg-gradient-to-t from-emerald-500/10 to-transparent" />
+      <div className="w-full pb-[10em] px-2 md:px-5 lg:px-10">
+        <h1 className="mx-auto text-white text-3xl text-center mt-[7em] ">
+          {` Transform your mental wellness journey with our AI-powered mental health solutions.`}
+        </h1>
+        <div className="flex flex-wrap flex-row items-center justify-center gap-4">
+          <div className="text-white w-[300px] h-[300px] py-10 px-3 flex items-center justify-center flex-col rounded-lg border-white/20 border-2  mt-10">
+            <img
+              src="/confidential.gif"
+              alt="confidential"
+              className="h-[100px] w-[100px] mb-10"
+            />
+            <h1 className="text-2xl text-center font-semibold text-[#00FF8C]">
+              Confidential
+            </h1>
+            <p className="text-center">
+              All your data is completely encrypted for your privacy.
+            </p>
           </div>
-        </section>
-        {/* Footer */}
-        <footer className="bg-black py-12 border-t border-gray-800">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div>
-                <h3 className="text-xl font-bold mb-4">SoulScript</h3>
-                <p className="text-gray-400">
-                  Making mental health support accessible to everyone through AI
-                  and human expertise.
-                </p>
-              </div>
-              <div>
-                <h4 className="font-bold mb-4">Product</h4>
-                <ul className="space-y-2">
-                  <li>
-                    <a href="#" className="text-gray-400 hover:text-white">
-                      Features
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-gray-400 hover:text-white">
-                      Pricing
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-gray-400 hover:text-white">
-                      Testimonials
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-gray-400 hover:text-white">
-                      FAQ
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-bold mb-4">Company</h4>
-                <ul className="space-y-2">
-                  <li>
-                    <a href="#" className="text-gray-400 hover:text-white">
-                      About
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-gray-400 hover:text-white">
-                      Blog
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-gray-400 hover:text-white">
-                      Careers
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-gray-400 hover:text-white">
-                      Contact
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-bold mb-4">Legal</h4>
-                <ul className="space-y-2">
-                  <li>
-                    <a href="#" className="text-gray-400 hover:text-white">
-                      Privacy Policy
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-gray-400 hover:text-white">
-                      Terms of Service
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-gray-400 hover:text-white">
-                      Cookie Policy
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-gray-400 hover:text-white">
-                      HIPAA Compliance
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500">
-              <p>
-                © {new Date().getFullYear()} SoulScript. All rights reserved.
-              </p>
-            </div>
+          <div className="text-white w-[300px] h-[300px] py-10 px-3 flex items-center justify-center flex-col rounded-lg border-white/20 border-2  mt-10">
+            <img src="/ai.gif" alt="ai" className="h-[100px] w-[100px] mb-10" />
+            <h1 className="text-2xl text-center font-semibold text-[#00FF8C]">
+              Smart
+            </h1>
+            <p className="text-center">
+              Powered by state of the art AI models, made just for you.
+            </p>
           </div>
-        </footer>
+          <div className="text-white w-[300px] h-[300px] py-10 px-3 flex items-center justify-center flex-col rounded-lg border-white/20 border-2  mt-10">
+            <img
+              src="/doctor_2.gif"
+              alt="doctor"
+              className="h-[100px] w-[100px] mb-10"
+            />
+            <h1 className="text-2xl text-center font-semibold text-[#00FF8C]">
+              Personalized
+            </h1>
+            <p className="text-center">
+              Talk to your AI therapist, who knows you best.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="w-[90%] max-w-[1440px] min-h-[600px] bg-slate-900 mx-auto rounded-xl flex items-center justify-center flex-col relative mt-10 px-5 py-5 md:px-30">
+        <h1 className="relative flex items-center justify-center text-white text-5xl text-center ">
+          <div className="text-white h-50 w-50 absolute left-0 bottom-[100%] opacity-8">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 310">
+              <path
+                d="M79 144.11c-6 0-11.37.28-16.19.8 8.02-32.82 27.27-48.06 55.31-60.35L103.1 50.31C75.18 62.56 56.9 76.59 43.81 95.82c-15.2 22.35-22.6 51.72-22.6 89.81v16.46c0 31.83.11 57.6 57.79 57.6 57.79 0 57.79-25.87 57.79-57.79 0-31.91.37-57.79-57.79-57.79zm152 0c-6 0-11.37.28-16.19.8 8.02-32.82 27.27-48.06 55.31-60.35L255.1 50.31c-27.92 12.25-46.2 26.28-59.29 45.51-15.2 22.35-22.6 51.72-22.6 89.81v16.46c0 31.83.11 57.6 57.79 57.6 57.79 0 57.79-25.87 57.79-57.79 0-31.91.37-57.79-57.79-57.79z"
+                fill="#FFF"
+              ></path>
+            </svg>
+          </div>
+          {
+            "A well thought out, powerful tool for therapists and clients alike."
+          }
+        </h1>
+        <p className="w-full flex flex-col text-white text-lg mt-4 text-right">
+          <span className="text-xl text-[#00FF8C]">Nirmal Kr. Bera</span>
+          <span>Consultant Neuro Psychiatrist</span>
+          <span>Prof N.B Medical College and Hospital</span>
+        </p>
+      </div>
+      <div className="relative w-full flex flex-wrap items-center justify-center text-center py-20 gap-5">
+        <div
+          className={`transition-all duration-1000 delay-90 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+        >
+          <Link href="/dashboard">
+            <button className="group relative px-12 py-4 bg-[#00FF8C] cursor-pointer rounded-full text-slate-800 font-semibold text-xl overflow-hidden transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-emerald-500/25">
+              {/* <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" /> */}
+              <span className="relative flex items-center gap-2">
+                Try Now <ExternalLink></ExternalLink>
+              </span>
+            </button>
+          </Link>
+        </div>
+        <Link href="mailto:ytbhemant@gmail.com">
+          <button className="group relative px-12 py-4 bg-[#cf0048] cursor-pointer rounded-full text-white font-regular text-xl overflow-hidden transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-emerald-500/25">
+            {/* <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" /> */}
+            <span className="relative flex items-center gap-2">
+              Sponsor <Heart fill="#ffffff"></Heart>
+            </span>
+          </button>
+        </Link>
+      </div>
+      <div className="footer relative bg-teal-900/20 pt-10 flex items-center justify-center flex-col">
+        <h1 className="text-2xl font-regular text-white text-center mb-5">
+          🍀SoulScript
+        </h1>
+        <Link
+          href="mailto:ytbhemant@gmail.com"
+          className="text-blue-100/80 text-xl my-2 mb-10 text-center w-full"
+        >
+          Contact Us
+        </Link>
+        <div className="border-t-white/50 border-t-[1px] flex text center items-center justify-center text-white/50 text-sm w-full py-2 bottom-0">
+          © 2025 SoulScript. All rights reserved.
+        </div>
       </div>
     </div>
   );
-}
+};
+
+const SoulScriptLanding: React.FC = () => {
+  return (
+    <>
+      <HeroSection></HeroSection>
+    </>
+  );
+};
+
+export default SoulScriptLanding;
