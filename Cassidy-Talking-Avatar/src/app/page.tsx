@@ -213,7 +213,7 @@ const HeroSection: React.FC = () => {
             </svg>
           </div>
           {
-            "A well thought out, powerful tool for therapists and clients alike."
+            "Soulscript is a well thought out, powerful tool for therapists and clients alike."
           }
         </h1>
         <p className="w-full flex flex-col text-white text-lg mt-4 text-right">
