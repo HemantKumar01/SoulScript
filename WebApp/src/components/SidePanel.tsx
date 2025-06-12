@@ -144,7 +144,9 @@ const SidePanel: React.FC = () => {
     const introShown = localStorage.getItem("introShown");
     if (!introShown) {
       setShowJoyride(true);
-      localStorage.setItem("introShown", "true");
+      setTimeout(() => {
+        localStorage.setItem("introShown", "true");
+      }, 5000);
     } else {
       setShowJoyride(false);
     }
@@ -171,7 +173,7 @@ const SidePanel: React.FC = () => {
     try {
       setIsLoggingOut(true);
       await signOut(auth);
-      router.push("/login"); // Adjust redirect path as needed
+      router.push("/"); // Adjust redirect path as needed
     } catch (error) {
       console.error("Error signing out:", error);
     } finally {
