@@ -79,8 +79,7 @@ const HeroSection: React.FC = () => {
                 </span>
               </button>
             </Link>
-            <Link href="mailto:ytbhemant@gmail.com>">
-              {" "}
+            <Link href="mailto:ytbhemant@gmail.com" target="_blank">
               <button className="hidden md:flex group px-6 py-2 bg-[#e40050] cursor-pointer rounded-full text-white font-semibold text-md overflow-hidden transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-emerald-500/25">
                 {/* <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" /> */}
                 <span className="relative flex items-center gap-2">
