@@ -84,7 +84,6 @@ pip install -r requirements.txt
 ```sh
 GOOGLE_GENAI_USE_VERTEXAI=FALSE
 GOOGLE_API_KEY=
-NEXT_PUBLIC_ENCRYPTION_KEY=
 ```
 3. Run server using
 ```sh
@@ -100,7 +99,6 @@ pip install -r requirements.txt
 ```sh
 EMAIL= # preferably gmail 
 PASSWORD= #google app password not your gmail password
-NEXT_PUBLIC_ENCRYPTION_KEY=
 ```
 3. Run server using
 ```sh
