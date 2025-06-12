@@ -5,7 +5,7 @@ import { SidebarProvider } from "@/components/SidePanel";
 import MainContent from "@/components/MainContent";
 
 export const metadata = {
-  title: "Cassidy - SoulScript",
+  title: "SoulScript",
   description: "Your personal AI therapist",
 };
 

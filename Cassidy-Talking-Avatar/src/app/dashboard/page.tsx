@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 import { useLiveAPIContext } from "@/contexts/LiveAPIContext";
 import Progress from "@/components/avatar/progress/progress";
 import { Inter } from "next/font/google";
+
 import localFont from "next/font/local";
 const ClashDisplay = localFont({
   src: "../../fonts/ClashDisplay_Complete/Fonts/WEB/fonts/ClashDisplay-Variable.woff2",

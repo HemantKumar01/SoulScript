@@ -22,7 +22,57 @@ import {
   MapPinned,
 } from "lucide-react";
 import { ChatBubbleIcon } from "@radix-ui/react-icons";
+import Joyride, {
+  ACTIONS,
+  EVENTS,
+  ORIGIN,
+  STATUS,
+  LIFECYCLE,
+  CallBackProps,
+} from "react-joyride";
 
+const steps = [
+  {
+    target: ".cassidy-step",
+    content: "Talk to Cassidy about anything you want! ",
+    disableBeacon: true,
+  },
+  {
+    target: ".mindlog-step",
+    disableBeacon: true,
+    content: "Log your thoughts and feelings in Mind Log.",
+  },
+  {
+    target: ".calmify-step",
+    disableBeacon: true,
+    content: "AI Music magic that helps you relax and unwind.",
+  },
+  {
+    target: ".yourpersona-step",
+    disableBeacon: true,
+    content: "Your detailed persona based on your interactions and logs.",
+  },
+  {
+    target: ".reflection-step",
+    disableBeacon: true,
+    content: "Ask and reflect anything about you",
+  },
+  {
+    target: ".reports-step",
+    disableBeacon: true,
+    content: "All your reports in one place",
+  },
+  {
+    target: ".therapistsnearby-step",
+    disableBeacon: true,
+    content: "Quickly find therapists near you",
+  },
+  {
+    target: ".community-step",
+    disableBeacon: true,
+    content: "Your social community of like-minded people",
+  },
+];
 // Create context for sidebar state
 const SidebarContext = createContext<{
   isCollapsed: boolean;
@@ -86,8 +136,20 @@ const SidePanel: React.FC = () => {
   const { isCollapsed, setIsCollapsed } = useSidebar();
   const [user, setUser] = useState<User | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showJoyride, setShowJoyride] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    const introShown = localStorage.getItem("introShown");
+    if (!introShown) {
+      setShowJoyride(true);
+      localStorage.setItem("introShown", "true");
+    } else {
+      setShowJoyride(false);
+    }
+  }, []);
+
   function getWindowDimensions() {
     const { innerWidth: width, innerHeight: height } = window;
     return {
@@ -140,6 +202,39 @@ const SidePanel: React.FC = () => {
         ${isCollapsed ? "w-16" : "w-64"}
       `}
     >
+      {showJoyride && (
+        <Joyride
+          steps={steps}
+          continuous={true}
+          run={true}
+          showSkipButton={true}
+          hideCloseButton={true}
+          locale={{
+            back: "Back",
+            close: "Close",
+            last: "Get Started",
+            next: "Next",
+            nextLabelWithProgress: "Next (Step {step} of {steps})",
+            open: "Open the dialog",
+            skip: "Skip",
+          }}
+          styles={{
+            options: {
+              arrowColor: "#00a974",
+              backgroundColor: "#00a974",
+              beaconSize: 36,
+              overlayColor: "rgba(0, 0, 0, 0.5)",
+              primaryColor: "#00ce8d",
+              spotlightShadow: "0 0 15px rgba(0, 0, 0, 0.5)",
+              textColor: "#ffffff",
+              width: undefined,
+              zIndex: 200,
+            },
+          }}
+          // showProgress={true}
+        />
+      )}
+
       {/* Header with Profile */}
       <div className="p-4 border-b border-emerald-500/20">
         <div className="flex items-center justify-between">
@@ -199,7 +294,12 @@ const SidePanel: React.FC = () => {
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <li key={item.href}>
+              <li
+                key={item.href}
+                className={`${item.label
+                  .replaceAll(" ", "")
+                  .toLowerCase()}-step`}
+              >
                 <Link
                   href={item.href}
                   className={`
