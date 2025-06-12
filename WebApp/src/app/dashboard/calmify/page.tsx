@@ -363,13 +363,17 @@ export default function CalmifyPage() {
             console.error("Session error:", e);
             setConnectionError(true);
             stop();
-            toastRef.current?.show("Connection error, please reload.");
+            toastRef.current?.show(
+              "Too many users using it right now, try reloading or wait for some time."
+            );
           },
           onclose: (e: CloseEvent) => {
             console.error("Session closed:", e);
             setConnectionError(true);
             stop();
-            toastRef.current?.show("Connection error, please reload.");
+            toastRef.current?.show(
+              "Too many users using it right now, try reloading or wait for some time."
+            );
           },
         },
       });
