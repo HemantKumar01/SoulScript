@@ -163,3 +163,59 @@ code {
     background: #9ca3af;
   }
 }
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(-15deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(15deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.bg-leaf {
+  position: absolute;
+  opacity: 0.4;
+  animation: float 6s ease-in-out infinite;
+  font-size: 40px;
+  transform: rotate(15deg);
+}
+
+.bg-leaf:nth-child(1) {
+  top: 5%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.bg-leaf:nth-child(2) {
+  top: 70%;
+  right: 10%;
+  font-size: 35px;
+  animation-delay: 2s;
+}
+
+.bg-leaf:nth-child(3) {
+  bottom: 20%;
+  left: 10%;
+  font-size: 45px;
+  animation-delay: 4s;
+}

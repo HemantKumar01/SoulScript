@@ -67,18 +67,19 @@ const navItems: NavItem[] = [
     href: "/dashboard/persona-dashboard",
     icon: <LayoutDashboard size={20} />,
   },
-  { label: "Community", href: "/dashboard/blogs", icon: <Users size={20} /> },
-  {
-    label: "Therapists Nearby",
-    href: "/dashboard/therapists-near-you",
-    icon: <MapPinned size={20} />,
-  },
-  { label: "Reports", href: "/dashboard/reports", icon: <ChartColumn /> },
   {
     label: "Reflection",
     href: "/dashboard/reflection",
     icon: <ChatBubbleIcon />,
   },
+  { label: "Reports", href: "/dashboard/reports", icon: <ChartColumn /> },
+
+  {
+    label: "Therapists Nearby",
+    href: "/dashboard/therapists-near-you",
+    icon: <MapPinned size={20} />,
+  },
+  { label: "Community", href: "/dashboard/blogs", icon: <Users size={20} /> },
 ];
 
 const SidePanel: React.FC = () => {
