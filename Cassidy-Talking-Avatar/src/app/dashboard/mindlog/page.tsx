@@ -31,13 +31,13 @@ export default function Home() {
       });
   }, []);
   return (
-    <div className="space-y-6 bg-[#18181B] m-auto w-[90%] max-w-[800px] px-10 py-12 rounded-3xl shadow-lg">
+    <div className="space-y-6 bg-[#18181B] m-auto w-[100%] max-w-[800px] px-4 md:px-10 py-12 rounded-3xl shadow-lg">
       <div className="text-center space-y-2">
         {user && <HeroHeading user={user}></HeroHeading>}
         <HeroSubheading></HeroSubheading>
       </div>
       <div
-        className={`banner-text fixed z-[20] pointer-events-none w-[100vh] h-auto top-1/2 transform -translate-y-1/2 right-0 text-[110px] font-[900] text-[#ffffff] text-center opacity-10 origin-center -rotate-90 translate-x-[calc(50%-0.5em)] select-none ${ClashDisplay.className}`}
+        className={`hidden md:block banner-text fixed z-[0] pointer-events-none w-[100vh] h-auto top-1/2 transform -translate-y-1/2 right-0 text-[110px] font-[900] text-[#ffffff] text-center opacity-10 origin-center -rotate-90 translate-x-[calc(50%-0.5em)] select-none ${ClashDisplay.className}`}
       >
         MINDLOG
       </div>

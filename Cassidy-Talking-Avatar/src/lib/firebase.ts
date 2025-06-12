@@ -201,6 +201,7 @@ export const addMessageToHistory = async (
   newMessage: MessageHistoryItem
 ): Promise<void> => {
   try {
+    console.log(newMessage)
     const userId = auth.currentUser?.uid;
     const userEmail = auth.currentUser?.email;
     

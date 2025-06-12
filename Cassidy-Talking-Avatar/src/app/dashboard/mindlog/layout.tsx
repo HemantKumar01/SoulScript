@@ -27,7 +27,7 @@ export default function MindlogLayout({
       >
         <Header />
         <main className="flex-1 py-8">
-          <div className="container px-4 mx-auto">{children}</div>
+          <div className="container px-0 md:px-4 mx-auto">{children}</div>
         </main>
       </div>
     </ThemeProvider>

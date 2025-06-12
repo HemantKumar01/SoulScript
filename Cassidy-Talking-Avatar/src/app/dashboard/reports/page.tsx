@@ -54,23 +54,23 @@ const ReportPage = () => {
     <div
       className={`min-h-screen bg-slate-900 relative ${ClashDisplay.className}`}
     >
-        <div
-        className={`banner-text fixed z-[20] pointer-events-none w-[100vh] h-auto top-1/2 transform -translate-y-1/2 right-0 text-[100px] font-[900] text-[#ffffff] text-center opacity-5 origin-center -rotate-90 translate-x-[calc(50%-0.5em)] select-none ${ClashDisplay.className}`}
+      <div
+        className={`hidden md:block banner-text fixed z-[20] pointer-events-none w-[100vh] h-auto top-1/2 transform -translate-y-1/2 right-0 text-[100px] font-[900] text-[#ffffff] text-center opacity-5 origin-center -rotate-90 translate-x-[calc(50%-0.5em)] select-none ${ClashDisplay.className}`}
       >
-      Insights Hub
+        Insights Hub
       </div>
-      <div className="container mx-auto px-32 py-8 max-w-6xl">
+      <div className="container mx-auto px-2 md:px-32 py-8 max-w-6xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="flex items-center justify-center text-5xl font-regular text-white mb-4">
+          <h1 className="flex items-center justify-center text-4xl md:text-5xl font-regular text-white mb-4">
             <img
               src="/report_animated.gif"
               alt="report"
-              className="h-[1.5em] w-auto mr-2"
+              className="h-[1.5em] w-auto mr-0  md:mr-2"
             />
-           Insights Hub
+            Insights Hub
           </h1>
-         
+
           <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
             Generate <span className="text-[#47ff9d]">comprehensive</span>{" "}
             reports to track your progress and gain valuable insights with our

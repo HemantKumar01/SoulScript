@@ -164,7 +164,7 @@ const AIChatInterface: React.FC<{ InteractiveMode: boolean }> = ({
 
             {/* Message bubble */}
             <div
-              className={`max-w-xs lg:max-w-md px-6 py-4 rounded-2xl ${
+              className={`max-w-xs lg:max-w-md px-6 py-4 rounded-2xl z-10 ${
                 msg.role === "user"
                   ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-lg"
                   : "bg-black/10 backdrop-blur-sm text-white border border-white/2 text-lg"

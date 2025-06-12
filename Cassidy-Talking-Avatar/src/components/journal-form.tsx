@@ -87,7 +87,7 @@ export function JournalForm({ entry, isEditing = false }: JournalFormProps) {
   };
 
   return (
-    <div className="  py-2 px-2 flex items-center justify-center">
+    <div className="  py-2 px-0 md:px-2 flex items-center justify-center">
       <Card className="w-full max-w-2xl mx-auto bg-[#29292e] shadow-2xl rounded-2xl border">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-[#10B981] tracking-tight">
