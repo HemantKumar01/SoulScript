@@ -209,6 +209,7 @@ export const addMessageToHistory = async (
       throw new Error('User is not authenticated');
     }
     const prevMessage = await getMessageHistory();
+    console.log(prevMessage)
     if(newMessage == prevMessage[prevMessage.length - 1] || (prevMessage.length >= 2 && newMessage == prevMessage[prevMessage.length - 2])){
       console.log("Message already exists in history, skipping addition.");
       return

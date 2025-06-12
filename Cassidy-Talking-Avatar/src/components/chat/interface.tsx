@@ -8,6 +8,7 @@ import {
   MessageHistoryItem,
 } from "@/lib/firebase";
 import { useLiveAPIContext } from "@/contexts/LiveAPIContext";
+import { Inter } from "next/font/google";
 
 const AIChatInterface: React.FC<{ InteractiveMode: boolean }> = ({
   InteractiveMode,
@@ -27,7 +28,11 @@ const AIChatInterface: React.FC<{ InteractiveMode: boolean }> = ({
       messageTranscription != null &&
       messageTranscription.message.trim() !== ""
     ) {
-      if (messageTranscription != messages[messages.length - 1]) {
+      if (
+        messageTranscription != messages[messages.length - 1] &&
+        messages.length >= 2 &&
+        messageTranscription != messages[messages.length - 2]
+      ) {
         // Add AI response to local state
         setMessages((prev) => [...prev, messageTranscription]);
       }
@@ -48,7 +53,7 @@ const AIChatInterface: React.FC<{ InteractiveMode: boolean }> = ({
     };
 
     loadHistory();
-  }, []);
+  }, [client, InteractiveMode]);
 
   // Auto-scroll to bottom when new messages are added
   useEffect(() => {

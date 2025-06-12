@@ -34,7 +34,7 @@ const HeroSection: React.FC = () => {
 
   return (
     <div
-      className={`min-h-screen bg-gradient-to-br from-slate-800 via-teal-900 to-slate-900 relative overflow-hidden ${ClashDisplay.className}`}
+      className={` selection:bg-teal-200 selection:text-teal-950 min-h-screen bg-gradient-to-br from-slate-800 via-teal-900 to-slate-900 relative overflow-hidden ${ClashDisplay.className}`}
     >
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
