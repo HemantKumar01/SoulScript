@@ -3,7 +3,7 @@
 A sophisticated AI-powered platform that combines journaling capabilities with persona management, built with Next.js, Python, and modern web technologies.
 
 ## Project Overview
-![cassidy interactive chatbot](WebApp/image.png)
+![cassidy interactive chatbot](image.png)
 PersonaBot_Pegasus is a multi-component application that provides:
 - Real-time chat interactions with AI personas, with translation in 57 languages.
 - AI-powered journaling and personal reflection

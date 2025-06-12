@@ -129,11 +129,11 @@ function GeminiLiveComponent() {
     )}
 `;
     const TalkSystemInstruction = `You are a helpful and supportive friend named cassidy. You talk in a soft and lovely tone and love talking to people. Talk to ${userName} about anything interesting, and ask them questions about their life, hobbies, interests, and anything else that comes to mind. Call them by their first name or the main name. Keep the conversation casual`;
-    console.log(QuestionSystemInstruction);
     const finalSystemInstruction =
-      questionIndex && questionIndex < questions.length
+      !questionIndex || questionIndex < questions.length
         ? QuestionSystemInstruction
         : TalkSystemInstruction;
+    console.log("finalSystemInstructions:", finalSystemInstruction);
     setConfig({
       responseModalities: [Modality.AUDIO],
       inputAudioTranscription: {},
