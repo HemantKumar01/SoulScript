@@ -137,7 +137,7 @@ const HeroSection: React.FC = () => {
           <img
             src="/illustration.png"
             alt="Meditation illustration"
-            className="hidden md:block mx-auto w-[80%] pointer-events-none"
+            className="hidden md:block mx-auto w-[80%] pointer-events-none select-none"
           />
         </div>
 
