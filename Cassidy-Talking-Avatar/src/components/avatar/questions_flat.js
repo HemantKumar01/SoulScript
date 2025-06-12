@@ -1,5 +1,9 @@
 export const questions = [
   {
+    question: "Tell me about your age and gender?",
+    expected_answer: "user age and gender information",
+  },
+  {
     question: "Do you have any family members or significant others?",
     expected_answer:
       "Relevant Family Members/Significant Others: [Mentioned or Not Mentioned]",
