@@ -1,6 +1,7 @@
 # 🍀SoulScript
 > "Mental health issues don’t always scream, sometimes they whisper"
 > 
+>
 SoulScript is an intelligent AI-powered mental wellness platform designed to offer a safe space for self-reflection, support, and emotional healing. It combines journaling, intelligent avatars, AI-assisted therapy, and mood-driven tools to help users better understand and nurture their mental well-being.
 Have a look at the [**demo**](https://www.youtube.com/watch?v=bJ5IWUYLzlE)
 ![SoulScript Dashboard](images/image-3.png)
