@@ -114,7 +114,7 @@ function GeminiLiveComponent() {
   }, [client, userId]);
 
   useEffect(() => {
-    setModel("models/gemini-2.5-flash-preview-native-audio-dialog");
+    setModel("models/gemini-2.5-flash-native-audio-preview-09-2025");
 
     if (!userName || !userId.length || questionIndex === null) {
       console.log("Initializing");
