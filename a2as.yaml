@@ -1,0 +1,461 @@
+manifest:
+  version: "0.1.3"
+  schema: https://a2as.org/cert/schema
+  subject:
+    name: hemantkumar01/soulscript
+    source: https://github.com/hemantkumar01/soulscript
+    branch: main
+    commit: "eaa932f9"
+    scope: [backend/cassidy_adk/next_ques_agent/agent.py, backend/cassidy_adk/next_ques_agent/tools.py, backend/cassidy_adk/progress_agent/agent.py,
+      backend/persona_server/chat.py, backend/persona_server/conv.py, backend/persona_server/data.py]
+  issued:
+    by: A2AS.org
+    at: '2026-02-11T16:45:37Z'
+    url: https://a2as.org/certified/agents/hemantkumar01/soulscript
+  signatures:
+    digest: sha256:VFQIH_n5iChZLlJVEG6js-Mzmbx1B6bQDg3t5pDgYtc
+    key: ed25519:wL_zak3FgxDsHhmhjLCt5TYma2v5JnwPu_nR3zMxzp8
+    sig: ed25519:EWvS_sK1LjEWkTZnfjKu-dDUGe6ndyweVAc9HNcOe2AKuDkRwnBOF4IN4RWI-Fl_asarHaxCW_0-mIQZCzMHCA
+
+agents:
+  answer_reviewer_agent:
+    type: instance
+    models: [gemini-2.0-flash]
+    tools: [get_next_question, follow_up_generator]
+    params:
+      name: AnswerReviewerAgent
+      instruction: ['You are a helper agent to a mental therapist. The mental therapist has asked the user some question,
+          and the user has provided an answer. Your task is to review the user''s answer and tell if the answer is complete
+          or not. That is, you have to check if the user has answered all parts of the question asked by the therapist.',
+        'If the answer is not complete, call the follow_up_generator agent tool to generate a follow-up question based on
+          the user''s answer. Provide the therapist''s question and user''s answer as it is to the follow_up_generator tool
+          (provide it as a single string).', 'If the answer is complete and satisfactory, (or the user tells they don''t want
+          to answer the question) call the get_next_question tool to get the next question for the user. If the next question
+          is not available, return empty string.', return only the question to be asked as a string and nothing else or empty
+          string if no question provided.]
+      description: Reviews user provided answers to therapy questions and determines if they are complete and provides the
+        next question if available
+      output_key: answer_review
+  follow_up_generator:
+    type: instance
+    models: [gemini-2.0-flash]
+    params:
+      name: followUpAgent
+      instruction: ['You are a follow-up question generator AI. The user has answered a question asked by the therapist, but
+          not completely. Your task is to generate a follow-up question based on the user''s answer to a therapy question.']
+      description: Generates a follow-up question based on the user's answer to a therapy question.
+      output_key: follow_up
+  progress_agent:
+    type: instance
+    models: [gemini-2.0-flash]
+    params:
+      name: ProgressAgent
+      instruction: ['You are a progress tracking AI for a mental health therapy application. Your task is to analyze a set
+          of questions and a conversation between a user and therapist, and determine the number of questions asked by the
+          therapist and completely answered by the user. If same question is asked multiple times, it should be counted only
+          once if answered completely. Also questions are asked serially, so if a question is not answered, any question after
+          that should not be counted as answered.', 'Full Question Set: {questions_data}', 'Return only in the following format:',
+        '{', '"answered_questions": <array of answered questions from full questoin set>,', '}', 'Note that the answered questions
+          should be continuous, meaning if a question is not answered, any question after that should not be counted as answered.
+          The conversation will be provided in the next message.']
+      description: Analyzes a set of questions, and a conversation between a user and therapist, and determines the number
+        of questions completely answered by the user.
+      output_key: progress_agent
+      output_schema: Progress
+
+models:
+  gemini-2.0-flash:
+    type: literal
+    agents: [follow_up_generator, answer_reviewer_agent, progress_agent]
+
+tools:
+  follow_up_generator:
+    type: agent
+    agents: [answer_reviewer_agent]
+    params:
+      wrapper: AgentTool
+      agent: follow_up_generator
+  get_next_question:
+    type: function
+    agents: [answer_reviewer_agent]
+    params:
+      description: |-
+        Get next question for a user and update their current question
+
+        Args:
+            user_id (str): User ID from URL path
+            user_response (str): User's response to the current question (optional)
+        Returns:
+            JSON response with next question or error
+
+imports:
+  A4: reportlab.lib.pagesizes.A4
+  AESGCM: cryptography.hazmat.primitives.ciphers.aead.AESGCM
+  agent: agent
+  AgentTool: google.adk.tools.agent_tool.AgentTool
+  analyze_journal_entries: data.analyze_journal_entries
+  analyze_user_response: next_ques_agent.agent.analyze_user_response
+  Any: typing.Any
+  asyncio: asyncio
+  base64: base64
+  BaseModel: pydantic.BaseModel
+  colors: reportlab.lib.colors
+  CORS: flask_cors.CORS
+  CORSMiddleware: fastapi.middleware.cors.CORSMiddleware
+  create_pdf_from_json: mail.create_pdf_from_json
+  create_pdf_from_json_chat: data.create_pdf_from_json_chat
+  credentials: firebase_admin.credentials
+  CSS: weasyprint.CSS
+  data_chat_extraction: data.data_chat_extraction
+  datetime: datetime.datetime
+  decrypt: encryption.decrypt
+  default_backend: cryptography.hazmat.backends.default_backend
+  Dict: typing.Dict
+  Drawing: reportlab.graphics.shapes.Drawing
+  email_queue: email_queue.email_queue
+  extract_graph_info: conv.extract_graph_info
+  extract_information_gemini: conv.extract_information_gemini
+  FastAPI: fastapi.FastAPI
+  firebase_admin: firebase_admin
+  FirebaseQuestionManager: next_ques_agent.tools.FirebaseQuestionManager
+  firestore: google.cloud.firestore
+  Flask: flask.Flask
+  gen_mindlogpdf: data.gen_mindlogpdf
+  genai: google.genai
+  generate_rag: conv.generate_rag
+  get_current_question: tools.get_current_question
+  get_next_question: tools.get_next_question
+  getSampleStyleSheet: reportlab.lib.styles.getSampleStyleSheet
+  hashes: cryptography.hazmat.primitives.hashes
+  HTML: weasyprint.HTML
+  Image: reportlab.platypus.Image
+  inch: reportlab.lib.units.inch
+  InMemorySessionService: google.adk.sessions.InMemorySessionService
+  isPersonaUpdateNeeded: dataSync.isPersonaUpdateNeeded
+  json: json
+  json_to_md: data.json_to_md
+  jsonify: flask.jsonify
+  JSONResponse: fastapi.responses.JSONResponse
+  letter: reportlab.lib.pagesizes.letter
+  LlmAgent: google.adk.agents.LlmAgent
+  load_dotenv: dotenv.load_dotenv
+  logging: logging
+  markdown2: markdown2
+  NamedTemporaryFile: tempfile.NamedTemporaryFile
+  nltk: nltk
+  Optional: typing.Optional
+  os: os
+  PageBreak: reportlab.platypus.PageBreak
+  Paragraph: reportlab.platypus.Paragraph
+  ParagraphStyle: reportlab.lib.styles.ParagraphStyle
+  PBKDF2HMAC: cryptography.hazmat.primitives.kdf.pbkdf2.PBKDF2HMAC
+  pd: pandas
+  personaInfo: dataSync.personaInfo
+  pi: math.pi
+  plt: matplotlib.pyplot
+  re: re
+  reflection_chatbot: chat.reflection_chatbot
+  Request: fastapi.Request
+  request: flask.request
+  Runner: google.adk.runners.Runner
+  save_to_pdf: data.save_to_pdf
+  secrets: secrets
+  sendEmail: mail.sendEmail
+  SentimentIntensityAnalyzer: nltk.sentiment.vader.SentimentIntensityAnalyzer
+  SequentialAgent: google.adk.agents.SequentialAgent
+  SimpleDocTemplate: reportlab.platypus.SimpleDocTemplate
+  sns: seaborn
+  Spacer: reportlab.platypus.Spacer
+  svg2rlg: svglib.svglib.svg2rlg
+  TA_CENTER: reportlab.lib.enums.TA_CENTER
+  TA_JUSTIFY: reportlab.lib.enums.TA_JUSTIFY
+  TA_LEFT: reportlab.lib.enums.TA_LEFT
+  TA_RIGHT: reportlab.lib.enums.TA_RIGHT
+  Table: reportlab.platypus.Table
+  TableStyle: reportlab.platypus.TableStyle
+  textwrap: textwrap
+  track_progress: progress_agent.agent.track_progress
+  types: google.genai.types
+  updatePersona: dataSync.updatePersona
+  uuid: uuid
+
+functions:
+  __init__:
+    type: sync
+    module: backend.cassidy_adk.next_ques_agent.tools
+    args: [self, credentials_path, questions_json_path]
+  add_centered_svg_logo:
+    type: sync
+    module: backend.persona_server.data
+    args: [elements, svg_path, target_width]
+  analyze_journal_entries:
+    type: sync
+    module: backend.persona_server.data
+    args: [authId]
+  analyze_user_response:
+    type: async
+    module: backend.cassidy_adk.next_ques_agent.agent
+    args: [user_id, user_response]
+  analyze_with_llm:
+    type: sync
+    module: backend.persona_server.data
+    args: [prompt, system_prompt]
+  analyze_with_llm_1:
+    type: sync
+    module: backend.persona_server.data
+    args: [prompt, system_prompt]
+  call_agent:
+    type: async
+    module: backend.cassidy_adk.progress_agent.agent
+    args: [query]
+  chat:
+    type: async
+    module: backend.persona_server.main
+    args: [request]
+  create_pdf_from_json_chat:
+    type: sync
+    module: backend.persona_server.data
+    args: [json_data, output_filename]
+  data_chat_extraction:
+    type: sync
+    module: backend.persona_server.data
+    args: [authId, response_format]
+  decrypt:
+    type: sync
+    module: backend.cassidy_adk.next_ques_agent.encryption
+    args: [encrypted_data, encryption_key]
+    params:
+      returns: str
+  derive_key:
+    type: sync
+    module: backend.cassidy_adk.next_ques_agent.encryption
+    args: [password, salt]
+    params:
+      returns: bytes
+  encrypt:
+    type: sync
+    module: backend.cassidy_adk.next_ques_agent.encryption
+    args: [data, encryption_key]
+    params:
+      returns: str
+  enhance_markdown_content:
+    type: sync
+    module: backend.persona_server.data
+    args: [markdown_content]
+  extract_graph_info:
+    type: sync
+    module: backend.persona_server.conv
+    args: [json_data]
+  extract_information_gemini:
+    type: sync
+    module: backend.persona_server.conv
+    args: [json_data]
+  format_section:
+    type: sync
+    module: backend.persona_server.data
+    args: [section_data, section_title]
+  format_text_for_pdf:
+    type: sync
+    module: backend.persona_server.data
+    args: [text]
+  gen_mindlogpdf:
+    type: sync
+    module: backend.persona_server.data
+    args: [authId, numdays, filename]
+  generate_pdf_report:
+    type: sync
+    module: backend.persona_server.data
+    args: [analysis_df, chart_paths, filename]
+  generate_rag:
+    type: sync
+    module: backend.persona_server.conv
+    args: [chat_data, journal_analysis]
+  generate_visualizations:
+    type: sync
+    module: backend.persona_server.data
+    args: [analysis_df, filename]
+  get_current_question:
+    type: sync
+    module: backend.cassidy_adk.main
+    args: [user_id]
+  get_next_question:
+    type: async
+    module: backend.cassidy_adk.main
+    args: [user_id]
+  get_report:
+    type: async
+    module: backend.persona_server.main
+    args: [request]
+  getCurrentQuestion:
+    type: sync
+    module: backend.cassidy_adk.next_ques_agent.tools
+    args: [self, userId]
+    params:
+      returns: Optional[Dict]
+  getMessageHistory:
+    type: sync
+    module: backend.cassidy_adk.next_ques_agent.tools
+    args: [self, userId]
+    params:
+      returns: Optional[list]
+  getNextQuestion:
+    type: sync
+    module: backend.cassidy_adk.next_ques_agent.tools
+    args: [self, userId]
+    params:
+      returns: Dict
+  handle_internal_error:
+    type: sync
+    module: backend.cassidy_adk.main
+    args: [e]
+  handle_not_found:
+    type: sync
+    module: backend.cassidy_adk.main
+    args: [e]
+  handle_validation_error:
+    type: sync
+    module: backend.cassidy_adk.main
+    args: [e]
+  health_check:
+    type: sync
+    module: backend.cassidy_adk.main
+  initialize_question_manager:
+    type: sync
+    module: backend.cassidy_adk.main
+  isPersonaUpdateNeeded:
+    type: sync
+    module: backend.persona_server.dataSync
+    args: [authId, updateRequired]
+  json_to_md:
+    type: sync
+    module: backend.persona_server.data
+    args: [json_data]
+  load_questions:
+    type: sync
+    module: backend.cassidy_adk.next_ques_agent.tools
+    args: [self, questions_json_path]
+    params:
+      returns: None
+  personaInfo:
+    type: sync
+    module: backend.persona_server.dataSync
+    args: [authId, newInfo]
+  reflection_chatbot:
+    type: sync
+    module: backend.persona_server.chat
+    args: [user_info, user_message]
+  save_to_pdf:
+    type: sync
+    module: backend.persona_server.data
+    args: [markdown_content, file_name, logo_path]
+  set_questions_data:
+    type: sync
+    module: backend.cassidy_adk.next_ques_agent.tools
+    args: [self, questions_dict]
+    params:
+      returns: None
+  setCurrentQuestion:
+    type: sync
+    module: backend.cassidy_adk.next_ques_agent.tools
+    args: [self, userId, questionTheme, questionIndex]
+    params:
+      returns: Optional[Dict]
+  shutdown_event:
+    type: async
+    module: backend.persona_server.main
+  startup:
+    type: sync
+    module: backend.cassidy_adk.main
+  startup_event:
+    type: async
+    module: backend.persona_server.main
+  track_progress:
+    type: async
+    module: backend.cassidy_adk.progress_agent.agent
+    args: [user_id, message_history]
+  track_progress_route:
+    type: async
+    module: backend.cassidy_adk.main
+  updatePersona:
+    type: async
+    module: backend.persona_server.dataSync
+    args: [authId, user_message]
+  updateProgress:
+    type: sync
+    module: backend.cassidy_adk.next_ques_agent.tools
+    args: [self, userId, progress]
+    params:
+      returns: bool
+  validate_user_id:
+    type: sync
+    module: backend.cassidy_adk.main
+    args: [user_id]
+
+variables:
+  FLASK_DEBUG:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [backend.cassidy_adk.main]
+  FLASK_HOST:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [backend.cassidy_adk.main]
+  FLASK_PORT:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [backend.cassidy_adk.main]
+  GOOGLE_APPLICATION_CREDENTIALS:
+    type: env
+    params:
+      caller: [os.environ]
+  NEXT_PUBLIC_ENCRYPTION_KEY:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [backend.cassidy_adk.next_ques_agent.encryption]
+  NEXT_PUBLIC_GEMINI_API_KEY:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [backend.persona_server.data, backend.persona_server.conv]
+
+files:
+  .pdf:
+    type: literal
+    actions: [write]
+    params:
+      caller: [NamedTemporaryFile]
+      delete: "False"
+  credentials.json:
+    type: pattern
+    actions: [read]
+    params:
+      caller: [os.path.join]
+      pattern: [BASE_DIR, credentials.json]
+  pdf_path:
+    type: variable
+    actions: [read]
+    params:
+      caller: [open]
+      alias: [pdf_file]
+  questions.json:
+    type: pattern
+    actions: [read]
+    params:
+      caller: [os.path.join]
+      pattern: [BASE_DIR, questions.json]
+  questions_flat.json:
+    type: pattern
+    actions: [read]
+    params:
+      caller: [os.path.join]
+      pattern: [BASE_DIR, questions_flat.json]
+  questions_json_path:
+    type: variable
+    actions: [read]
+    params:
+      caller: [open, json.load]
+      alias: [file]
